@@ -126,7 +126,7 @@ void KaleidoScope_DrawDungeonMap(PlayState* play, GraphicsContext* gfxCtx) {
                 if (pauseCtx->stickAdjY > 30) {
                     if (pauseCtx->cursorPoint[PAUSE_MAP] >= 4) {
                         for (i = pauseCtx->cursorPoint[PAUSE_MAP] - 3 - 1; i >= 0; i--) {
-                            if ((gSaveContext.save.info.sceneFlags[gSaveContext.mapIndex].floors & gBitFlags[i]) ||
+                            if ((gOotSave.info.sceneFlags[gSaveContext.mapIndex].floors & gBitFlags[i]) ||
                                 (CHECK_DUNGEON_ITEM(DUNGEON_MAP, gSaveContext.mapIndex) &&
                                  (gMapData->floorID[interfaceCtx->unk_25A][i] != 0))) {
                                 pauseCtx->cursorPoint[PAUSE_MAP] = i + 3;
@@ -137,7 +137,7 @@ void KaleidoScope_DrawDungeonMap(PlayState* play, GraphicsContext* gfxCtx) {
                 } else if (pauseCtx->stickAdjY < -30) {
                     if (pauseCtx->cursorPoint[PAUSE_MAP] != 10) {
                         for (i = pauseCtx->cursorPoint[PAUSE_MAP] - 3 + 1; i < 11; i++) {
-                            if ((gSaveContext.save.info.sceneFlags[gSaveContext.mapIndex].floors & gBitFlags[i]) ||
+                            if ((gOotSave.info.sceneFlags[gSaveContext.mapIndex].floors & gBitFlags[i]) ||
                                 (CHECK_DUNGEON_ITEM(DUNGEON_MAP, gSaveContext.mapIndex) &&
                                  (gMapData->floorID[interfaceCtx->unk_25A][i] != 0))) {
                                 pauseCtx->cursorPoint[PAUSE_MAP] = i + 3;
@@ -262,7 +262,7 @@ void KaleidoScope_DrawDungeonMap(PlayState* play, GraphicsContext* gfxCtx) {
     gSPVertex(POLY_OPA_DISP++, &pauseCtx->mapPageVtx[84], 32, 0);
 
     for (i = j = 0; i < 8; i++, j += 4) {
-        if ((gSaveContext.save.info.sceneFlags[gSaveContext.mapIndex].floors & gBitFlags[i]) ||
+        if ((gOotSave.info.sceneFlags[gSaveContext.mapIndex].floors & gBitFlags[i]) ||
             CHECK_DUNGEON_ITEM(DUNGEON_MAP, gSaveContext.mapIndex)) {
             if (i != (pauseCtx->dungeonMapSlot - 3)) {
                 gDPLoadTextureBlock(POLY_OPA_DISP++, floorIconTexs[gMapData->floorID[interfaceCtx->unk_25A][i]],
@@ -689,7 +689,7 @@ void KaleidoScope_DrawWorldMap(PlayState* play, GraphicsContext* gfxCtx) {
     } else if (HREG(15) == 1) {
         Gfx* gfx = POLY_OPA_DISP;
 
-        gSPLoadUcodeL(gfx++, gspS2DEX2d_fifo);
+        gSPLoadUcodeL(gfx++, gspS2DEX2_fifo);
 
         Room_DrawBackground2D(&gfx, gWorldMapImageTex, gWorldMapImageTLUT, WORLD_MAP_IMAGE_WIDTH,
                               WORLD_MAP_IMAGE_HEIGHT, G_IM_FMT_CI, G_IM_SIZ_8b, G_TT_RGBA16, 256, HREG(13) / 100.0f,
@@ -757,7 +757,7 @@ void KaleidoScope_DrawWorldMap(PlayState* play, GraphicsContext* gfxCtx) {
             gSPVertex(POLY_OPA_DISP++, &pauseCtx->mapPageVtx[(PAGE_BG_QUADS + k) * 4], 32, 0);
 
             for (j = i = 0; i < 8; i++, j += 4) {
-                if (!(gSaveContext.save.info.worldMapAreaData & gBitFlags[cloudFlagNums[k + i]])) {
+                if (!(gOotSave.info.worldMapAreaData & gBitFlags[cloudFlagNums[k + i]])) {
                     gDPLoadTextureBlock_4b(POLY_OPA_DISP++, cloudTexs[k + i], G_IM_FMT_I,
                                            gVtxPageMapWorldQuadsWidth[k + i], gVtxPageMapWorldQuadsHeight[k + i], 0,
                                            G_TX_WRAP | G_TX_NOMIRROR, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK,

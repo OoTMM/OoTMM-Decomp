@@ -100,7 +100,7 @@ void EnDs_GiveOddPotion(EnDs* this, PlayState* play) {
         this->actionFunc = EnDs_DisplayOddPotionText;
         gSaveContext.subTimerState = SUBTIMER_STATE_OFF;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_ODD_POTION, 10000.0f, 50.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_OOT_ODD_POTION, 10000.0f, 50.0f);
     }
 }
 
@@ -108,7 +108,7 @@ void EnDs_TalkAfterBrewOddPotion(EnDs* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
         Message_CloseTextbox(play);
         this->actionFunc = EnDs_GiveOddPotion;
-        Actor_OfferGetItem(&this->actor, play, GI_ODD_POTION, 10000.0f, 50.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_OOT_ODD_POTION, 10000.0f, 50.0f);
     }
 }
 
@@ -166,7 +166,7 @@ void EnDs_OfferOddPotion(EnDs* this, PlayState* play) {
 }
 
 s32 EnDs_CheckRupeesAndBottle(void) {
-    if (gSaveContext.save.info.playerData.rupees < 100) {
+    if (gOotSave.info.playerData.rupees < 100) {
         return 0;
     } else if (Inventory_HasEmptyBottle() == 0) {
         return 1;
@@ -180,7 +180,7 @@ void EnDs_GiveBluePotion(EnDs* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = EnDs_Talk;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_BOTTLE_POTION_BLUE, 10000.0f, 50.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_OOT_POTION_BLUE, 10000.0f, 50.0f);
     }
 }
 
@@ -199,7 +199,7 @@ void EnDs_OfferBluePotion(EnDs* this, PlayState* play) {
                     case 2: // have 100 rupees and empty bottle
                         Rupees_ChangeBy(-100);
                         this->actor.flags &= ~ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
-                        Actor_OfferGetItem(&this->actor, play, GI_BOTTLE_POTION_BLUE, 10000.0f, 50.0f);
+                        Actor_OfferGetItem(&this->actor, play, GI_OOT_POTION_BLUE, 10000.0f, 50.0f);
                         this->actionFunc = EnDs_GiveBluePotion;
                         return;
                 }

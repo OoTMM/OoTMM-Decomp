@@ -254,7 +254,7 @@ void EnDivingGame_HandlePlayChoice(EnDivingGame* this, PlayState* play) {
         Message_ShouldAdvance(play)) { // Did the player select an answer?
         switch (play->msgCtx.choiceIndex) {
             case 0: // Yes
-                if (gSaveContext.save.info.playerData.rupees >= 20) {
+                if (gOotSave.info.playerData.rupees >= 20) {
                     Rupees_ChangeBy(-20);
                     this->actor.textId = 0x4054;
                 } else {
@@ -478,7 +478,7 @@ void func_809EEA00(EnDivingGame* this, PlayState* play) {
     if ((this->unk_292 == Message_GetState(&play->msgCtx) && Message_ShouldAdvance(play))) {
         Message_CloseTextbox(play);
         this->actor.parent = NULL;
-        Actor_OfferGetItem(&this->actor, play, GI_SCALE_SILVER, 90.0f, 10.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_OOT_SCALE_SILVER, 90.0f, 10.0f);
         this->actionFunc = func_809EEA90;
     }
 }
@@ -488,7 +488,7 @@ void func_809EEA90(EnDivingGame* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
         this->actionFunc = func_809EEAF8;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_SCALE_SILVER, 90.0f, 10.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_OOT_SCALE_SILVER, 90.0f, 10.0f);
     }
 }
 

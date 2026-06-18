@@ -6,9 +6,6 @@
 #include "segment_symbols.h"
 #include "terminal.h"
 #include "assets/textures/parameter_static/parameter_static.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
 #include "z64map_mark.h"
 #include "z64play.h"
 #include "z64save.h"
@@ -65,21 +62,9 @@ void MapMark_Init(PlayState* play) {
                                ? (void*)((uintptr_t)overlay->vramTable -
                                          (intptr_t)((uintptr_t)overlay->vramStart - (uintptr_t)overlay->loadedRamAddr))
                                : NULL);
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_2C != NULL)) {
-        B_80121220->unk_2C(&sLoadedMarkDataTable);
-    }
-#endif
 }
 
 void MapMark_ClearPointers(PlayState* play) {
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_30 != NULL)) {
-        B_80121220->unk_30(&sLoadedMarkDataTable);
-    }
-#endif
-
     sMapMarkDataOvl.loadedRamAddr = NULL;
     sLoadedMarkDataTable = NULL;
 }

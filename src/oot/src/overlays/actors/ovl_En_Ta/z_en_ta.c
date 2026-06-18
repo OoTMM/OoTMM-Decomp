@@ -577,7 +577,7 @@ void EnTa_IdleAtRanch(EnTa* this, PlayState* play) {
 }
 
 s32 EnTa_CheckCanBuyMilk(void) {
-    if (gSaveContext.save.info.playerData.rupees < 30) {
+    if (gOotSave.info.playerData.rupees < 30) {
         return TALON_CANBUYMILK_NOT_ENOUGH_RUPEES;
     } else if (!Inventory_HasEmptyBottle()) {
         return TALON_CANBUYMILK_NO_EMPTY_BOTTLE;
@@ -962,9 +962,9 @@ void EnTa_GiveItemInLonLonHouse(EnTa* this, PlayState* play) {
         }
         this->stateFlags &= ~TALON_STATE_FLAG_GIVING_MILK_REFILL;
     } else if (this->stateFlags & TALON_STATE_FLAG_GIVING_MILK_REFILL) {
-        Actor_OfferGetItem(&this->actor, play, GI_MILK, 10000.0f, 50.0f);
+        Actor_OfferGetItem(&this->actor, play,GI_OOT_MILK, 10000.0f, 50.0f);
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_BOTTLE_MILK_FULL, 10000.0f, 50.0f);
+        Actor_OfferGetItem(&this->actor, play,GI_OOT_BOTTLE_MILK, 10000.0f, 50.0f);
     }
     this->stateFlags |= TALON_STATE_FLAG_TRACKING_PLAYER;
 }
@@ -974,7 +974,7 @@ void EnTa_TalkAfterCuccoGameFirstWon(EnTa* this, PlayState* play) {
         Message_CloseTextbox(play);
         this->stateFlags &= ~TALON_STATE_FLAG_GIVING_MILK_REFILL;
         EnTa_SetupAction(this, EnTa_GiveItemInLonLonHouse, EnTa_AnimRunToEnd);
-        Actor_OfferGetItem(&this->actor, play, GI_BOTTLE_MILK_FULL, 10000.0f, 50.0f);
+        Actor_OfferGetItem(&this->actor, play,GI_OOT_BOTTLE_MILK, 10000.0f, 50.0f);
     }
 }
 
@@ -997,13 +997,13 @@ void EnTa_WaitBuyMilkOrPlayCuccoGameResponse(EnTa* this, PlayState* play) {
                         this->stateFlags |= TALON_STATE_FLAG_GIVING_MILK_REFILL;
                         EnTa_SetupAction(this, EnTa_GiveItemInLonLonHouse, EnTa_AnimRunToEnd);
                         Rupees_ChangeBy(-30);
-                        Actor_OfferGetItem(&this->actor, play, GI_MILK, 10000.0f, 50.0f);
+                        Actor_OfferGetItem(&this->actor, play,GI_OOT_MILK, 10000.0f, 50.0f);
                         break;
                 }
                 break;
 
             case 1: // Play cucco game
-                if (gSaveContext.save.info.playerData.rupees < 10) {
+                if (gOotSave.info.playerData.rupees < 10) {
                     Message_ContinueTextbox(play, 0x85);
                     EnTa_SetupAction(this, EnTa_TalkNotEnoughRupees, EnTa_AnimRunToEnd);
                 } else {
@@ -1037,7 +1037,7 @@ void EnTa_WaitForPlayCuccoGameResponse(EnTa* this, PlayState* play) {
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE && Message_ShouldAdvance(play)) {
         switch (play->msgCtx.choiceIndex) {
             case 0:
-                if (gSaveContext.save.info.playerData.rupees < price) {
+                if (gOotSave.info.playerData.rupees < price) {
                     Message_ContinueTextbox(play, 0x85);
                     EnTa_SetupAction(this, EnTa_TalkNotEnoughRupees, EnTa_AnimRunToEnd);
                 } else {
@@ -1094,7 +1094,7 @@ void EnTa_TalkAfterCuccoGameWon(EnTa* this, PlayState* play) {
             Message_CloseTextbox(play);
             this->stateFlags |= TALON_STATE_FLAG_GIVING_MILK_REFILL;
             EnTa_SetupAction(this, EnTa_GiveItemInLonLonHouse, EnTa_AnimRunToEnd);
-            Actor_OfferGetItem(&this->actor, play, GI_MILK, 10000.0f, 50.0f);
+            Actor_OfferGetItem(&this->actor, play,GI_OOT_MILK, 10000.0f, 50.0f);
         } else {
             Message_ContinueTextbox(play, 0x208A);
             EnTa_SetupAction(this, EnTa_TalkGeneralInLonLonHouse, EnTa_AnimRunToEnd);

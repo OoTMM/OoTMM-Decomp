@@ -147,14 +147,14 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);
 
     // Current Health Quarter (X / 4)
-    KaleidoScope_DrawDigit(play, (gSaveContext.save.info.playerData.health % 0x10) / 4, 194, 15);
+    KaleidoScope_DrawDigit(play, (gOotSave.info.playerData.health % 0x10) / 4, 194, 15);
 
     gDPPipeSync(POLY_OPA_DISP++);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
 
     // Rupees
     spD8[0] = spD8[1] = spD8[2] = 0;
-    spD8[3] = gSaveContext.save.info.playerData.rupees;
+    spD8[3] = gOotSave.info.playerData.rupees;
     while (spD8[3] >= 1000) {
         spD8[0]++;
         spD8[3] -= 1000;
@@ -176,7 +176,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
 
     // Health capacity
     spD8[2] = 0;
-    spD8[3] = gSaveContext.save.info.playerData.healthCapacity / 0x10;
+    spD8[3] = gOotSave.info.playerData.healthCapacity / 0x10;
     while (spD8[3] >= 10) {
         spD8[2]++;
         spD8[3] -= 10;
@@ -187,7 +187,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
 
     // Health
     spD8[2] = 0;
-    spD8[3] = gSaveContext.save.info.playerData.health / 0x10;
+    spD8[3] = gOotSave.info.playerData.health / 0x10;
     while (spD8[3] >= 10) {
         spD8[2]++;
         spD8[3] -= 10;
@@ -201,12 +201,12 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
         for (j = 0, x = 78; j < 6; j++, slot++, x += 26) {
             spD8[2] = 0;
 
-            if ((slot <= SLOT_BOW) || (slot == SLOT_SLINGSHOT) || (slot == SLOT_BOMBCHU) || (slot == SLOT_MAGIC_BEAN)) {
+            if ((slot <= SLOT_OOT_BOW) || (slot == SLOT_OOT_SLINGSHOT) || (slot == SLOT_OOT_BOMBCHU) || (slot == SLOT_OOT_MAGIC_BEAN)) {
                 spD8[3] = AMMO(gAmmoItems[slot]);
-            } else if (slot == SLOT_OCARINA) {
-                spD8[3] = gSaveContext.save.info.inventory.items[slot];
+            } else if (slot == SLOT_OOT_OCARINA) {
+                spD8[3] = gOotSave.info.inventory.items[slot];
             } else {
-                spD8[3] = gSaveContext.save.info.inventory.items[slot];
+                spD8[3] = gOotSave.info.inventory.items[slot];
             }
 
             if (spD8[3] != ITEM_NONE) {
@@ -227,7 +227,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
     for (spD8[1] = 78, i = 0; i < 17; i++) {
         spD8[2] = 0;
 
-        if ((spD8[3] = gSaveContext.save.info.inventory.dungeonKeys[i]) >= 0) {
+        if ((spD8[3] = gOotSave.info.inventory.dungeonKeys[i]) >= 0) {
             while (spD8[3] >= 10) {
                 spD8[2]++;
                 spD8[3] -= 10;
@@ -252,7 +252,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
 
     // Dungeon Items
     for (spD8[1] = 78, i = 0; i < 12; i++, spD8[1] += 12) {
-        spD8[2] = gSaveContext.save.info.inventory.dungeonItems[i] & gEquipMasks[0];
+        spD8[2] = gOotSave.info.inventory.dungeonItems[i] & gEquipMasks[0];
         KaleidoScope_DrawDigit(play, spD8[2], spD8[1], 132);
     }
 
@@ -293,7 +293,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
     }
 
     // GS Tokens
-    spD8[3] = gSaveContext.save.info.inventory.gsTokens;
+    spD8[3] = gOotSave.info.inventory.gsTokens;
     spD8[1] = 0;
     spD8[2] = 0;
     while (spD8[3] >= 100) {
@@ -312,7 +312,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
 
     // Heart Pieces (X / 4)
     KaleidoScope_DrawDigit(
-        play, ((gSaveContext.save.info.inventory.questItems & 0xF0000000) & 0xF0000000) >> QUEST_HEART_PIECE_COUNT, 210,
+        play, ((gOotSave.info.inventory.questItems & 0xF0000000) & 0xF0000000) >> QUEST_HEART_PIECE_COUNT, 210,
         185);
 
     // Handles navigating the menu to different sections with the D-Pad
@@ -353,39 +353,39 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
     switch (curSection) {
         case 0:
             if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
-                gSaveContext.save.info.playerData.rupees -= 100;
-                if (gSaveContext.save.info.playerData.rupees < 0) {
-                    gSaveContext.save.info.playerData.rupees = 0;
+                gOotSave.info.playerData.rupees -= 100;
+                if (gOotSave.info.playerData.rupees < 0) {
+                    gOotSave.info.playerData.rupees = 0;
                 }
             } else if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {
-                gSaveContext.save.info.playerData.rupees += 100;
-                if (gSaveContext.save.info.playerData.rupees >= 9999) {
-                    gSaveContext.save.info.playerData.rupees = 9999;
+                gOotSave.info.playerData.rupees += 100;
+                if (gOotSave.info.playerData.rupees >= 9999) {
+                    gOotSave.info.playerData.rupees = 9999;
                 }
             } else if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                gSaveContext.save.info.playerData.rupees--;
-                if (gSaveContext.save.info.playerData.rupees < 0) {
-                    gSaveContext.save.info.playerData.rupees = 0;
+                gOotSave.info.playerData.rupees--;
+                if (gOotSave.info.playerData.rupees < 0) {
+                    gOotSave.info.playerData.rupees = 0;
                 }
             } else if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                gSaveContext.save.info.playerData.rupees++;
-                if (gSaveContext.save.info.playerData.rupees >= 9999) {
-                    gSaveContext.save.info.playerData.rupees = 9999;
+                gOotSave.info.playerData.rupees++;
+                if (gOotSave.info.playerData.rupees >= 9999) {
+                    gOotSave.info.playerData.rupees = 9999;
                 }
             }
             break;
 
         case 1:
             if (CHECK_BTN_ALL(input->press.button, BTN_CUP) || CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                gSaveContext.save.info.playerData.healthCapacity -= 0x10;
-                if (gSaveContext.save.info.playerData.healthCapacity < 0x30) {
-                    gSaveContext.save.info.playerData.healthCapacity = 0x30;
+                gOotSave.info.playerData.healthCapacity -= 0x10;
+                if (gOotSave.info.playerData.healthCapacity < 0x30) {
+                    gOotSave.info.playerData.healthCapacity = 0x30;
                 }
             } else if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN) ||
                        CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                gSaveContext.save.info.playerData.healthCapacity += 0x10;
-                if (gSaveContext.save.info.playerData.healthCapacity >= 0x140) {
-                    gSaveContext.save.info.playerData.healthCapacity = 0x140;
+                gOotSave.info.playerData.healthCapacity += 0x10;
+                if (gOotSave.info.playerData.healthCapacity >= 0x140) {
+                    gOotSave.info.playerData.healthCapacity = 0x140;
                 }
             }
             break;
@@ -404,14 +404,14 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
 
         case 0x5C:
             if (CHECK_BTN_ALL(input->press.button, BTN_CUP) || CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                if ((((gSaveContext.save.info.inventory.questItems & 0xF0000000) & 0xF0000000) >>
+                if ((((gOotSave.info.inventory.questItems & 0xF0000000) & 0xF0000000) >>
                      QUEST_HEART_PIECE_COUNT) != 0) {
-                    gSaveContext.save.info.inventory.questItems -= (1 << QUEST_HEART_PIECE_COUNT);
+                    gOotSave.info.inventory.questItems -= (1 << QUEST_HEART_PIECE_COUNT);
                 }
             } else if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN) ||
                        CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                if ((gSaveContext.save.info.inventory.questItems & 0xF0000000) <= (4 << QUEST_HEART_PIECE_COUNT)) {
-                    gSaveContext.save.info.inventory.questItems += (1 << QUEST_HEART_PIECE_COUNT);
+                if ((gOotSave.info.inventory.questItems & 0xF0000000) <= (4 << QUEST_HEART_PIECE_COUNT)) {
+                    gOotSave.info.inventory.questItems += (1 << QUEST_HEART_PIECE_COUNT);
                 }
             }
             break;
@@ -419,7 +419,7 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
         default:
             if (curSection < 0x1B) {
                 i = curSection - 3;
-                if ((i <= SLOT_BOW) || (i == SLOT_SLINGSHOT) || (i == SLOT_BOMBCHU) || (i == SLOT_MAGIC_BEAN)) {
+                if ((i <= SLOT_OOT_BOW) || (i == SLOT_OOT_SLINGSHOT) || (i == SLOT_OOT_BOMBCHU) || (i == SLOT_OOT_MAGIC_BEAN)) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
                         Inventory_DeleteItem(gAmmoItems[i], SLOT(gAmmoItems[i]));
                         AMMO(gAmmoItems[i]) = 0;
@@ -439,112 +439,112 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
                             AMMO(gAmmoItems[i]) = 0;
                         }
                     }
-                } else if (i == SLOT_OCARINA) {
+                } else if (i == SLOT_OOT_OCARINA) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
                         Inventory_DeleteItem(ITEM_OCARINA_FAIRY, SLOT(ITEM_OCARINA_FAIRY));
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_OCARINA_FAIRY;
-                        } else if ((gSaveContext.save.info.inventory.items[i] >= ITEM_OCARINA_FAIRY) &&
-                                   (gSaveContext.save.info.inventory.items[i] < ITEM_OCARINA_OF_TIME)) {
-                            gSaveContext.save.info.inventory.items[i]++;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_OCARINA_FAIRY;
+                        } else if ((gOotSave.info.inventory.items[i] >= ITEM_OCARINA_FAIRY) &&
+                                   (gOotSave.info.inventory.items[i] < ITEM_OCARINA_OF_TIME)) {
+                            gOotSave.info.inventory.items[i]++;
                         }
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_OCARINA_OF_TIME;
-                        } else if ((gSaveContext.save.info.inventory.items[i] > ITEM_OCARINA_FAIRY) &&
-                                   (gSaveContext.save.info.inventory.items[i] <= ITEM_OCARINA_OF_TIME)) {
-                            gSaveContext.save.info.inventory.items[i]--;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_OCARINA_OF_TIME;
+                        } else if ((gOotSave.info.inventory.items[i] > ITEM_OCARINA_FAIRY) &&
+                                   (gOotSave.info.inventory.items[i] <= ITEM_OCARINA_OF_TIME)) {
+                            gOotSave.info.inventory.items[i]--;
                         }
                     }
-                } else if (i == SLOT_HOOKSHOT) {
+                } else if (i == SLOT_OOT_HOOKSHOT) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
                         Inventory_DeleteItem(ITEM_HOOKSHOT, SLOT(ITEM_HOOKSHOT));
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_HOOKSHOT;
-                        } else if ((gSaveContext.save.info.inventory.items[i] >= ITEM_HOOKSHOT) &&
-                                   (gSaveContext.save.info.inventory.items[i] < ITEM_LONGSHOT)) {
-                            gSaveContext.save.info.inventory.items[i]++;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_HOOKSHOT;
+                        } else if ((gOotSave.info.inventory.items[i] >= ITEM_HOOKSHOT) &&
+                                   (gOotSave.info.inventory.items[i] < ITEM_LONGSHOT)) {
+                            gOotSave.info.inventory.items[i]++;
                         }
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_LONGSHOT;
-                        } else if ((gSaveContext.save.info.inventory.items[i] > ITEM_HOOKSHOT) &&
-                                   (gSaveContext.save.info.inventory.items[i] <= ITEM_LONGSHOT)) {
-                            gSaveContext.save.info.inventory.items[i]--;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_LONGSHOT;
+                        } else if ((gOotSave.info.inventory.items[i] > ITEM_HOOKSHOT) &&
+                                   (gOotSave.info.inventory.items[i] <= ITEM_LONGSHOT)) {
+                            gOotSave.info.inventory.items[i]--;
                         }
                     }
-                } else if (i == SLOT_TRADE_ADULT) {
+                } else if (i == SLOT_OOT_TRADE_ADULT) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
                         Inventory_DeleteItem(ITEM_POCKET_EGG, SLOT(ITEM_POCKET_EGG));
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_POCKET_EGG;
-                        } else if ((gSaveContext.save.info.inventory.items[i] >= ITEM_POCKET_EGG) &&
-                                   (gSaveContext.save.info.inventory.items[i] < ITEM_CLAIM_CHECK)) {
-                            gSaveContext.save.info.inventory.items[i]++;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_POCKET_EGG;
+                        } else if ((gOotSave.info.inventory.items[i] >= ITEM_POCKET_EGG) &&
+                                   (gOotSave.info.inventory.items[i] < ITEM_CLAIM_CHECK)) {
+                            gOotSave.info.inventory.items[i]++;
                         }
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_CLAIM_CHECK;
-                        } else if ((gSaveContext.save.info.inventory.items[i] > ITEM_POCKET_EGG) &&
-                                   (gSaveContext.save.info.inventory.items[i] <= ITEM_CLAIM_CHECK)) {
-                            gSaveContext.save.info.inventory.items[i]--;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_CLAIM_CHECK;
+                        } else if ((gOotSave.info.inventory.items[i] > ITEM_POCKET_EGG) &&
+                                   (gOotSave.info.inventory.items[i] <= ITEM_CLAIM_CHECK)) {
+                            gOotSave.info.inventory.items[i]--;
                         }
                     }
-                } else if (i == SLOT_TRADE_CHILD) {
+                } else if (i == SLOT_OOT_TRADE_CHILD) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
                         Inventory_DeleteItem(ITEM_WEIRD_EGG, SLOT(ITEM_WEIRD_EGG));
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_WEIRD_EGG;
-                        } else if ((gSaveContext.save.info.inventory.items[i] >= ITEM_WEIRD_EGG) &&
-                                   (gSaveContext.save.info.inventory.items[i] < ITEM_SOLD_OUT)) {
-                            gSaveContext.save.info.inventory.items[i]++;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_WEIRD_EGG;
+                        } else if ((gOotSave.info.inventory.items[i] >= ITEM_WEIRD_EGG) &&
+                                   (gOotSave.info.inventory.items[i] < ITEM_SOLD_OUT)) {
+                            gOotSave.info.inventory.items[i]++;
                         }
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_SOLD_OUT;
-                        } else if ((gSaveContext.save.info.inventory.items[i] > ITEM_WEIRD_EGG) &&
-                                   (gSaveContext.save.info.inventory.items[i] <= ITEM_SOLD_OUT)) {
-                            gSaveContext.save.info.inventory.items[i]--;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_SOLD_OUT;
+                        } else if ((gOotSave.info.inventory.items[i] > ITEM_WEIRD_EGG) &&
+                                   (gOotSave.info.inventory.items[i] <= ITEM_SOLD_OUT)) {
+                            gOotSave.info.inventory.items[i]--;
                         }
                     }
-                } else if ((i >= SLOT_BOTTLE_1) && (i <= SLOT_BOTTLE_4)) {
+                } else if ((i >= SLOT_OOT_BOTTLE_1) && (i <= SLOT_OOT_BOTTLE_4)) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
-                        Inventory_DeleteItem(ITEM_BOTTLE_EMPTY + i - SLOT_BOTTLE_1,
-                                             SLOT(ITEM_BOTTLE_EMPTY) + i - SLOT_BOTTLE_1);
+                        Inventory_DeleteItem(ITEM_BOTTLE_EMPTY + i - SLOT_OOT_BOTTLE_1,
+                                             SLOT(ITEM_BOTTLE_EMPTY) + i - SLOT_OOT_BOTTLE_1);
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_BOTTLE_EMPTY;
-                        } else if ((gSaveContext.save.info.inventory.items[i] >= ITEM_BOTTLE_EMPTY) &&
-                                   (gSaveContext.save.info.inventory.items[i] <= ITEM_BOTTLE_MILK_HALF)) {
-                            gSaveContext.save.info.inventory.items[i]++;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_BOTTLE_EMPTY;
+                        } else if ((gOotSave.info.inventory.items[i] >= ITEM_BOTTLE_EMPTY) &&
+                                   (gOotSave.info.inventory.items[i] <= ITEM_BOTTLE_MILK_HALF)) {
+                            gOotSave.info.inventory.items[i]++;
                         }
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                            gSaveContext.save.info.inventory.items[i] = ITEM_BOTTLE_POE;
-                        } else if ((gSaveContext.save.info.inventory.items[i] >= ITEM_BOTTLE_POTION_RED) &&
-                                   (gSaveContext.save.info.inventory.items[i] <= ITEM_BOTTLE_POE)) {
-                            gSaveContext.save.info.inventory.items[i]--;
+                        if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                            gOotSave.info.inventory.items[i] = ITEM_BOTTLE_POE;
+                        } else if ((gOotSave.info.inventory.items[i] >= ITEM_BOTTLE_POTION_RED) &&
+                                   (gOotSave.info.inventory.items[i] <= ITEM_BOTTLE_POE)) {
+                            gOotSave.info.inventory.items[i]--;
                         }
                     }
                 } else if (i < 0x1B) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP) || CHECK_BTN_ALL(input->press.button, BTN_CLEFT) ||
                         CHECK_BTN_ALL(input->press.button, BTN_CDOWN) ||
                         CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        if (i == SLOT_TRADE_ADULT) {
-                            if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                                gSaveContext.save.info.inventory.items[i] = ITEM_MAGIC_BEAN;
+                        if (i == SLOT_OOT_TRADE_ADULT) {
+                            if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                                gOotSave.info.inventory.items[i] = ITEM_MAGIC_BEAN;
                             } else {
                                 Inventory_DeleteItem(ITEM_MAGIC_BEAN, SLOT(ITEM_MAGIC_BEAN));
                             }
                         } else {
                             j = sSlotItems[i];
                             PRINTF("i=%d  j=%d\n", i, j);
-                            if (gSaveContext.save.info.inventory.items[i] == ITEM_NONE) {
-                                gSaveContext.save.info.inventory.items[i] = j;
+                            if (gOotSave.info.inventory.items[i] == ITEM_NONE) {
+                                gOotSave.info.inventory.items[i] = j;
                             } else {
                                 Inventory_DeleteItem(j, i);
                             }
@@ -554,19 +554,19 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
             } else if (curSection < 0x2C) {
                 if (CHECK_BTN_ALL(input->press.button, BTN_CUP) || CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
                     i = curSection - 0x1B;
-                    gSaveContext.save.info.inventory.dungeonKeys[i]--;
-                    if (gSaveContext.save.info.inventory.dungeonKeys[i] < 0) {
-                        gSaveContext.save.info.inventory.dungeonKeys[i] = -1;
+                    gOotSave.info.inventory.dungeonKeys[i]--;
+                    if (gOotSave.info.inventory.dungeonKeys[i] < 0) {
+                        gOotSave.info.inventory.dungeonKeys[i] = -1;
                     }
                 } else if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN) ||
                            CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
                     i = curSection - 0x1B;
-                    if (gSaveContext.save.info.inventory.dungeonKeys[i] < 0) {
-                        gSaveContext.save.info.inventory.dungeonKeys[i] = 1;
+                    if (gOotSave.info.inventory.dungeonKeys[i] < 0) {
+                        gOotSave.info.inventory.dungeonKeys[i] = 1;
                     } else {
-                        gSaveContext.save.info.inventory.dungeonKeys[i]++;
-                        if (gSaveContext.save.info.inventory.dungeonKeys[i] >= 9) {
-                            gSaveContext.save.info.inventory.dungeonKeys[i] = 9;
+                        gOotSave.info.inventory.dungeonKeys[i]++;
+                        if (gOotSave.info.inventory.dungeonKeys[i] >= 9) {
+                            gOotSave.info.inventory.dungeonKeys[i] = 9;
                         }
                     }
                 }
@@ -588,48 +588,48 @@ void KaleidoScope_DrawDebugEditor(PlayState* play) {
                     } else {
                         i = curSection - 0x34; // 0 <= i < 4
                         if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                            gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 0);
+                            gOotSave.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 0);
                         }
                         if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {
-                            gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 1);
+                            gOotSave.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 1);
                         }
                         if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                            gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 2);
+                            gOotSave.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 2);
                         }
                         if (CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
-                            gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 3);
+                            gOotSave.info.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(i, 3);
                         }
                     }
                 } else if (curSection < 0x44) {
                     i = curSection - 0x38;
                     if (CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        gSaveContext.save.info.inventory.dungeonItems[i] ^= 4;
+                        gOotSave.info.inventory.dungeonItems[i] ^= 4;
                     }
                     if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN)) {
-                        gSaveContext.save.info.inventory.dungeonItems[i] ^= 2;
+                        gOotSave.info.inventory.dungeonItems[i] ^= 2;
                     }
                     if (CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        gSaveContext.save.info.inventory.dungeonItems[i] ^= 1;
+                        gOotSave.info.inventory.dungeonItems[i] ^= 1;
                     }
                 } else if (curSection == 0x5B) {
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP) || CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        gSaveContext.save.info.inventory.gsTokens++;
+                        gOotSave.info.inventory.gsTokens++;
 #if PLATFORM_N64
-                        if (gSaveContext.save.info.inventory.gsTokens >= 100) {
-                            gSaveContext.save.info.inventory.gsTokens = 100;
+                        if (gOotSave.info.inventory.gsTokens >= 100) {
+                            gOotSave.info.inventory.gsTokens = 100;
                         }
 #endif
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_CDOWN) ||
                                CHECK_BTN_ALL(input->press.button, BTN_CRIGHT)) {
-                        gSaveContext.save.info.inventory.gsTokens--;
-                        if (gSaveContext.save.info.inventory.gsTokens <= 0) {
-                            gSaveContext.save.info.inventory.gsTokens = 0;
+                        gOotSave.info.inventory.gsTokens--;
+                        if (gOotSave.info.inventory.gsTokens <= 0) {
+                            gOotSave.info.inventory.gsTokens = 0;
                         }
                     }
                 } else if (curSection < 0x5C) {
                     i = curSection - 0x44;
                     if (CHECK_BTN_ALL(input->press.button, BTN_CUP) || CHECK_BTN_ALL(input->press.button, BTN_CLEFT)) {
-                        gSaveContext.save.info.inventory.questItems ^= gBitFlags[i];
+                        gOotSave.info.inventory.questItems ^= gBitFlags[i];
                     }
                 }
             }

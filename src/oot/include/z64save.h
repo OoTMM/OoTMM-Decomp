@@ -5,6 +5,7 @@
 #include "versions.h"
 #include "z64inventory.h"
 #include "z64math.h"
+#include <save.h>
 
 typedef enum ZTargetSetting {
     /* 0 */ Z_TARGET_SETTING_SWITCH,
@@ -71,44 +72,6 @@ typedef enum MagicChangeType {
 #define MAGIC_NORMAL_METER 0x30
 #define MAGIC_DOUBLE_METER (2 * MAGIC_NORMAL_METER)
 
-typedef struct ItemEquips {
-    /* 0x00 */ u8 buttonItems[4];
-    /* 0x04 */ u8 cButtonSlots[3];
-    /* 0x08 */ u16 equipment; // a mask where each nibble corresponds to a type of equipment `EquipmentType`, and each nibble is a piece `EquipValue*`
-} ItemEquips; // size = 0x0A
-
-typedef struct Inventory {
-    /* 0x00 */ u8 items[24];
-    /* 0x18 */ s8 ammo[16];
-    /* 0x28 */ u16 equipment; // a mask where each nibble corresponds to a type of equipment `EquipmentType`, and each bit to an owned piece `EquipInv*`
-    /* 0x2C */ u32 upgrades;
-    /* 0x30 */ u32 questItems;
-    /* 0x34 */ u8 dungeonItems[20];
-    /* 0x48 */ s8 dungeonKeys[19];
-    /* 0x5B */ s8 defenseHearts;
-    /* 0x5C */ s16 gsTokens;
-} Inventory; // size = 0x5E
-
-typedef struct Checksum {
-    /* 0x00 */ u16 value;
-} Checksum; // size = 0x02
-
-typedef struct SavedSceneFlags {
-    /* 0x00 */ u32 chest;
-    /* 0x04 */ u32 swch;
-    /* 0x08 */ u32 clear;
-    /* 0x0C */ u32 collect;
-    /* 0x10 */ u32 unk;
-    /* 0x14 */ u32 rooms;
-    /* 0x18 */ u32 floors;
-} SavedSceneFlags; // size = 0x1C
-
-typedef struct HorseData {
-    /* 0x00 */ s16 sceneId;
-    /* 0x02 */ Vec3s pos;
-    /* 0x08 */ s16 angle;
-} HorseData; // size = 0x0A
-
 /**
  * The respawn mode names refer to the perceived player movement when respawning
  * "down": being on ground
@@ -132,17 +95,6 @@ typedef struct RespawnData {
     /* 0x14 */ u32 tempSwchFlags;
     /* 0x18 */ u32 tempCollectFlags;
 } RespawnData; // size = 0x1C
-
-typedef struct FaroresWindData {
-    /* 0x00 */ Vec3i pos;
-    /* 0x0C */ s32 yaw;
-    /* 0x10 */ s32 playerParams;
-    /* 0x14 */ s32 entranceIndex;
-    /* 0x18 */ s32 roomIndex;
-    /* 0x1C */ s32 set;
-    /* 0x20 */ s32 tempSwchFlags;
-    /* 0x24 */ s32 tempCollectFlags;
-} FaroresWindData; // size = 0x28
 
 typedef enum TimerState {
     /* 0x0 */ TIMER_STATE_OFF,
@@ -214,72 +166,8 @@ typedef enum WorldMapArea {
 } WorldMapArea;
 
 // offsets in SavePlayerData and SaveContext/Save
-typedef struct SavePlayerData {
-    /* 0x00  0x001C */ char newf[6]; // string "ZELDAZ"
-    /* 0x06  0x0022 */ u16 deaths;
-    /* 0x08  0x0024 */ u8 playerName[8];
-    /* 0x10  0x002C */ s16 n64ddFlag;
-    /* 0x12  0x002E */ s16 healthCapacity; // "max_life"
-    /* 0x14  0x0030 */ s16 health; // "now_life"
-    /* 0x16  0x0032 */ s8 magicLevel; // 0 for no magic/new load, 1 for magic, 2 for double magic
-    /* 0x17  0x0033 */ s8 magic; // current magic available for use
-    /* 0x18  0x0034 */ s16 rupees;
-    /* 0x1A  0x0036 */ u16 swordHealth;
-    /* 0x1C  0x0038 */ u16 naviTimer;
-    /* 0x1E  0x003A */ u8 isMagicAcquired;
-    /* 0x1F  0x003B */ char unk_3B[0x01];
-    /* 0x20  0x003C */ u8 isDoubleMagicAcquired;
-    /* 0x21  0x003D */ u8 isDoubleDefenseAcquired;
-    /* 0x22  0x003E */ u8 bgsFlag;
-    /* 0x23  0x003F */ u8 ocarinaGameRoundNum;
-    /* 0x24  0x0040 */ ItemEquips childEquips;
-    /* 0x2E  0x004A */ ItemEquips adultEquips;
-    /* 0x38  0x0054 */ u32 unk_54; // this may be incorrect, currently used for alignment
-    /* 0x3C  0x0058 */ char unk_58[0x0E];
-    /* 0x4A  0x0066 */ s16 savedSceneId;
-} SavePlayerData;
-
-// offsets in SaveInfo and SaveContext/Save
-typedef struct SaveInfo {
-    /* 0x0000  0x001C */ SavePlayerData playerData; // "S_Private"
-    /* 0x004C  0x0068 */ ItemEquips equips;
-    /* 0x0058  0x0074 */ Inventory inventory;
-    /* 0x00B8  0x00D4 */ SavedSceneFlags sceneFlags[124];
-    /* 0x0E48  0x0E64 */ FaroresWindData fw;
-    /* 0x0E70  0x0E8C */ char unk_E8C[0x10];
-    /* 0x0E80  0x0E9C */ s32 gsFlags[6];
-    /* 0x0E98  0x0EB4 */ char unk_EB4[0x4];
-    /* 0x0E9C  0x0EB8 */ s32 highScores[7];
-    /* 0x0EB8  0x0ED4 */ u16 eventChkInf[14]; // "event_chk_inf"
-    /* 0x0ED4  0x0EF0 */ u16 itemGetInf[4]; // "item_get_inf"
-    /* 0x0EDC  0x0EF8 */ u16 infTable[30]; // "inf_table"
-    /* 0x0F18  0x0F34 */ char unk_F34[0x04];
-    /* 0x0F1C  0x0F38 */ u32 worldMapAreaData; // "area_arrival"
-    /* 0x0F20  0x0F3C */ char unk_F3C[0x4];
-    /* 0x0F24  0x0F40 */ u8 scarecrowLongSongSet;
-    /* 0x0F25  0x0F41 */ u8 scarecrowLongSong[0x360];
-    /* 0x1285  0x12A1 */ char unk_12A1[0x24];
-    /* 0x12A9  0x12C5 */ u8 scarecrowSpawnSongSet;
-    /* 0x12AA  0x12C6 */ u8 scarecrowSpawnSong[0x80];
-    /* 0x132A  0x1346 */ char unk_1346[0x02];
-    /* 0x132C  0x1348 */ HorseData horseData;
-    /* 0x1336  0x1352 */ Checksum checksum; // "check_sum"
-} SaveInfo;
-
-typedef struct Save {
-    /* 0x00 */ s32 entranceIndex;
-    /* 0x04 */ s32 linkAge; // 0: Adult; 1: Child (see enum `LinkAge`)
-    /* 0x08 */ s32 cutsceneIndex;
-    /* 0x0C */ u16 dayTime; // "zelda_time"
-    /* 0x10 */ s32 nightFlag;
-    /* 0x14 */ s32 totalDays;
-    /* 0x18 */ s32 bgsDayCount; // increments with totalDays, can be cleared with `Environment_ClearBgsDayCount`
-    /* 0x1C */ SaveInfo info; // "information"
-} Save;
 
 typedef struct SaveContext {
-    /* 0x0000 */ Save save; // "memory"
-    /* 0x1354 */ s32 fileNum; // "file_no"
     /* 0x1358 */ char unk_1358[0x0004];
     /* 0x135C */ s32 gameMode;
     /* 0x1360 */ s32 sceneLayer; // "counter"
@@ -321,9 +209,6 @@ typedef struct SaveContext {
     /* 0x1406 */ u16 minigameScore; // "yabusame_total"
     /* 0x1408 */ char unk_1408[0x0001];
     /* 0x1409 */ u8 language; // NTSC 0: Japanese; 1: English | PAL 0: English; 1: German; 2: French (see enum `Language`)
-    /* 0x140A */ u8 soundSetting; // 0: Stereo; 1: Mono; 2: Headset; 3: Surround (see enum `SoundSetting`)
-    /* 0x140B */ char unk_140B[0x0001];
-    /* 0x140C */ u8 zTargetSetting; // 0: Switch; 1: Hold (see enum `ZTargetSetting`)
     /* 0x140E */ u16 forcedSeqId; // immediately start playing the sequence if set
     /* 0x1410 */ u8 cutsceneTransitionControl; // context dependent usage: can either trigger a delayed fade or control fill alpha
     /* 0x1411 */ char unk_1411[0x0001];
@@ -408,8 +293,8 @@ typedef enum LinkAge {
 } LinkAge;
 
 
-#define LINK_IS_ADULT (gSaveContext.save.linkAge == LINK_AGE_ADULT)
-#define LINK_IS_CHILD (gSaveContext.save.linkAge == LINK_AGE_CHILD)
+#define LINK_IS_ADULT (gOotSave.linkAge == LINK_AGE_ADULT)
+#define LINK_IS_CHILD (gOotSave.linkAge == LINK_AGE_CHILD)
 
 #define YEARS_CHILD 5
 #define YEARS_ADULT 17
@@ -417,48 +302,48 @@ typedef enum LinkAge {
 
 #define CLOCK_TIME(hr, min) ((s32)(((hr) * 60 + (min)) * (f32)0x10000 / (24 * 60) + 0.5f))
 
-#define IS_DAY (gSaveContext.save.nightFlag == 0)
-#define IS_NIGHT (gSaveContext.save.nightFlag == 1)
+#define IS_DAY (gOotSave.nightFlag == 0)
+#define IS_NIGHT (gOotSave.nightFlag == 1)
 
 #define SLOT(item) gItemSlots[item]
-#define INV_CONTENT(item) gSaveContext.save.info.inventory.items[SLOT(item)]
-#define AMMO(item) gSaveContext.save.info.inventory.ammo[SLOT(item)]
+#define INV_CONTENT(item) gOotSave.info.inventory.items[SLOT(item)]
+#define AMMO(item) gOotSave.info.inventory.ammo[SLOT(item)]
 #define BEANS_BOUGHT AMMO(ITEM_MAGIC_BEAN + 1)
 
-#define ALL_EQUIP_VALUE(equip) ((s32)(gSaveContext.save.info.inventory.equipment & gEquipMasks[equip]) >> gEquipShifts[equip])
-#define CUR_EQUIP_VALUE(equip) ((s32)(gSaveContext.save.info.equips.equipment & gEquipMasks[equip]) >> gEquipShifts[equip])
+#define ALL_EQUIP_VALUE(equip) ((s32)(gOotSave.info.inventory.equipment & gEquipMasks[equip]) >> gEquipShifts[equip])
+#define CUR_EQUIP_VALUE(equip) ((s32)(gOotSave.info.equips.equipment & gEquipMasks[equip]) >> gEquipShifts[equip])
 #define OWNED_EQUIP_FLAG(equip, value) (gBitFlags[value] << gEquipShifts[equip])
 #define OWNED_EQUIP_FLAG_ALT(equip, value) ((1 << (value)) << gEquipShifts[equip])
-#define CHECK_OWNED_EQUIP(equip, value) (gSaveContext.save.info.inventory.equipment & OWNED_EQUIP_FLAG(equip, value))
-#define CHECK_OWNED_EQUIP_ALT(equip, value) (gSaveContext.save.info.inventory.equipment & gBitFlags[(value) + (equip) * 4])
+#define CHECK_OWNED_EQUIP(equip, value) (gOotSave.info.inventory.equipment & OWNED_EQUIP_FLAG(equip, value))
+#define CHECK_OWNED_EQUIP_ALT(equip, value) (gOotSave.info.inventory.equipment & gBitFlags[(value) + (equip) * 4])
 
 #define SWORD_EQUIP_TO_PLAYER(swordEquip) (swordEquip)
 #define SHIELD_EQUIP_TO_PLAYER(shieldEquip) (shieldEquip)
 #define TUNIC_EQUIP_TO_PLAYER(tunicEquip) ((tunicEquip) - 1)
 #define BOOTS_EQUIP_TO_PLAYER(bootsEquip) ((bootsEquip) - 1)
 
-#define CUR_UPG_VALUE(upg) ((s32)(gSaveContext.save.info.inventory.upgrades & gUpgradeMasks[upg]) >> gUpgradeShifts[upg])
+#define CUR_UPG_VALUE(upg) ((s32)(gOotSave.info.inventory.upgrades & gUpgradeMasks[upg]) >> gUpgradeShifts[upg])
 #define CAPACITY(upg, value) gUpgradeCapacities[upg][value]
 #define CUR_CAPACITY(upg) CAPACITY(upg, CUR_UPG_VALUE(upg))
 
-#define CHECK_QUEST_ITEM(item) (gSaveContext.save.info.inventory.questItems & gBitFlags[item])
-#define CHECK_DUNGEON_ITEM(item, dungeonIndex) (gSaveContext.save.info.inventory.dungeonItems[dungeonIndex] & gBitFlags[item])
+#define CHECK_QUEST_ITEM(item) (gOotSave.info.inventory.questItems & gBitFlags[item])
+#define CHECK_DUNGEON_ITEM(item, dungeonIndex) (gOotSave.info.inventory.dungeonItems[dungeonIndex] & gBitFlags[item])
 
 #define GET_GS_FLAGS(index) \
-    ((gSaveContext.save.info.gsFlags[(index) >> 2] & gGsFlagsMasks[(index) & 3]) >> gGsFlagsShifts[(index) & 3])
+    ((gOotSave.info.gsFlags[(index) >> 2] & gGsFlagsMasks[(index) & 3]) >> gGsFlagsShifts[(index) & 3])
 #define SET_GS_FLAGS(index, value) \
-    (gSaveContext.save.info.gsFlags[(index) >> 2] |= (value) << gGsFlagsShifts[(index) & 3])
+    (gOotSave.info.gsFlags[(index) >> 2] |= (value) << gGsFlagsShifts[(index) & 3])
 
-#define HIGH_SCORE(score) (gSaveContext.save.info.highScores[score])
+#define HIGH_SCORE(score) (gOotSave.info.highScores[score])
 
 #define B_BTN_ITEM ((gSaveContext.buttonStatus[0] == ITEM_NONE)                     \
                         ? ITEM_NONE                                                 \
-                        : (gSaveContext.save.info.equips.buttonItems[0] == ITEM_GIANTS_KNIFE) \
+                        : (gOotSave.info.equips.buttonItems[0] == ITEM_GIANTS_KNIFE) \
                             ? ITEM_SWORD_BIGGORON                                   \
-                            : gSaveContext.save.info.equips.buttonItems[0])
+                            : gOotSave.info.equips.buttonItems[0])
 
 #define C_BTN_ITEM(button) ((gSaveContext.buttonStatus[(button) + 1] != BTN_DISABLED) \
-                                ? gSaveContext.save.info.equips.buttonItems[(button) + 1]       \
+                                ? gOotSave.info.equips.buttonItems[(button) + 1]       \
                                 : ITEM_NONE)
 
 
@@ -476,9 +361,9 @@ typedef enum LinkAge {
 #define EVENTCHKINF_INDEX(flag) ((flag) >> 4)
 #define EVENTCHKINF_MASK(flag) (1 << ((flag) & 0xF))
 
-#define GET_EVENTCHKINF(flag) (gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX(flag)] & EVENTCHKINF_MASK(flag))
-#define SET_EVENTCHKINF(flag) (gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX(flag)] |= EVENTCHKINF_MASK(flag))
-#define CLEAR_EVENTCHKINF(flag) (gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX(flag)] &= ~EVENTCHKINF_MASK(flag))
+#define GET_EVENTCHKINF(flag) (gOotSave.info.eventChkInf[EVENTCHKINF_INDEX(flag)] & EVENTCHKINF_MASK(flag))
+#define SET_EVENTCHKINF(flag) (gOotSave.info.eventChkInf[EVENTCHKINF_INDEX(flag)] |= EVENTCHKINF_MASK(flag))
+#define CLEAR_EVENTCHKINF(flag) (gOotSave.info.eventChkInf[EVENTCHKINF_INDEX(flag)] &= ~EVENTCHKINF_MASK(flag))
 
 // EVENTCHKINF 0x00-0x0F
 #define EVENTCHKINF_INDEX_0 0
@@ -593,26 +478,26 @@ typedef enum LinkAge {
      EVENTCHKINF_MASK(EVENTCHKINF_CARPENTER_2_RESCUED) | EVENTCHKINF_MASK(EVENTCHKINF_CARPENTER_3_RESCUED))
 
 #define GET_EVENTCHKINF_CARPENTERS_ALL_RESCUED()                                             \
-    CHECK_FLAG_ALL(gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED], \
+    CHECK_FLAG_ALL(gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED], \
                    EVENTCHKINF_CARPENTERS_ALL_RESCUED_MASK)
 
 #define GET_EVENTCHKINF_CARPENTERS_ALL_RESCUED2()                                             \
-    CHECK_FLAG_ALL(gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] & \
+    CHECK_FLAG_ALL(gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] & \
                        (EVENTCHKINF_CARPENTERS_ALL_RESCUED_MASK | 0xF0),                      \
                    EVENTCHKINF_CARPENTERS_ALL_RESCUED_MASK)
 
 #define ENDAIKU_CARPENTER_RESCUED_MASK(carpenterType) (1 << (carpenterType))
 
 #define ENDAIKU_IS_CARPENTER_RESCUED(carpenterType)                            \
-    gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] & \
+    gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] & \
         ENDAIKU_CARPENTER_RESCUED_MASK(carpenterType)
 
 #define ENDAIKU_SET_CARPENTER_RESCUED(carpenterType)                            \
-    gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] |= \
+    gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] |= \
         ENDAIKU_CARPENTER_RESCUED_MASK((carpenterType))
 
 #define GET_EVENTCHKINF_CARPENTERS_RESCUED_FLAGS() \
-    gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] & EVENTCHKINF_CARPENTERS_ALL_RESCUED_MASK
+    gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_CARPENTERS_RESCUED] & EVENTCHKINF_CARPENTERS_ALL_RESCUED_MASK
 
 #define EVENTCHKINF_94 0x94
 #define EVENTCHKINF_95 0x95
@@ -682,8 +567,8 @@ typedef enum LinkAge {
 #define ITEMGETINF_INDEX(flag) ((flag) >> 4)
 #define ITEMGETINF_MASK(flag) (1 << ((flag) & 0xF))
 
-#define GET_ITEMGETINF(flag) (gSaveContext.save.info.itemGetInf[ITEMGETINF_INDEX(flag)] & ITEMGETINF_MASK(flag))
-#define SET_ITEMGETINF(flag) (gSaveContext.save.info.itemGetInf[ITEMGETINF_INDEX(flag)] |= ITEMGETINF_MASK(flag))
+#define GET_ITEMGETINF(flag) (gOotSave.info.itemGetInf[ITEMGETINF_INDEX(flag)] & ITEMGETINF_MASK(flag))
+#define SET_ITEMGETINF(flag) (gOotSave.info.itemGetInf[ITEMGETINF_INDEX(flag)] |= ITEMGETINF_MASK(flag))
 
 #define ITEMGETINF_TALON_BOTTLE 0x02
 #define ITEMGETINF_03 0x03
@@ -744,9 +629,9 @@ typedef enum LinkAge {
 #define INFTABLE_INDEX(flag) ((flag) >> 4)
 #define INFTABLE_MASK(flag) (1 << ((flag) & 0xF))
 
-#define GET_INFTABLE(flag) (gSaveContext.save.info.infTable[INFTABLE_INDEX(flag)] & INFTABLE_MASK(flag))
-#define SET_INFTABLE(flag) (gSaveContext.save.info.infTable[INFTABLE_INDEX(flag)] |= INFTABLE_MASK(flag))
-#define CLEAR_INFTABLE(flag) (gSaveContext.save.info.infTable[INFTABLE_INDEX(flag)] &= ~INFTABLE_MASK(flag))
+#define GET_INFTABLE(flag) (gOotSave.info.infTable[INFTABLE_INDEX(flag)] & INFTABLE_MASK(flag))
+#define SET_INFTABLE(flag) (gOotSave.info.infTable[INFTABLE_INDEX(flag)] |= INFTABLE_MASK(flag))
+#define CLEAR_INFTABLE(flag) (gOotSave.info.infTable[INFTABLE_INDEX(flag)] &= ~INFTABLE_MASK(flag))
 
 // INFTABLE 0x0-0xF
 #define INFTABLE_INDEX_0 0

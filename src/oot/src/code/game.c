@@ -10,9 +10,6 @@
 #include "fault.h"
 #include "libc64/os_malloc.h"
 #include "line_numbers.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
 #include "padmgr.h"
 #include "regs.h"
 #include "rumble.h"
@@ -149,12 +146,6 @@ void func_800C4344(GameState* gameState) {
         }
     }
 #endif
-
-#if PLATFORM_N64
-    if (D_80121212 != 0) {
-        func_801C7E78();
-    }
-#endif
 }
 
 #if DEBUG_FEATURES
@@ -272,12 +263,6 @@ void func_800C49F4(GraphicsContext* gfxCtx) {
     newDlist = Gfx_Open(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, newDlist);
 
-#if PLATFORM_N64
-    if (D_80121212 != 0) {
-        func_801C6EA0(&newDlist);
-    }
-#endif
-
     gSPEndDisplayList(newDlist++);
     Gfx_Close(polyOpaP, newDlist);
     POLY_OPA_DISP = newDlist;
@@ -297,15 +282,6 @@ void GameState_Update(GameState* gameState) {
     GameState_SetFrameBuffer(gfxCtx);
 
     gameState->main(gameState);
-
-#if PLATFORM_N64
-    if (D_80121212 != 0) {
-        func_801C7E78();
-    }
-    if ((B_80121220 != NULL) && (B_80121220->unk_74 != NULL)) {
-        B_80121220->unk_74(gameState);
-    }
-#endif
 
     func_800C4344(gameState);
 

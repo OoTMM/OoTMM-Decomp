@@ -224,7 +224,7 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
             if ((fabsf(currentCucco->actor.world.pos.x - 330.0f) < 90.0f) &&
                 (fabsf(currentCucco->actor.world.pos.z - 1610.0f) < 190.0f)) {
                 if (this->unk_26C == 0) {
-                    gSaveContext.save.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] |=
+                    gOotSave.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] |=
                         D_80ABB3B4[currentCucco->unk_2AA];
                     if (BREG(1) != 0) {
                         // "GET inside the chicken fence!"
@@ -233,7 +233,7 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
                 }
                 this->cuccosInPen++;
             } else if (this->unk_26C == 0) {
-                gSaveContext.save.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] &=
+                gOotSave.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] &=
                     ~D_80ABB3B4[currentCucco->unk_2AA];
             }
         }
@@ -290,13 +290,13 @@ void func_80ABA244(EnNiwLady* this, PlayState* play) {
                 this->unk_262 = TEXT_STATE_EVENT;
                 this->unk_26A = this->cuccosInPen;
                 PRINTF(VT_FGCOL(CYAN) "☆☆☆☆☆ 柵内BIT変更前 ☆☆ %x\n" VT_RST,
-                       gSaveContext.save.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F]);
-                gSaveContext.save.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] &=
+                       gOotSave.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F]);
+                gOotSave.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] &=
                     (u16) ~(INFTABLE_MASK(INFTABLE_199) | INFTABLE_MASK(INFTABLE_19A) | INFTABLE_MASK(INFTABLE_19B) |
                             INFTABLE_MASK(INFTABLE_19C) | INFTABLE_MASK(INFTABLE_19D) | INFTABLE_MASK(INFTABLE_19E) |
                             INFTABLE_MASK(INFTABLE_19F));
                 PRINTF(VT_FGCOL(CYAN) "☆☆☆☆☆ 柵内BIT変更後 ☆☆ %x\n" VT_RST,
-                       gSaveContext.save.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F]);
+                       gOotSave.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F]);
                 PRINTF("\n\n");
                 this->actionFunc = func_80ABA654;
                 return;
@@ -334,14 +334,14 @@ void func_80ABA654(EnNiwLady* this, PlayState* play) {
         this->unk_26E = 0xB;
         if (!GET_ITEMGETINF(ITEMGETINF_0C)) {
             this->actor.parent = NULL;
-            this->getItemId = GI_BOTTLE_EMPTY;
-            Actor_OfferGetItem(&this->actor, play, GI_BOTTLE_EMPTY, 100.0f, 50.0f);
+            this->getItemId = GI_OOT_BOTTLE_EMPTY;
+            Actor_OfferGetItem(&this->actor, play,GI_OOT_BOTTLE_EMPTY, 100.0f, 50.0f);
             this->actionFunc = func_80ABAC00;
             return;
         }
         if (this->unk_26C == 1) {
-            this->getItemId = GI_RUPEE_PURPLE;
-            Actor_OfferGetItem(&this->actor, play, GI_RUPEE_PURPLE, 100.0f, 50.0f);
+            this->getItemId = GI_OOT_RUPEE_PURPLE;
+            Actor_OfferGetItem(&this->actor, play,GI_OOT_RUPEE_PURPLE, 100.0f, 50.0f);
             this->actionFunc = func_80ABAC00;
         }
         this->actionFunc = func_80ABA244;
@@ -417,7 +417,7 @@ void func_80ABA9B8(EnNiwLady* this, PlayState* play) {
             case 0:
                 Message_CloseTextbox(play);
                 this->actor.parent = NULL;
-                Actor_OfferGetItem(&this->actor, play, GI_POCKET_EGG, 200.0f, 100.0f);
+                Actor_OfferGetItem(&this->actor, play,GI_OOT_POCKET_EGG, 200.0f, 100.0f);
                 this->actionFunc = func_80ABAC00;
                 break;
             case 1:
@@ -445,7 +445,7 @@ void func_80ABAB08(EnNiwLady* this, PlayState* play) {
             case 0:
                 Message_CloseTextbox(play);
                 this->actor.parent = NULL;
-                Actor_OfferGetItem(&this->actor, play, GI_COJIRO, 200.0f, 100.0f);
+                Actor_OfferGetItem(&this->actor, play,GI_OOT_COJIRO, 200.0f, 100.0f);
                 this->actionFunc = func_80ABAC00;
                 break;
             case 1:
@@ -469,7 +469,7 @@ void func_80ABAC00(EnNiwLady* this, PlayState* play) {
     } else {
         getItemId = this->getItemId;
         if (LINK_IS_ADULT) {
-            getItemId = !GET_ITEMGETINF(ITEMGETINF_2C) ? GI_POCKET_EGG : GI_COJIRO;
+            getItemId = !GET_ITEMGETINF(ITEMGETINF_2C) ?GI_OOT_POCKET_EGG :GI_OOT_COJIRO;
         }
         Actor_OfferGetItem(&this->actor, play, getItemId, 200.0f, 100.0f);
     }

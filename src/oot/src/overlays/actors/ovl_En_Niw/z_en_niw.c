@@ -180,7 +180,7 @@ void EnNiw_Init(Actor* thisx, PlayState* play) {
                 fabsf(this->actor.world.pos.z - sKakarikoPosList[i].z) < 40.0f) {
                 this->unk_2AA = i;
                 PRINTF(VT_FGCOL(YELLOW) " 通常鶏index %d\n" VT_RST, this->unk_2AA);
-                if (gSaveContext.save.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] &
+                if (gOotSave.info.infTable[INFTABLE_INDEX_199_19A_19B_19C_19D_19E_19F] &
                     sKakarikoFlagList[i]) {
                     this->actor.world.pos.x = 300.0f;
                     this->actor.world.pos.y = 100.0f;
@@ -484,8 +484,8 @@ void func_80AB6450(EnNiw* this, PlayState* play) {
         this->actor.speed = 0.0f;
         this->actionFunc = func_80AB6BF8;
     } else {
-        // GI_NONE in this case allows the player to lift the actor
-        Actor_OfferGetItem(&this->actor, play, GI_NONE, 25.0f, 10.0f);
+        //GI_NONE in this case allows the player to lift the actor
+        Actor_OfferGetItem(&this->actor, play,GI_NONE, 25.0f, 10.0f);
         func_80AB5BF8(this, play, 1);
     }
 }

@@ -7,7 +7,6 @@
 #include "libu64/gfxprint.h"
 #if PLATFORM_N64
 #include "cic6105.h"
-#include "n64dd.h"
 #endif
 
 #include "alloca.h"
@@ -199,17 +198,7 @@ void ConsoleLogo_Main(GameState* thisx) {
 
 void ConsoleLogo_Destroy(GameState* thisx) {
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
-
-#if PLATFORM_N64
-    if (this->unk_1E0) {
-        if (func_801C7818() != 0) {
-            func_800D31A0();
-        }
-        func_801C7268();
-    }
-#endif
-
-    Sram_InitSram(&this->state, &this->sramCtx);
+    Sram_InitSram();
 
 #if PLATFORM_N64
     func_800014E8();
@@ -219,17 +208,6 @@ void ConsoleLogo_Destroy(GameState* thisx) {
 void ConsoleLogo_Init(GameState* thisx) {
     u32 size = (uintptr_t)_nintendo_rogo_staticSegmentRomEnd - (uintptr_t)_nintendo_rogo_staticSegmentRomStart;
     ConsoleLogoState* this = (ConsoleLogoState*)thisx;
-
-#if PLATFORM_N64
-    if ((D_80121210 != 0) && (D_80121211 != 0) && (D_80121212 == 0)) {
-        if (func_801C7658() != 0) {
-            func_800D31A0();
-        }
-        this->unk_1E0 = true;
-    } else {
-        this->unk_1E0 = false;
-    }
-#endif
 
     this->staticSegment = GAME_STATE_ALLOC(&this->state, size, "../z_title.c", 611);
     PRINTF("z_title.c\n");
@@ -244,15 +222,14 @@ void ConsoleLogo_Init(GameState* thisx) {
 
 #if OOT_VERSION < GC_US || PLATFORM_IQUE
     if (!(gPadMgr.validCtrlrsMask & 1)) {
-        gSaveContext.fileNum = 0xFEDC;
+        gSaveFileNum = -2;
     } else {
-        gSaveContext.fileNum = 0xFF;
+        gSaveFileNum = -1;
     }
 #else
-    gSaveContext.fileNum = 0xFF;
+    gSaveFileNum = -1;
 #endif
 
-    Sram_Alloc(&this->state, &this->sramCtx);
     this->ult = 0;
     this->unk_1D4 = 0x14;
     this->coverAlpha = 255;

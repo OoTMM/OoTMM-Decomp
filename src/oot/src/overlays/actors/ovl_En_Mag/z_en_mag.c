@@ -10,9 +10,6 @@
 #include "gfx.h"
 #include "gfx_setupdl.h"
 #include "gfxalloc.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
 #include "regs.h"
 #include "sfx.h"
 #include "versions.h"
@@ -44,36 +41,6 @@ ActorProfile En_Mag_Profile = {
 };
 
 static s16 sDelayTimer = 0;
-
-#if OOT_VERSION < GC_US || PLATFORM_IQUE
-void EnMag_ResetSram(void) {
-    static u8 buffer[0x2000];
-
-    PRINTF(T("\n\n\n＝＝＝＝＝＝＝＝＝＝\n  ＳＲＡＭ初期化\n\n＝＝＝＝＝＝＝＝＝＝\n\n\n",
-             "\n\n\n==========\n  SRAM initialization\n\n==========\n\n\n"));
-
-    bzero(buffer, 0x800);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000800), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8001000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8001800), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8002000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8002800), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8003000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8003800), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8004000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8004800), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8005000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8005800), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8006000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8006800), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8007000), buffer, 0x800, 1);
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8007800), buffer, 0x800, 1);
-
-    gSaveContext.soundSetting = gSaveContext.zTargetSetting = 0; // SOUND_SETTING_STEREO/Z_TARGET_SETTING_SWITCH
-    Audio_SetSoundOutputMode(gSaveContext.soundSetting);
-}
-#endif
 
 void EnMag_Init(Actor* thisx, PlayState* play) {
     EnMag* this = (EnMag*)thisx;
@@ -157,61 +124,12 @@ void EnMag_Init(Actor* thisx, PlayState* play) {
 void EnMag_Destroy(Actor* thisx, PlayState* play) {
 }
 
-#if OOT_VERSION < GC_US || PLATFORM_IQUE
-void EnMag_CheckSramResetCode(PlayState* play, EnMag* this) {
-    static s32 sSramResetCode[] = {
-        BTN_DUP, BTN_DDOWN,  BTN_DLEFT, BTN_DRIGHT, BTN_START, BTN_B, BTN_CDOWN,
-        BTN_L,   BTN_CRIGHT, BTN_CLEFT, BTN_A,      BTN_CUP,   BTN_R, BTN_Z,
-    };
-    Input* input = &play->state.input[2];
-    s32 var_v1;
-
-    var_v1 =
-        play->state.input[2].cur.button & (BTN_A | BTN_B | BTN_Z | BTN_START | BTN_DUP | BTN_DDOWN | BTN_DLEFT |
-                                           BTN_DRIGHT | BTN_L | BTN_R | BTN_CUP | BTN_CDOWN | BTN_CLEFT | BTN_CRIGHT);
-    if (var_v1 == this->unk_E31C) {
-        this->unk_E320--;
-        if (this->unk_E320 < 0) {
-            this->unk_E320 = 1;
-        } else {
-            var_v1 ^= this->unk_E31C;
-        }
-    } else {
-        this->unk_E320 = 16;
-        this->unk_E31C = var_v1;
-    }
-
-    if (this->unk_E316 < 4) {
-        if (var_v1 & sSramResetCode[this->unk_E316]) {
-            this->unk_E316++;
-        } else if (var_v1 != 0) {
-            this->unk_E316 = 0;
-        }
-    } else {
-        if (CHECK_BTN_ALL(input->press.button, sSramResetCode[this->unk_E316])) {
-            this->unk_E316++;
-        } else if (var_v1 != 0) {
-            this->unk_E316 = 0;
-        }
-    }
-
-    if (this->unk_E316 == ARRAY_COUNT(sSramResetCode)) {
-        EnMag_ResetSram();
-        this->unk_E316 = 0;
-    }
-}
-#endif
-
 void EnMag_Update(Actor* thisx, PlayState* play) {
     s32 pad;
     Input* input = &play->state.input[0];
     EnMag* this = (EnMag*)thisx;
 
-#if OOT_VERSION < GC_US || PLATFORM_IQUE
-    EnMag_CheckSramResetCode(play, this);
-#endif
-
-    if (gSaveContext.fileNum != 0xFEDC) {
+    if (gSaveFileNum != -2) {
         if (this->globalState < MAG_STATE_DISPLAY) {
             if (CHECK_BTN_ALL(input->press.button, BTN_START) || CHECK_BTN_ALL(input->press.button, BTN_A) ||
                 CHECK_BTN_ALL(input->press.button, BTN_B)) {
@@ -489,32 +407,6 @@ void EnMag_DrawImageRGBA32(Gfx** gfxP, s16 centerX, s16 centerY, u8* source, u32
     *gfxP = gfx;
 }
 
-#if PLATFORM_N64
-void func_80AEEA48_unknown(Gfx** gfxP, s16 arg1, s16 arg2, u32 arg3) {
-    if ((D_80121212 != 0) && (func_801C70FC() != 0)) {
-        Gfx* gfx = *gfxP;
-        s32 temp_a3 = (arg1 + 0x40) << 2;
-        s32 temp_t0 = (arg2 + 5) << 2;
-
-        gDPPipeSync(gfx++);
-        gDPSetCycleType(gfx++, G_CYC_1CYCLE);
-        gDPSetRenderMode(gfx++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
-        gDPSetCombineLERP(gfx++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, PRIMITIVE,
-                          ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0);
-        gDPSetPrimColor(gfx++, 0x00, 0x00, 255, 255, 255, arg3);
-        gDPSetEnvColor(gfx++, 48, 36, 146, 255);
-        gDPLoadTextureBlock(gfx++, gTitleDiskTex, G_IM_FMT_IA, G_IM_SIZ_8b, 48, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
-                            G_TX_NOMIRROR | G_TX_WRAP, 0, 0, 0, 0);
-        gSPTextureRectangle(gfx++, temp_a3, temp_t0, temp_a3 + (48 << 2), temp_t0 + (16 << 2), G_TX_RENDERTILE, 0, 0,
-                            (1 << 10), (1 << 10));
-        gDPPipeSync(gfx++);
-        gDPSetCycleType(gfx++, G_CYC_2CYCLE);
-
-        *gfxP = gfx;
-    }
-}
-#endif
-
 void EnMag_DrawCharTexture(Gfx** gfxP, u8* texture, s32 rectLeft, s32 rectTop) {
     Gfx* gfx = *gfxP;
 
@@ -611,9 +503,6 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
 
     if ((s16)this->mainAlpha != 0) {
         EnMag_DrawImageRGBA32(&gfx, 160 + LOGO_X_SHIFT, 100, (u8*)gTitleZeldaShieldLogoTex, 160, 160);
-#if PLATFORM_N64
-        func_80AEEA48_unknown(&gfx, 160, 100, (u32)this->mainAlpha);
-#endif
     }
 
     Gfx_SetupDL_39Ptr(&gfx);
@@ -757,7 +646,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
 #endif
     }
 
-    if (gSaveContext.fileNum == 0xFEDC) {
+    if (gSaveFileNum == -2) {
         // Draw "NO CONTROLLER" Text
         textAlpha = textFadeTimer * 10;
         if (textAlpha >= 255) {

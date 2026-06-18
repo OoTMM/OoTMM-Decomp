@@ -58,6 +58,10 @@ N64_EMULATOR ?=
 # This may also be used to disable debug features on debug ROMs by setting DEBUG_FEATURES to 0
 # DEBUG_FEATURES ?= 1
 
+CFLAGS ?= -MMD -MP
+CPPFLAGS ?=
+CPP_DEFINES ?= -D__OOT__
+
 # Version-specific settings
 REGIONAL_CHECKSUM := 0
 ifeq ($(VERSION),ntsc-1.0)
@@ -308,7 +312,7 @@ else
   ICONV := iconv
 endif
 
-INC := -Iinclude -Iinclude/libc -Isrc -I$(BUILD_DIR) -I. -I$(EXTRACTED_DIR)
+INC := -Iinclude -Iinclude/libc -I../../include -I../../include/libc -I../../build/include -Isrc -I$(BUILD_DIR) -I. -I$(EXTRACTED_DIR)
 
 # Check code syntax with host compiler
 CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces
@@ -365,7 +369,7 @@ ifeq ($(DEBUG_FEATURES),1)
 endif
 
 CPPFLAGS += -P -xc -fno-dollars-in-identifiers $(CPP_DEFINES)
-ASFLAGS += -march=vr4300 -32 -no-pad-sections -Iinclude -I$(EXTRACTED_DIR)
+ASFLAGS += -march=vr4300 -32 -no-pad-sections -Iinclude -I../../include -I../../include/libc -I../../build/include -I$(EXTRACTED_DIR)
 
 ifeq ($(COMPILER),gcc)
   CFLAGS += $(CPP_DEFINES) $(GBI_DEFINES) -G 0 -nostdinc $(INC) -march=vr4300 -mfix4300 -mabi=32 -mno-abicalls -mdivide-breaks -fno-PIC -fno-common -ffreestanding -funsigned-char -fbuiltin -fno-builtin-sinf -fno-builtin-cosf $(CHECK_WARNINGS)
@@ -414,8 +418,8 @@ LDSCRIPT := $(ROM:.z64=.ld)
 SPEC := spec/spec
 SPEC_INCLUDES := $(wildcard spec/*.inc)
 
-SRC_DIRS := $(shell find src -type d)
-UNDECOMPILED_DATA_DIRS := $(shell find data -type d)
+SRC_DIRS := $(shell find -L src -type d)
+UNDECOMPILED_DATA_DIRS := $(shell find -L data -type d)
 
 ifneq ($(wildcard $(EXTRACTED_DIR)/assets/audio),)
   SAMPLE_EXTRACT_DIRS := $(shell find $(EXTRACTED_DIR)/assets/audio/samples -type d)
@@ -480,6 +484,8 @@ SEQUENCE_TABLE := include/tables/sequence_table.h
 # create extracted directory
 $(shell mkdir -p $(EXTRACTED_DIR))
 
+# Include dependencies
+
 ifneq ($(wildcard $(EXTRACTED_DIR)/assets),)
   ASSET_BIN_DIRS_EXTRACTED := $(shell find $(EXTRACTED_DIR)/assets -type d)
 else
@@ -502,7 +508,7 @@ OVL_RELOC_FILES := $(filter %_reloc.o,$(SPEC_O_FILES))
 
 # Automatic dependency files
 # (Only asm_processor dependencies and reloc dependencies are handled for now)
-DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
+DEP_FILES := $(shell find $(BUILD_DIR) -name '*.d')
 
 TEXTURE_FILES_PNG_EXTRACTED := $(foreach dir,$(ASSET_BIN_DIRS_EXTRACTED),$(wildcard $(dir)/*.png))
 TEXTURE_FILES_PNG_COMMITTED := $(foreach dir,$(ASSET_BIN_DIRS_COMMITTED),$(wildcard $(dir)/*.png))
@@ -790,6 +796,7 @@ venv:
 	$(PYTHON) -m pip install -U -r requirements.txt
 
 setup: venv
+	ln -snf ../../z64 src/z64
 	$(MAKE) -C tools
 	$(PYTHON) tools/decompress_baserom.py $(VERSION)
 	$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 $(EXTRACTED_DIR)/baserom -v $(VERSION)
@@ -841,7 +848,8 @@ endif
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(LDSCRIPT) $(BUILD_DIR)/linker_scripts/makerom.ld $(BUILD_DIR)/undefined_syms.txt \
         $(SAMPLEBANK_O_FILES) $(SOUNDFONT_O_FILES) $(SEQUENCE_O_FILES) \
-        $(BUILD_DIR)/assets/audio/sequence_font_table.o $(BUILD_DIR)/assets/audio/audiobank_padding.o
+        $(BUILD_DIR)/assets/audio/sequence_font_table.o $(BUILD_DIR)/assets/audio/audiobank_padding.o \
+		../loader/build/makerom.o ../loader/build/entry.o ../loader/build/loader.o
 	$(LD) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)/linker_scripts/makerom.ld: linker_scripts/makerom.ld
@@ -872,7 +880,7 @@ $(BUILD_DIR)/baserom/%.o: $(EXTRACTED_DIR)/baserom/%
 	$(OBJCOPY) -I binary -O elf32-big $< $@
 
 $(BUILD_DIR)/data/%.o: data/%.s
-	$(CPP) $(CPPFLAGS) -Iinclude $< | $(AS) $(ASFLAGS) -o $@
+	$(CPP) $(CPPFLAGS) -Iinclude -I../../include -I../../include/libc -I../../build/include $< | $(AS) $(ASFLAGS) -o $@
 
 ifeq ($(PLATFORM),IQUE)
   NES_CHARMAP := assets/text/charmap.chn.txt

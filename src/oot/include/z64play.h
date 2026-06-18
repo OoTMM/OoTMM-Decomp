@@ -22,7 +22,6 @@
 #include "z64scene.h"
 #include "z64sfx_source.h"
 #include "z64skybox.h"
-#include "z64sram.h"
 #include "z64transition.h"
 #include "z64view.h"
 
@@ -71,7 +70,6 @@ typedef struct PlayState {
     /* 0x01C24 */ ActorContext actorCtx;
     /* 0x01D64 */ CutsceneContext csCtx; // "demo_play"
     /* 0x01DB4 */ SfxSource sfxSources[SFX_SOURCE_COUNT];
-    /* 0x01F74 */ SramContext sramCtx;
     /* 0x01F78 */ SkyboxContext skyboxCtx;
     /* 0x020D8 */ MessageContext msgCtx;         // "message"
     /* 0x104F0 */ InterfaceContext interfaceCtx; // "parameter"

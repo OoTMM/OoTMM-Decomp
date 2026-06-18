@@ -2,6 +2,7 @@
 #include "attributes.h"
 #include "buffers.h"
 #include "versions.h"
+#include <combo.h>
 
 #include "global.h"
 
@@ -339,8 +340,13 @@ void AudioLoad_SetSampleFontLoadStatus(s32 sampleBankId, s32 loadStatus) {
     }
 }
 
-void AudioLoad_InitTable(AudioTable* table, u32 romAddr, u16 unkMediumParam) {
+void AudioLoad_InitTable(AudioTable* table, u32 vromAddr, u16 unkMediumParam) {
     s32 i;
+    FileDmaData dma;
+    u32 romAddr;
+
+    File_DmaData(FILEID_OOT_DMADATA, vromAddr, &dma);
+    romAddr = File_Offset(File_IndexFromID(dma.id));
 
     table->header.unkMediumParam = unkMediumParam;
     table->header.romAddr = romAddr;

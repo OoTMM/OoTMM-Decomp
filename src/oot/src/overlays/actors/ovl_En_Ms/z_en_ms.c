@@ -132,11 +132,11 @@ void EnMs_Talk(EnMs* this, PlayState* play) {
     } else if (Message_ShouldAdvance(play)) {
         switch (play->msgCtx.choiceIndex) {
             case 0: // yes
-                if (gSaveContext.save.info.playerData.rupees < sPrices[BEANS_BOUGHT]) {
+                if (gOotSave.info.playerData.rupees < sPrices[BEANS_BOUGHT]) {
                     Message_ContinueTextbox(play, 0x4069); // not enough rupees text
                     return;
                 }
-                Actor_OfferGetItem(&this->actor, play, GI_MAGIC_BEAN, 90.0f, 10.0f);
+                Actor_OfferGetItem(&this->actor, play,GI_OOT_MAGIC_BEAN, 90.0f, 10.0f);
                 this->actionFunc = EnMs_Sell;
                 return;
             case 1: // no
@@ -153,7 +153,7 @@ void EnMs_Sell(EnMs* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = EnMs_TalkAfterPurchase;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_MAGIC_BEAN, 90.0f, 10.0f);
+        Actor_OfferGetItem(&this->actor, play,GI_OOT_MAGIC_BEAN, 90.0f, 10.0f);
     }
 }
 
@@ -176,7 +176,7 @@ void EnMs_Update(Actor* thisx, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     this->actionFunc(this, play);
 
-    if (gSaveContext.save.entranceIndex == ENTR_LON_LON_RANCH_0 &&
+    if (gOotSave.entranceIndex == ENTR_LON_LON_RANCH_0 &&
         gSaveContext.sceneLayer == 8) { // ride carpet if in credits
         Actor_MoveXZGravity(&this->actor);
         PRINTF("OOOHHHHHH %f\n", this->actor.velocity.y);

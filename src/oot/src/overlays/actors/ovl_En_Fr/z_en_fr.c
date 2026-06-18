@@ -131,11 +131,11 @@ static EnFrPointers sEnFrPointers = {
 };
 
 #define FROG_HAS_SONG_BEEN_PLAYED(frogSongIndex)                             \
-    (gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_SONGS_FOR_FROGS] & \
+    (gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_SONGS_FOR_FROGS] & \
      sFrogSongIndexToEventChkInfSongsForFrogsMask[frogSongIndex])
 
 #define FROG_SET_SONG_PLAYED(frogSongIndex)                                  \
-    gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_SONGS_FOR_FROGS] |= \
+    gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_SONGS_FOR_FROGS] |= \
         sFrogSongIndexToEventChkInfSongsForFrogsMask[frogSongIndex];
 
 static u16 sFrogSongIndexToEventChkInfSongsForFrogsMask[] = {
@@ -968,23 +968,23 @@ void EnFr_SetReward(EnFr* this, PlayState* play) {
     if ((songIndex >= FROG_ZL) && (songIndex <= FROG_SOT)) {
         if (!FROG_HAS_SONG_BEEN_PLAYED(songIndex)) {
             FROG_SET_SONG_PLAYED(songIndex);
-            this->reward = GI_RUPEE_PURPLE;
+            this->reward = GI_OOT_RUPEE_PURPLE;
         } else {
-            this->reward = GI_RUPEE_BLUE;
+            this->reward = GI_OOT_RUPEE_BLUE;
         }
     } else if (songIndex == FROG_STORMS) {
         if (!FROG_HAS_SONG_BEEN_PLAYED(songIndex)) {
             FROG_SET_SONG_PLAYED(songIndex);
-            this->reward = GI_HEART_PIECE;
+            this->reward = GI_OOT_HEART_PIECE;
         } else {
-            this->reward = GI_RUPEE_BLUE;
+            this->reward = GI_OOT_RUPEE_BLUE;
         }
     } else if (songIndex == FROG_CHOIR_SONG) {
         if (!FROG_HAS_SONG_BEEN_PLAYED(songIndex)) {
             FROG_SET_SONG_PLAYED(songIndex);
-            this->reward = GI_HEART_PIECE;
+            this->reward = GI_OOT_HEART_PIECE;
         } else {
-            this->reward = GI_RUPEE_PURPLE;
+            this->reward = GI_OOT_RUPEE_PURPLE;
         }
     }
 }

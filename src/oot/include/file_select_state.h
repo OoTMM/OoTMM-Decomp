@@ -18,7 +18,6 @@ typedef struct FileSelectState {
     /* 0x000B0 */ u8* objectMagSegment;
 #endif
     /* 0x000B8 */ View view;
-    /* 0x001E0 */ SramContext sramCtx;
     /* 0x001E4 */ char unk_1E4[0x4];
     /* 0x001E8 */ SkyboxContext skyboxCtx;
     /* 0x00348 */ MessageContext msgCtx;
@@ -29,6 +28,7 @@ typedef struct FileSelectState {
     /* 0x1C9EC */ Vtx* keyboardVtx;
     /* 0x1C9F0 */ Vtx* nameEntryVtx;
     /* 0x1C9F4 */ u8 n64ddFlag;
+                  u8 valid[3];
     /* 0x1C9F6 */ u16 deaths[3];
     /* 0x1C9FC */ u8 fileNames[3][8];
     /* 0x1CA14 */ u16 healthCapacities[3];

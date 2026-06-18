@@ -1,7 +1,7 @@
 #ifndef DEBUG_ARENA_H
 #define DEBUG_ARENA_H
 
-#include "ultra64/ultratypes.h"
+#include "PR/ultratypes.h"
 
 void* DebugArena_Malloc(u32 size);
 void* DebugArena_MallocR(u32 size);

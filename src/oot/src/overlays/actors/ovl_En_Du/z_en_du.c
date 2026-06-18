@@ -307,7 +307,7 @@ void EnDu_Init(Actor* thisx, PlayState* play) {
     this->actor.attentionRangeType = ATTENTION_RANGE_1;
     this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
 
-    if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
+    if (gOotSave.cutsceneIndex >= 0xFFF0) {
         play->csCtx.script = SEGMENTED_TO_VIRTUAL(gGoronCityDaruniaDancingCs);
         gSaveContext.cutsceneTrigger = 1;
         EnDu_SetupAction(this, func_809FE890);
@@ -552,7 +552,7 @@ void func_809FEC70(EnDu* this, PlayState* play) {
     } else {
         xzRange = this->actor.xzDistToPlayer + 1.0f;
 
-        Actor_OfferGetItem(&this->actor, play, GI_GORONS_BRACELET, xzRange, fabsf(this->actor.yDistToPlayer) + 1.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_OOT_GORON_BRACELET, xzRange, fabsf(this->actor.yDistToPlayer) + 1.0f);
     }
 }
 

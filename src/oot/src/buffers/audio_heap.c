@@ -1,4 +1,4 @@
-#include "ultra64/ultratypes.h"
+#include "PR/ultratypes.h"
 #include "alignment.h"
 #include "buffers.h"
 

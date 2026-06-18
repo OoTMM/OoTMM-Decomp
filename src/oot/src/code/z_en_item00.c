@@ -573,22 +573,22 @@ void EnItem00_Init(Actor* thisx, PlayState* play) {
             Item_Give(play, ITEM_ARROWS_30);
             break;
         case ITEM00_MAGIC_LARGE:
-            getItemId = GI_MAGIC_JAR_SMALL;
+            getItemId = GI_OOT_MAGIC_JAR_SMALL;
             break;
         case ITEM00_MAGIC_SMALL:
-            getItemId = GI_MAGIC_JAR_LARGE;
+            getItemId = GI_OOT_MAGIC_JAR_LARGE;
             break;
         case ITEM00_SMALL_KEY:
             Item_Give(play, ITEM_SMALL_KEY);
             break;
         case ITEM00_SEEDS:
-            getItemId = GI_DEKU_SEEDS_5;
+            getItemId = GI_OOT_DEKU_SEEDS_5;
             break;
         case ITEM00_NUTS:
-            getItemId = GI_DEKU_NUTS_5;
+            getItemId = GI_OOT_NUTS_5;
             break;
         case ITEM00_STICK:
-            getItemId = GI_DEKU_STICKS_1;
+            getItemId = GI_OOT_STICK;
             break;
         case ITEM00_HEART_PIECE:
         case ITEM00_HEART_CONTAINER:
@@ -882,10 +882,10 @@ void EnItem00_Update(Actor* thisx, PlayState* play) {
             Item_Give(play, ITEM_RUPEE_GOLD);
             break;
         case ITEM00_STICK:
-            getItemId = GI_DEKU_STICKS_1;
+            getItemId = GI_OOT_STICK;
             break;
         case ITEM00_NUTS:
-            getItemId = GI_DEKU_NUTS_5;
+            getItemId = GI_OOT_NUTS_5;
             break;
         case ITEM00_RECOVERY_HEART:
             Item_Give(play, ITEM_RECOVERY_HEART);
@@ -910,34 +910,34 @@ void EnItem00_Update(Actor* thisx, PlayState* play) {
             Item_Give(play, ITEM_ARROWS_30);
             break;
         case ITEM00_SEEDS:
-            getItemId = GI_DEKU_SEEDS_5;
+            getItemId = GI_OOT_DEKU_SEEDS_5;
             break;
         case ITEM00_SMALL_KEY:
-            getItemId = GI_SMALL_KEY;
+            getItemId = GI_OOT_SMALL_KEY;
             break;
         case ITEM00_HEART_PIECE:
-            getItemId = GI_HEART_PIECE;
+            getItemId = GI_OOT_HEART_PIECE;
             break;
         case ITEM00_HEART_CONTAINER:
-            getItemId = GI_HEART_CONTAINER;
+            getItemId = GI_OOT_HEART_CONTAINER;
             break;
         case ITEM00_MAGIC_LARGE:
-            getItemId = GI_MAGIC_JAR_LARGE;
+            getItemId = GI_OOT_MAGIC_JAR_LARGE;
             break;
         case ITEM00_MAGIC_SMALL:
-            getItemId = GI_MAGIC_JAR_SMALL;
+            getItemId = GI_OOT_MAGIC_JAR_SMALL;
             break;
         case ITEM00_SHIELD_DEKU:
-            getItemId = GI_SHIELD_DEKU;
+            getItemId = GI_OOT_SHIELD_DEKU;
             break;
         case ITEM00_SHIELD_HYLIAN:
-            getItemId = GI_SHIELD_HYLIAN;
+            getItemId = GI_OOT_SHIELD_HYLIAN;
             break;
         case ITEM00_TUNIC_ZORA:
-            getItemId = GI_TUNIC_ZORA;
+            getItemId = GI_OOT_TUNIC_ZORA;
             break;
         case ITEM00_TUNIC_GORON:
-            getItemId = GI_TUNIC_GORON;
+            getItemId = GI_OOT_TUNIC_GORON;
             break;
         case ITEM00_BOMBS_SPECIAL:
             break;
@@ -1176,13 +1176,13 @@ s16 func_8001F404(s16 dropId) {
         ((dropId == ITEM00_ARROWS_SMALL || dropId == ITEM00_ARROWS_MEDIUM || dropId == ITEM00_ARROWS_LARGE) &&
          INV_CONTENT(ITEM_BOW) == ITEM_NONE) ||
         ((dropId == ITEM00_MAGIC_LARGE || dropId == ITEM00_MAGIC_SMALL) &&
-         gSaveContext.save.info.playerData.magicLevel == 0) ||
+         gOotSave.info.playerData.magicLevel == 0) ||
         ((dropId == ITEM00_SEEDS) && INV_CONTENT(ITEM_SLINGSHOT) == ITEM_NONE)) {
         return -1;
     }
 
     if (dropId == ITEM00_RECOVERY_HEART &&
-        gSaveContext.save.info.playerData.healthCapacity == gSaveContext.save.info.playerData.health) {
+        gOotSave.info.playerData.healthCapacity == gOotSave.info.playerData.health) {
         return ITEM00_RUPEE_GREEN;
     }
 
@@ -1313,27 +1313,27 @@ void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, Vec3f* spawnP
     }
 
     if (dropId == ITEM00_FLEXIBLE) {
-        if (gSaveContext.save.info.playerData.health <= 0x10) { // 1 heart or less
+        if (gOotSave.info.playerData.health <= 0x10) { // 1 heart or less
             Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, spawnPos->x, spawnPos->y + 40.0f, spawnPos->z, 0, 0, 0,
                         FAIRY_HEAL_TIMED);
             EffectSsDeadSound_SpawnStationary(play, spawnPos, NA_SE_EV_BUTTERFRY_TO_FAIRY, true,
                                               DEADSOUND_REPEAT_MODE_OFF, 40);
             return;
-        } else if (gSaveContext.save.info.playerData.health <= 0x30) { // 3 hearts or less
+        } else if (gOotSave.info.playerData.health <= 0x30) { // 3 hearts or less
             params = 0xB * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_RECOVERY_HEART;
-        } else if (gSaveContext.save.info.playerData.health <= 0x50) { // 5 hearts or less
+        } else if (gOotSave.info.playerData.health <= 0x50) { // 5 hearts or less
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_RECOVERY_HEART;
-        } else if ((gSaveContext.save.info.playerData.magicLevel != 0) &&
-                   (gSaveContext.save.info.playerData.magic == 0)) { // Empty magic meter
+        } else if ((gOotSave.info.playerData.magicLevel != 0) &&
+                   (gOotSave.info.playerData.magic == 0)) { // Empty magic meter
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_MAGIC_LARGE;
-        } else if ((gSaveContext.save.info.playerData.magicLevel != 0) &&
-                   (gSaveContext.save.info.playerData.magic <= (gSaveContext.save.info.playerData.magicLevel >> 1))) {
+        } else if ((gOotSave.info.playerData.magicLevel != 0) &&
+                   (gOotSave.info.playerData.magic <= (gOotSave.info.playerData.magicLevel >> 1))) {
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_MAGIC_SMALL;
@@ -1349,7 +1349,7 @@ void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, Vec3f* spawnP
             params = 0xD * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_BOMBS_A;
-        } else if (gSaveContext.save.info.playerData.rupees < 11) {
+        } else if (gOotSave.info.playerData.rupees < 11) {
             params = 0xA * 0x10;
             dropTableIndex = 0x0;
             dropId = ITEM00_RUPEE_RED;

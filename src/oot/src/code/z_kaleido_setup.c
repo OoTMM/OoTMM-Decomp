@@ -1,8 +1,5 @@
 #include "controller.h"
 #include "letterbox.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
 #include "regs.h"
 #include "z64audio.h"
 #include "z64play.h"
@@ -71,7 +68,7 @@ void KaleidoSetup_Update(PlayState* play) {
 
     if (!IS_PAUSED(pauseCtx) && play->gameOverCtx.state == GAMEOVER_INACTIVE &&
         play->transitionTrigger == TRANS_TRIGGER_OFF && play->transitionMode == TRANS_MODE_OFF &&
-        gSaveContext.save.cutsceneIndex < 0xFFF0 && gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) &&
+        gOotSave.cutsceneIndex < 0xFFF0 && gSaveContext.nextCutsceneIndex < 0xFFF0 && !Play_InCsMode(play) &&
         play->shootingGalleryStatus <= 1 && gSaveContext.magicState != MAGIC_STATE_STEP_CAPACITY &&
         gSaveContext.magicState != MAGIC_STATE_FILL &&
         (play->sceneId != SCENE_BOMBCHU_BOWLING_ALLEY || !Flags_GetSwitch(play, 0x38))) {
@@ -180,18 +177,7 @@ void KaleidoSetup_Init(PlayState* play) {
     pauseCtx->cursorSpecialPos = 0;
 
     View_Init(&pauseCtx->view, play->state.gfxCtx);
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_3C != NULL)) {
-        B_80121220->unk_3C();
-    }
-#endif
 }
 
 void KaleidoSetup_Destroy(PlayState* play) {
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_40 != NULL)) {
-        B_80121220->unk_40();
-    }
-#endif
 }

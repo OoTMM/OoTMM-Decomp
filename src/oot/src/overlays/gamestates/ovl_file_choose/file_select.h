@@ -7,17 +7,6 @@
 #include "versions.h"
 #include "z64game.h"
 
-
-#define GET_NEWF(sramCtx, slotNum, index) (sramCtx->readBuff[gSramSlotOffsets[slotNum] + offsetof(SaveContext, save.info.playerData.newf[index])])
-
-#define SLOT_OCCUPIED(sramCtx, slotNum) \
-    ((GET_NEWF(sramCtx, slotNum, 0) == 'Z') || \
-     (GET_NEWF(sramCtx, slotNum, 1) == 'E') || \
-     (GET_NEWF(sramCtx, slotNum, 2) == 'L') || \
-     (GET_NEWF(sramCtx, slotNum, 3) == 'D') || \
-     (GET_NEWF(sramCtx, slotNum, 4) == 'A') || \
-     (GET_NEWF(sramCtx, slotNum, 5) == 'Z'))
-
 // Init mode: Loads saves from SRAM, handles initial language selection in PAL N64 versions
 // Config mode: Handles the bulk of the file select, various configuration tasks like picking a file, copy/erase, and the options menu
 // Select mode: Displays the selected file with various details about it, and allows the player to confirm and open it
@@ -220,6 +209,9 @@ void FileSelect_DrawOptions(GameState* thisx);
 
 void FileSelect_DrawNameEntry(GameState* thisx);
 void FileSelect_DrawCharacter(GraphicsContext* gfxCtx, void* texture, s16 vtx);
+
+typedef struct FileSelectState FileSelectState;
+void FileSelect_CreateSave(FileSelectState* this, int index);
 
 #if OOT_VERSION == PAL_1_1
 extern s16 D_808124C0[];

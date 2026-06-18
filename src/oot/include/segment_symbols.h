@@ -1,7 +1,7 @@
 #ifndef SEGMENT_SYMBOLS_H
 #define SEGMENT_SYMBOLS_H
 
-#include "ultra64/ultratypes.h"
+#include "PR/ultratypes.h"
 #include "versions.h"
 
 #define DECLARE_SEGMENT(name)          \

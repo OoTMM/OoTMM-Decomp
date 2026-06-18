@@ -92,7 +92,7 @@ static u16 sEventFlags[6] = {
 };
 
 static s16 sGetItemIds[6] = {
-    GI_RUPEE_GOLD, GI_WALLET_ADULT, GI_STONE_OF_AGONY, GI_WALLET_GIANT, GI_BOMBCHUS_10, GI_HEART_PIECE,
+   GI_OOT_RUPEE_HUGE, GI_OOT_WALLET2, GI_OOT_STONE_OF_AGONY, GI_OOT_WALLET2, GI_OOT_BOMBCHU_10, GI_OOT_HEART_PIECE,
 };
 
 void EnSth_SetupAction(EnSth* this, EnSthActionFunc actionFunc) {
@@ -108,13 +108,13 @@ void EnSth_Init(Actor* thisx, PlayState* play) {
 
     PRINTF(VT_FGCOL(BLUE) "金スタル屋 no = %d\n" VT_RST, params); // "Gold Skulltula Shop"
     if (this->actor.params == 0) {
-        if (gSaveContext.save.info.inventory.gsTokens < 100) {
+        if (gOotSave.info.inventory.gsTokens < 100) {
             Actor_Kill(&this->actor);
             // "Gold Skulltula Shop I still can't be a human"
             PRINTF("金スタル屋 まだ 人間に戻れない \n");
             return;
         }
-    } else if (gSaveContext.save.info.inventory.gsTokens < (this->actor.params * 10)) {
+    } else if (gOotSave.info.inventory.gsTokens < (this->actor.params * 10)) {
         Actor_Kill(&this->actor);
         // "Gold Skulltula Shop I still can't be a human"
         PRINTF(VT_FGCOL(BLUE) "金スタル屋 まだ 人間に戻れない \n" VT_RST);
@@ -164,7 +164,7 @@ void EnSth_SetupAfterObjectLoaded(EnSth* this, PlayState* play) {
 
     params = &this->actor.params;
     this->eventFlag = sEventFlags[*params];
-    if (gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_SKULLTULA_REWARD] & this->eventFlag) {
+    if (gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_SKULLTULA_REWARD] & this->eventFlag) {
         EnSth_SetupAction(this, sRewardObtainedWaitActions[*params]);
     } else {
         EnSth_SetupAction(this, EnSth_RewardUnobtainedWait);
@@ -241,22 +241,6 @@ void EnSth_ParentRewardObtainedWait(EnSth* this, PlayState* play) {
 
 void EnSth_GivePlayerItem(EnSth* this, PlayState* play) {
     u16 getItemId = sGetItemIds[this->actor.params];
-
-    switch (this->actor.params) {
-        case 1:
-        case 3:
-            switch (CUR_UPG_VALUE(UPG_WALLET)) {
-                case 0:
-                    getItemId = GI_WALLET_ADULT;
-                    break;
-
-                case 1:
-                    getItemId = GI_WALLET_GIANT;
-                    break;
-            }
-            break;
-    }
-
     Actor_OfferGetItem(&this->actor, play, getItemId, 10000.0f, 50.0f);
 }
 
@@ -264,7 +248,7 @@ void EnSth_GiveReward(EnSth* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
         this->actor.parent = NULL;
         EnSth_SetupAction(this, EnSth_RewardObtainedTalk);
-        gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_SKULLTULA_REWARD] |= this->eventFlag;
+        gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_SKULLTULA_REWARD] |= this->eventFlag;
     } else {
         EnSth_GivePlayerItem(this, play);
     }
@@ -300,7 +284,7 @@ void EnSth_ChildRewardObtainedWait(EnSth* this, PlayState* play) {
     if (Actor_TalkOfferAccepted(&this->actor, play)) {
         EnSth_SetupAction(this, EnSth_RewardObtainedTalk);
     } else {
-        if (gSaveContext.save.info.inventory.gsTokens < 50) {
+        if (gOotSave.info.inventory.gsTokens < 50) {
             this->actor.textId = 0x20;
         } else {
             this->actor.textId = 0x1F;

@@ -253,11 +253,11 @@ void EnGm_ProcessChoiceIndex(EnGm* this, PlayState* play) {
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE && Message_ShouldAdvance(play)) {
         switch (play->msgCtx.choiceIndex) {
             case 0: // yes
-                if (gSaveContext.save.info.playerData.rupees < 200) {
+                if (gOotSave.info.playerData.rupees < 200) {
                     Message_ContinueTextbox(play, 0xC8);
                     this->actionFunc = func_80A3DD7C;
                 } else {
-                    Actor_OfferGetItem(&this->actor, play, GI_SWORD_KNIFE, 415.0f, 10.0f);
+                    Actor_OfferGetItem(&this->actor, play, GI_OOT_SWORD_KNIFE, 415.0f, 10.0f);
                     this->actionFunc = func_80A3DF00;
                 }
                 break;
@@ -274,7 +274,7 @@ void func_80A3DF00(EnGm* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = func_80A3DF60;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_SWORD_KNIFE, 415.0f, 10.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_OOT_SWORD_KNIFE, 415.0f, 10.0f);
     }
 }
 

@@ -7,9 +7,6 @@
 #include "jpeg.h"
 #include "line_numbers.h"
 #include "map.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
 #include "regs.h"
 #include "segmented_address.h"
 #include "sys_matrix.h"
@@ -411,7 +408,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
         }
 
         if (drawBackground) {
-            gSPLoadUcodeL(POLY_OPA_DISP++, gspS2DEX2d_fifo);
+            gSPLoadUcodeL(POLY_OPA_DISP++, gspS2DEX2_fifo);
 
             gfx = POLY_OPA_DISP;
 
@@ -520,7 +517,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
         }
 
         if (drawBackground) {
-            gSPLoadUcodeL(POLY_OPA_DISP++, gspS2DEX2d_fifo);
+            gSPLoadUcodeL(POLY_OPA_DISP++, gspS2DEX2_fifo);
 
             gfx = POLY_OPA_DISP;
 
@@ -681,19 +678,9 @@ s32 Room_RequestNewRoom(PlayState* play, RoomContext* roomCtx, s32 roomNum) {
                                                   ((size + 8) * roomCtx->activeBufPage + 7));
 
         osCreateMesgQueue(&roomCtx->loadQueue, &roomCtx->loadMsg, 1);
-
-#if PLATFORM_N64
-        if ((B_80121220 != NULL) && (B_80121220->unk_08 != NULL)) {
-            B_80121220->unk_08(play, roomCtx, roomNum);
-        } else {
-            DMA_REQUEST_ASYNC(&roomCtx->dmaRequest, roomCtx->roomRequestAddr,
-                              play->roomList.romFiles[roomNum].vromStart, size, 0, &roomCtx->loadQueue, NULL,
-                              "../z_room.c", 1036);
-        }
-#else
-        DMA_REQUEST_ASYNC(&roomCtx->dmaRequest, roomCtx->roomRequestAddr, play->roomList.romFiles[roomNum].vromStart,
-                          size, 0, &roomCtx->loadQueue, NULL, "../z_room.c", 1036);
-#endif
+        DMA_REQUEST_ASYNC(&roomCtx->dmaRequest, roomCtx->roomRequestAddr,
+                            play->roomList.romFiles[roomNum].vromStart, size, 0, &roomCtx->loadQueue, NULL,
+                            "../z_room.c", 1036);
 
         roomCtx->activeBufPage ^= 1;
         return true;

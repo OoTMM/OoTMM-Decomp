@@ -855,10 +855,10 @@ void Fishing_Init(Actor* thisx, PlayState* play2) {
     if (KREG(5) != 0) {
         sLinkAge = LINK_AGE_CHILD;
     } else {
-        sLinkAge = gSaveContext.save.linkAge;
+        sLinkAge = gOotSave.linkAge;
     }
 #else
-    sLinkAge = gSaveContext.save.linkAge;
+    sLinkAge = gOotSave.linkAge;
 #endif
 
     if (thisx->params < EN_FISH_PARAM) {
@@ -3143,13 +3143,13 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
             }
 
             if (Message_GetState(&play->msgCtx) == TEXT_STATE_NONE) {
-                if ((gSaveContext.save.dayTime >= CLOCK_TIME(18, 0)) &&
-                    (gSaveContext.save.dayTime <= CLOCK_TIME(18, 0) + 27)) {
+                if ((gOotSave.dayTime >= CLOCK_TIME(18, 0)) &&
+                    (gOotSave.dayTime <= CLOCK_TIME(18, 0) + 27)) {
                     this->fishState = 7;
                     this->timerArray[3] = (s16)Rand_ZeroFloat(150.0f) + 200;
                 }
-                if ((gSaveContext.save.dayTime >= CLOCK_TIME(5, 30) - 1) &&
-                    (gSaveContext.save.dayTime < CLOCK_TIME(5, 30) + 27)) {
+                if ((gOotSave.dayTime >= CLOCK_TIME(5, 30) - 1) &&
+                    (gOotSave.dayTime < CLOCK_TIME(5, 30) + 27)) {
                     this->fishState = 7;
                     this->timerArray[3] = (s16)Rand_ZeroFloat(150.0f) + 200;
                 }
@@ -3405,10 +3405,10 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                 multiplier = 1.0f;
             }
 
-            if ((gSaveContext.save.dayTime >= CLOCK_TIME(17, 0)) && (gSaveContext.save.dayTime < CLOCK_TIME(19, 0))) {
+            if ((gOotSave.dayTime >= CLOCK_TIME(17, 0)) && (gOotSave.dayTime < CLOCK_TIME(19, 0))) {
                 multiplier *= 1.75f;
-            } else if ((gSaveContext.save.dayTime >= CLOCK_TIME(5, 0)) &&
-                       (gSaveContext.save.dayTime < CLOCK_TIME(7, 0))) {
+            } else if ((gOotSave.dayTime >= CLOCK_TIME(5, 0)) &&
+                       (gOotSave.dayTime < CLOCK_TIME(7, 0))) {
                 multiplier *= 1.5f;
             } else if (sFishingFoggy != 0) {
                 multiplier *= 1.5f;
@@ -4819,7 +4819,7 @@ void Fishing_HandleOwnerDialog(Fishing* this, PlayState* play) {
 
                 switch (play->msgCtx.choiceIndex) {
                     case 0:
-                        if (gSaveContext.save.info.playerData.rupees >= 20) {
+                        if (gOotSave.info.playerData.rupees >= 20) {
                             Rupees_ChangeBy(-20);
                             if (!Rumble_Controller1HasRumblePak()) {
                                 this->actor.textId = 0x407C;
@@ -5027,31 +5027,31 @@ void Fishing_HandleOwnerDialog(Fishing* this, PlayState* play) {
                     }
 
                     if (sFishingRecordLength >= 60.0f) { // 13 lbs
-                        getItemId = GI_RUPEE_PURPLE;
+                        getItemId = GI_OOT_RUPEE_PURPLE;
                     } else if (sFishingRecordLength >= 50.0f) { // 9 lbs
-                        getItemId = GI_RUPEE_RED;
+                        getItemId = GI_OOT_RUPEE_RED;
                     } else if (sFishingRecordLength >= 40.0f) { // 6 lbs
-                        getItemId = GI_RUPEE_BLUE;
+                        getItemId = GI_OOT_RUPEE_BLUE;
                     } else {
-                        getItemId = GI_RUPEE_GREEN;
+                        getItemId = GI_OOT_RUPEE_GREEN;
                     }
 
                     if (sLinkAge == LINK_AGE_CHILD) { // 9 lbs
                         if ((sFishingRecordLength >= 50.0f) && !(HIGH_SCORE(HS_FISHING) & HS_FISH_PRIZE_CHILD)) {
                             HIGH_SCORE(HS_FISHING) |= HS_FISH_PRIZE_CHILD;
-                            getItemId = GI_HEART_PIECE;
+                            getItemId = GI_OOT_HEART_PIECE;
                             sSinkingLureLocation = (u8)Rand_ZeroFloat(3.999f) + 1;
                         }
                     } else { // 13 lbs
                         if ((sFishingRecordLength >= 60.0f) && !(HIGH_SCORE(HS_FISHING) & HS_FISH_PRIZE_ADULT)) {
                             HIGH_SCORE(HS_FISHING) |= HS_FISH_PRIZE_ADULT;
-                            getItemId = GI_SCALE_GOLDEN;
+                            getItemId = GI_OOT_SCALE_GOLDEN;
                             sSinkingLureLocation = (u8)Rand_ZeroFloat(3.999f) + 1;
                         }
                     }
                 } else {
                     sFishOnHandLength = 0.0f; // doesn't record loach
-                    getItemId = GI_RUPEE_PURPLE;
+                    getItemId = GI_OOT_RUPEE_PURPLE;
                 }
 
                 this->actor.parent = NULL;
@@ -5109,7 +5109,7 @@ void Fishing_HandleOwnerDialog(Fishing* this, PlayState* play) {
             if (Actor_HasParent(&this->actor, play)) {
                 this->stateAndTimer = 24;
             } else {
-                Actor_OfferGetItem(&this->actor, play, GI_SCALE_GOLDEN, 2000.0f, 1000.0f);
+                Actor_OfferGetItem(&this->actor, play,GI_OOT_SCALE_GOLDEN, 2000.0f, 1000.0f);
             }
             break;
 
@@ -5662,7 +5662,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
     sREG(14) = 0;
 
     PRINTF_COLOR_GREEN();
-    PRINTF("zelda_time %x\n", ((void)0, gSaveContext.save.dayTime));
+    PRINTF("zelda_time %x\n", ((void)0, gOotSave.dayTime));
     PRINTF_RST();
 #endif
 

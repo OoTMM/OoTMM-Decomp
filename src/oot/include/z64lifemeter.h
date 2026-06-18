@@ -1,7 +1,7 @@
 #ifndef Z64LIFEMETER_H
 #define Z64LIFEMETER_H
 
-#include "ultra64/ultratypes.h"
+#include "PR/ultratypes.h"
 
 struct PlayState;
 

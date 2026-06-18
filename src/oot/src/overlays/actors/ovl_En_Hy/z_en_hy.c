@@ -904,7 +904,7 @@ s16 EnHy_UpdateTalkState(PlayState* play, Actor* thisx) {
                     break;
 
                 case 0x709F:
-                    EnHy_GiveItem(this, play, GET_INFTABLE(INFTABLE_191) ? GI_RUPEE_BLUE : GI_HEART_PIECE);
+                    EnHy_GiveItem(this, play, GET_INFTABLE(INFTABLE_191) ? GI_OOT_RUPEE_BLUE : GI_OOT_HEART_PIECE);
                     this->actionFunc = EnHy_WaitDogFoundRewardGiven;
                     break;
             }
@@ -1180,7 +1180,7 @@ void EnHy_WaitForObjects(EnHy* this, PlayState* play) {
         }
 
         if (play->sceneId == SCENE_KAKARIKO_CENTER_GUEST_HOUSE) {
-            this->talonEventChkInf = gSaveContext.save.info.eventChkInf[EVENTCHKINF_INDEX_TALON_RETURNED_FROM_KAKARIKO];
+            this->talonEventChkInf = gOotSave.info.eventChkInf[EVENTCHKINF_INDEX_TALON_RETURNED_FROM_KAKARIKO];
         }
 
         EnHy_InitSetProperties(this);
@@ -1329,13 +1329,13 @@ void EnHy_WaitDogFoundRewardGiven(EnHy* this, PlayState* play) {
 void EnHy_FinishGivingDogFoundReward(EnHy* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_DONE) && Message_ShouldAdvance(play)) {
         switch (this->getItemId) {
-            case GI_HEART_PIECE:
+            case GI_OOT_HEART_PIECE:
                 gSaveContext.dogParams = 0;
                 gSaveContext.dogIsLost = false;
                 SET_INFTABLE(INFTABLE_191);
                 break;
 
-            case GI_RUPEE_BLUE:
+            case GI_OOT_RUPEE_BLUE:
                 Rupees_ChangeBy(5);
                 gSaveContext.dogParams = 0;
                 gSaveContext.dogIsLost = false;

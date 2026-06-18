@@ -3,7 +3,7 @@
 #endif
 #include "ultra64/asm.h"
 #include "ultra64/regdef.h"
-#include "ultra64/R4300.h"
+#include "PR/R4300.h"
 #include "ultra64/rcp.h"
 #include "ultra64/bcp.h"
 #include "ultra64/message.h"
@@ -193,7 +193,7 @@ endrcp:
     lw      t0, THREAD_FP(k0)
     beqz    t0, handle_interrupt
     /* Save FP Registers if FPU was used by the thread */
-.set noreorder 
+.set noreorder
     cfc1    t0, C1_FPCSR
     nop
     sw      t0, THREAD_FPCSR(k0)
@@ -934,7 +934,7 @@ LEAF(__osDispatchThread)
     lw      k1, THREAD_FP(k0)
     beqz    k1, 1f
 
-.set noreorder 
+.set noreorder
     lw      k1, THREAD_FPCSR(k0)
     ctc1    k1, C1_FPCSR
 .set reorder

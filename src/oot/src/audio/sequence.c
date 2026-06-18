@@ -19,7 +19,7 @@
  */
 #include "ultra64.h"
 #include "global.h"
-#include "ultra64/abi.h"
+#include "PR/abi.h"
 #include "seqcmd.h"
 
 // Direct audio command (skips the queueing system)

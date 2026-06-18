@@ -1,3 +1,5 @@
+#include <combo.h>
+#include "regs.h"
 #include "console_logo_state.h"
 #include "setup_state.h"
 
@@ -9,7 +11,22 @@ void Setup_InitImpl(SetupState* this) {
     PRINTF(T("ゼルダ共通データ初期化\n", "Zelda common data initialization\n"));
     SaveContext_Init();
     this->state.running = false;
-    SET_NEXT_GAMESTATE(&this->state, ConsoleLogo_Init, ConsoleLogoState);
+
+    if (gGameStarted)
+    {
+        /* Prepare save loading */
+        Sram_OnLoad();
+        gOotSave.entranceIndex = 0x1d1; /* Market from mask shop */
+
+        /* Enable audio */
+        R_AUDIOMGR_DEBUG_LEVEL = 0;
+
+        SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
+    }
+    else
+    {
+        SET_NEXT_GAMESTATE(&this->state, ConsoleLogo_Init, ConsoleLogoState);
+    }
 }
 
 void Setup_Destroy(GameState* thisx) {

@@ -1,3 +1,5 @@
+#include <string.h>
+#include <combo.h>
 #include "file_select.h"
 #include "file_select_state.h"
 
@@ -10,9 +12,6 @@
 #include "main.h"
 #include "map_select_state.h"
 #include "memory_utils.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
 #include "regs.h"
 #include "rumble.h"
 #include "segment_symbols.h"
@@ -29,7 +28,6 @@
 #include "z64save.h"
 #include "z64skybox.h"
 #include "z64sram.h"
-#include "z64ss_sram.h"
 #include "z64view.h"
 
 #include "global.h"
@@ -101,233 +99,6 @@ static s16 sWindowContentColors[2][3] = {
     { 100, 100, 100 }, // gray
 };
 
-#if OOT_PAL_N64
-void FileSelect_UpdateInitialLanguageMenu(FileSelectState* this) {
-    SramContext* sramCtx = &this->sramCtx;
-    Input* input = &this->state.input[0];
-
-    if (gSaveContext.language >= LANGUAGE_MAX) {
-        gSaveContext.language = 0;
-    }
-
-    sInitialLanguageAlpha += sInitialLanguageAlphaStep;
-    if (sInitialLanguageAlphaStep < 0.0f) {
-        if (sInitialLanguageAlpha < 100.0f) {
-            sInitialLanguageAlpha = 100.0f;
-            sInitialLanguageAlphaStep *= -1.0f;
-        }
-    } else if (sInitialLanguageAlphaStep > 0.0f) {
-        if (sInitialLanguageAlpha > 255.0f) {
-            sInitialLanguageAlpha = 255.0f;
-            sInitialLanguageAlphaStep *= -1.0f;
-        }
-    }
-
-    sInitialLanguageAlphaAsInt = (s32)sInitialLanguageAlpha;
-    sInitialLanguageStickAdjX = (s16)input->rel.stick_x;
-    if (sInitialLanguageStickAdjX < -30) {
-        if (sInitialLanguageStickXDir == -1) {
-            sInitialLanguageInputTimerX -= 1;
-            if (sInitialLanguageInputTimerX < 0) {
-                sInitialLanguageInputTimerX = 2;
-            } else {
-                sInitialLanguageStickAdjX = 0;
-            }
-        } else {
-            sInitialLanguageInputTimerX = 10;
-            sInitialLanguageStickXDir = -1;
-        }
-    } else if (sInitialLanguageStickAdjX > 30) {
-        if (sInitialLanguageStickXDir == 1) {
-            sInitialLanguageInputTimerX -= 1;
-            if (sInitialLanguageInputTimerX < 0) {
-                sInitialLanguageInputTimerX = 2;
-            } else {
-                sInitialLanguageStickAdjX = 0;
-            }
-        } else {
-            sInitialLanguageInputTimerX = 10;
-            sInitialLanguageStickXDir = 1;
-        }
-    } else {
-        sInitialLanguageStickXDir = 0;
-    }
-
-    if (CHECK_BTN_ALL(input->press.button, BTN_A) || CHECK_BTN_ALL(input->press.button, BTN_B) ||
-        CHECK_BTN_ALL(input->press.button, BTN_START)) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        sramCtx->readBuff[2] = gSaveContext.language;
-        Sram_WriteSramHeader(sramCtx);
-        this->configMode++;
-        return;
-    }
-
-    if (sInitialLanguageStickAdjX < -30) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        gSaveContext.language--;
-        if (gSaveContext.language >= LANGUAGE_MAX) {
-            gSaveContext.language = LANGUAGE_MAX - 1;
-        }
-    } else if (sInitialLanguageStickAdjX > 30) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        gSaveContext.language++;
-        if (gSaveContext.language >= LANGUAGE_MAX) {
-            gSaveContext.language = 0;
-        }
-    }
-}
-
-void FileSelect_DrawImageRGBA32(GraphicsContext* gfxCtx, s16 centerX, s16 centerY, u8* source, u32 width, u32 height) {
-    u8* curTexture;
-    s32 textureCount;
-    s32 rectLeft;
-    s32 rectTop;
-    u32 textureHeight;
-    s32 remainingSize;
-    s32 textureSize;
-    s32 pad;
-    s32 i;
-
-    OPEN_DISPS(gfxCtx, "../z_file_choose.c", UNK_LINE);
-
-    Gfx_SetupDL_56Opa(gfxCtx);
-
-    curTexture = source;
-    rectLeft = centerX - (width / 2);
-    rectTop = centerY - (height / 2);
-    remainingSize = (width * height) << 2;
-    textureHeight = 4096 / (width << 2);
-    textureSize = (width * textureHeight) << 2;
-    textureCount = remainingSize / textureSize;
-    if ((remainingSize % textureSize) != 0) {
-        textureCount++;
-    }
-
-    gDPSetTileCustom(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, width - 1, textureHeight - 1, 0,
-                     G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
-                     G_TX_NOLOD);
-
-    remainingSize -= textureSize;
-
-    for (i = 0; i < textureCount; i++) {
-        gDPSetTextureImage(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, width, curTexture);
-
-        gDPLoadSync(POLY_OPA_DISP++);
-        gDPLoadTile(POLY_OPA_DISP++, G_TX_LOADTILE, 0, 0, (width - 1) << 2, (textureHeight - 1) << 2);
-
-        gSPTextureRectangle(POLY_OPA_DISP++, rectLeft << 2, rectTop << 2, (rectLeft + (s32)width) << 2,
-                            (rectTop + textureHeight) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-        curTexture += textureSize;
-        rectTop += textureHeight;
-
-        if ((remainingSize - textureSize) < 0) {
-            if (remainingSize > 0) {
-                textureHeight = remainingSize / (s32)(width << 2);
-                remainingSize -= textureSize;
-
-                gDPSetTileCustom(POLY_OPA_DISP++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, width - 1, textureHeight - 1, 0,
-                                 G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
-                                 G_TX_NOLOD, G_TX_NOLOD);
-            }
-        } else {
-            remainingSize -= textureSize;
-        }
-    }
-
-    CLOSE_DISPS(gfxCtx, "../z_file_choose.c", UNK_LINE);
-}
-
-void FileSelect_DrawInitialLanguageMenu(FileSelectState* this) {
-    u8* source;
-    s32 i;
-    s32 y1;
-    s32 y2;
-
-    OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", UNK_LINE);
-
-    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 70 + WREG(0));
-    FileSelect_DrawImageRGBA32(this->state.gfxCtx, 160, 85 + WREG(1), (u8*)gTitleZeldaShieldLogoTex, 160, 160);
-
-    Gfx_SetupDL_39Opa(this->state.gfxCtx);
-
-    gDPSetAlphaCompare(POLY_OPA_DISP++, G_AC_NONE);
-    gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
-
-    gDPLoadTextureBlock(POLY_OPA_DISP++, gTitleCopyright1998Tex, G_IM_FMT_IA, G_IM_SIZ_8b, 128, 16, 0,
-                        G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
-                        G_TX_NOLOD);
-
-    gSPTextureRectangle(POLY_OPA_DISP++, 94 << 2, 198 << 2, 222 << 2, 214 << 2, G_TX_RENDERTILE, 0, 0, 1 << 10,
-                        1 << 10);
-
-    Gfx_SetupDL_39Opa(this->state.gfxCtx);
-
-    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 100, 100, 255, sInitialLanguageAlphaAsInt);
-
-    gDPLoadTextureBlock_4b(POLY_OPA_DISP++, gFileSelInitialLanguageCursorTex, G_IM_FMT_I, 48, 48, 0,
-                           G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
-                           G_TX_NOLOD);
-
-    gSPTextureRectangle(POLY_OPA_DISP++, (sInitialLanguageCursors[gSaveContext.language].x1 + GREG(1)) << 2,
-                        (sInitialLanguageCursors[gSaveContext.language].y1 + GREG(2)) << 2,
-                        (sInitialLanguageCursors[gSaveContext.language].x2 + GREG(1)) << 2,
-                        (sInitialLanguageCursors[gSaveContext.language].y2 + GREG(2)) << 2, G_TX_RENDERTILE, 0, 0,
-                        3 << 8, 3 << 8);
-
-    gDPPipeSync(POLY_OPA_DISP++);
-    gDPSetRenderMode(POLY_OPA_DISP++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
-    gDPSetCombineMode(POLY_OPA_DISP++, G_CC_BLENDPEDECALA, G_CC_BLENDPEDECALA);
-    gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 50, 255);
-
-    for (i = 0; i < LANGUAGE_MAX; i++) {
-        gDPPipeSync(POLY_OPA_DISP++);
-
-        if (i == gSaveContext.language) {
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
-        } else {
-            gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 50, 50, 100, 255);
-        }
-
-        gDPLoadTextureBlock(POLY_OPA_DISP++, sInitialLanguageTextures[i].texture, G_IM_FMT_IA, G_IM_SIZ_8b,
-                            sInitialLanguageTextures[i].width, sInitialLanguageTextures[i].height, 0,
-                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
-                            G_TX_NOLOD);
-
-        gSPTextureRectangle(POLY_OPA_DISP++, (sInitialLanguageTextures[i].x1 + GREG(1)) << 2,
-                            (sInitialLanguageTextures[i].y1 + GREG(2)) << 2,
-                            (sInitialLanguageTextures[i].x2 + GREG(1)) << 2,
-                            (sInitialLanguageTextures[i].y2 + GREG(2)) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-    }
-
-    gDPPipeSync(POLY_OPA_DISP++);
-
-    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 220, 180, 30, 255);
-    gDPSetEnvColor(POLY_OPA_DISP++, 60, 20, 0, 255);
-
-    source = (u8*)gFileSelSelectYourLanguageTex;
-    y1 = 120 + GREG(3);
-    for (i = 0; i < 8; i++, source += 0x500) {
-        y2 = y1 + 8;
-        gDPLoadTextureBlock(POLY_OPA_DISP++, source, G_IM_FMT_IA, G_IM_SIZ_8b, 160, 8, 0, G_TX_NOMIRROR | G_TX_WRAP,
-                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
-
-        gSPTextureRectangle(POLY_OPA_DISP++, (80 + GREG(4)) << 2, y1 << 2, (240 + GREG(4)) << 2, y2 << 2,
-                            G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-        y1 = y2;
-    }
-
-    CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", UNK_LINE);
-}
-#endif
-
 void FileSelect_SetView(FileSelectState* this, f32 eyeX, f32 eyeY, f32 eyeZ) {
     Vec3f eye;
     Vec3f lookAt;
@@ -355,59 +126,37 @@ Gfx* FileSelect_QuadTextureIA8(Gfx* gfx, void* texture, s16 width, s16 height, s
     return gfx;
 }
 
+static void Sram_VerifyAndLoadAllSaves(FileSelectState* fileSelect) {
+    u16 slotNum;
+
+    fileSelect->valid[0] = 0;
+    for (slotNum = 0; slotNum < 2; slotNum++) {
+        fileSelect->valid[slotNum] = 0;
+        if (!SaveRaw_ReadFrom(slotNum) || memcmp(gSave.magic, SAVE_MAGIC, 16))
+            continue;
+
+        fileSelect->valid[slotNum] = 1;
+        memcpy(&fileSelect->fileNames[slotNum][0], gOotSave.info.playerData.playerName, 8);
+        fileSelect->deaths[slotNum] = gOotSave.info.playerData.deaths;
+        fileSelect->healthCapacities[slotNum] = gOotSave.info.playerData.healthCapacity;
+        fileSelect->questItems[slotNum] = gOotSave.info.inventory.questItems;
+        fileSelect->defense[slotNum] = gOotSave.info.inventory.defenseHearts;
+    }
+}
+
 void FileSelect_InitModeUpdate(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
-    SramContext* sramCtx = &this->sramCtx;
 
-#if !OOT_PAL_N64
     if (this->menuMode == FS_MENU_MODE_INIT) {
         this->menuMode = FS_MENU_MODE_CONFIG;
         this->configMode = CM_FADE_IN_START;
         this->nextTitleLabel = FS_TITLE_OPEN_FILE;
-        PRINTF("Ｓｒａｍ Ｓｔａｒｔ─Ｌｏａｄ  》》》》》  ");
-        Sram_VerifyAndLoadAllSaves(this, sramCtx);
-        PRINTF("終了！！！\n");
-    }
-#else
-    if (this->configMode == CM_FADE_IN_START) {
-        Sram_VerifyAndLoadAllSaves(this, sramCtx);
 
-        if (!SLOT_OCCUPIED(sramCtx, 0) && !SLOT_OCCUPIED(sramCtx, 1) && !SLOT_OCCUPIED(sramCtx, 2)) {
-            this->configMode++; // = CM_FADE_IN_END
-        } else {
-            this->menuMode = FS_MENU_MODE_CONFIG;
-            this->configMode = CM_FADE_IN_START;
-            this->nextTitleLabel = FS_TITLE_OPEN_FILE;
-        }
+        Sram_VerifyAndLoadAllSaves(this);
     }
-
-    if (this->configMode == CM_FADE_IN_END) {
-        sScreenFillAlpha -= 40;
-        if (sScreenFillAlpha <= 0) {
-            sScreenFillAlpha = 0;
-            this->configMode++; // = CM_MAIN_MENU
-        }
-    } else if (this->configMode == CM_MAIN_MENU) {
-        FileSelect_UpdateInitialLanguageMenu(this);
-    } else {
-        sScreenFillAlpha += 40;
-        if (sScreenFillAlpha >= 255) {
-            sScreenFillAlpha = 255;
-            this->menuMode = FS_MENU_MODE_CONFIG;
-            this->configMode = CM_FADE_IN_START;
-            this->nextTitleLabel = FS_TITLE_OPEN_FILE;
-        }
-    }
-#endif
 }
 
 void FileSelect_InitModeDraw(GameState* thisx) {
-#if OOT_PAL_N64
-    FileSelectState* this = (FileSelectState*)thisx;
-
-    Gfx_SetupDL_39Opa(this->state.gfxCtx);
-    FileSelect_DrawInitialLanguageMenu(this);
-#endif
 }
 
 /**
@@ -417,7 +166,6 @@ void FileSelect_InitModeDraw(GameState* thisx) {
  */
 void FileSelect_FadeInMenuElements(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
-    SramContext* sramCtx = &this->sramCtx;
     s16 i;
 
     this->titleAlpha[0] += VREG(1);
@@ -426,7 +174,7 @@ void FileSelect_FadeInMenuElements(GameState* thisx) {
     for (i = 0; i < 3; i++) {
         this->fileButtonAlpha[i] = this->windowAlpha;
 
-        if (SLOT_OCCUPIED(sramCtx, i)) {
+        if (this->valid[i]) {
             this->nameBoxAlpha[i] = this->nameAlpha[i] = this->windowAlpha;
             this->connectorAlpha[i] += VREG(1);
             if (this->connectorAlpha[i] >= 255) {
@@ -516,17 +264,11 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
         FILENAME_SPACE, FILENAME_SPACE, FILENAME_SPACE, FILENAME_SPACE,
     };
     FileSelectState* this = (FileSelectState*)thisx;
-    SramContext* sramCtx = &this->sramCtx;
     Input* input = &this->state.input[0];
 
     if (CHECK_BTN_ALL(input->press.button, BTN_START) || CHECK_BTN_ALL(input->press.button, BTN_A)) {
         if (this->buttonIndex <= FS_BTN_MAIN_FILE_3) {
-            PRINTF("REGCK_ALL[%x]=%x,%x,%x,%x,%x,%x\n", this->buttonIndex, GET_NEWF(sramCtx, this->buttonIndex, 0),
-                   GET_NEWF(sramCtx, this->buttonIndex, 1), GET_NEWF(sramCtx, this->buttonIndex, 2),
-                   GET_NEWF(sramCtx, this->buttonIndex, 3), GET_NEWF(sramCtx, this->buttonIndex, 4),
-                   GET_NEWF(sramCtx, this->buttonIndex, 5));
-
-            if (!SLOT_OCCUPIED(sramCtx, this->buttonIndex)) {
+            if (!this->valid[this->buttonIndex]) {
                 Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 this->configMode = CM_ROTATE_TO_NAME_ENTRY;
@@ -560,14 +302,6 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
             } else if (!this->n64ddFlags[this->buttonIndex]) {
                 Audio_PlaySfxGeneral(NA_SE_SY_FSEL_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-            } else {
-#if PLATFORM_N64
-                if (D_80121212 != 0) {
-                    func_801C7268();
-                    // Setting ioData to 1 and writing it to ioPort 7 will skip the harp intro
-                    Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, NA_BGM_FILE_SELECT, 0, 7, 1);
-                }
-#endif
             }
         } else {
             if (this->warningLabel == FS_WARNING_NONE) {
@@ -616,11 +350,11 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
         }
 
         if (this->buttonIndex == FS_BTN_MAIN_COPY) {
-            if (!SLOT_OCCUPIED(sramCtx, 0) && !SLOT_OCCUPIED(sramCtx, 1) && !SLOT_OCCUPIED(sramCtx, 2)) {
+            if (!this->valid[0] && !this->valid[1] && !this->valid[2]) {
                 this->warningButtonIndex = this->buttonIndex;
                 this->warningLabel = FS_WARNING_NO_FILE_COPY;
                 this->emptyFileTextAlpha = 255;
-            } else if (SLOT_OCCUPIED(sramCtx, 0) && SLOT_OCCUPIED(sramCtx, 1) && SLOT_OCCUPIED(sramCtx, 2)) {
+            } else if (this->valid[0] && this->valid[1] && this->valid[2]) {
                 this->warningButtonIndex = this->buttonIndex;
                 this->warningLabel = FS_WARNING_NO_EMPTY_FILES;
                 this->emptyFileTextAlpha = 255;
@@ -628,7 +362,7 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
                 this->warningLabel = FS_WARNING_NONE;
             }
         } else if (this->buttonIndex == FS_BTN_MAIN_ERASE) {
-            if (!SLOT_OCCUPIED(sramCtx, 0) && !SLOT_OCCUPIED(sramCtx, 1) && !SLOT_OCCUPIED(sramCtx, 2)) {
+            if (!this->valid[0] && !this->valid[1] && !this->valid[2]) {
                 this->warningButtonIndex = this->buttonIndex;
                 this->warningLabel = FS_WARNING_NO_FILE_ERASE;
                 this->emptyFileTextAlpha = 255;
@@ -741,50 +475,7 @@ void FileSelect_PulsateCursor(GameState* thisx) {
     static s16 cursorAlphaTargets[] = { 70, 200 };
     FileSelectState* this = (FileSelectState*)thisx;
     s16 alphaStep;
-    SramContext* sramCtx = &this->sramCtx;
     Input* debugInput = &this->state.input[2];
-
-#if OOT_PAL && DEBUG_FEATURES
-    if (CHECK_BTN_ALL(debugInput->press.button, BTN_DLEFT)) {
-        sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_ENG;
-        *((u8*)0x80000002) = LANGUAGE_ENG;
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        PRINTF("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
-               sramCtx->readBuff[SRAM_HEADER_Z_TARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
-               sramCtx->readBuff[SRAM_HEADER_MAGIC]);
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
-        PRINTF("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
-               sramCtx->readBuff[SRAM_HEADER_Z_TARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
-               sramCtx->readBuff[SRAM_HEADER_MAGIC]);
-    } else if (CHECK_BTN_ALL(debugInput->press.button, BTN_DUP)) {
-        sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_GER;
-        *((u8*)0x80000002) = LANGUAGE_GER;
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        PRINTF("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
-               sramCtx->readBuff[SRAM_HEADER_Z_TARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
-               sramCtx->readBuff[SRAM_HEADER_MAGIC]);
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
-        PRINTF("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
-               sramCtx->readBuff[SRAM_HEADER_Z_TARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
-               sramCtx->readBuff[SRAM_HEADER_MAGIC]);
-    } else if (CHECK_BTN_ALL(debugInput->press.button, BTN_DRIGHT)) {
-        sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_FRA;
-        *((u8*)0x80000002) = LANGUAGE_FRA;
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, 3, OS_WRITE);
-        PRINTF("1:read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
-               sramCtx->readBuff[SRAM_HEADER_Z_TARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
-               sramCtx->readBuff[SRAM_HEADER_MAGIC]);
-
-        SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
-        PRINTF("read_buff[]=%x, %x, %x, %x\n", sramCtx->readBuff[SRAM_HEADER_SOUND],
-               sramCtx->readBuff[SRAM_HEADER_Z_TARGET], sramCtx->readBuff[SRAM_HEADER_LANGUAGE],
-               sramCtx->readBuff[SRAM_HEADER_MAGIC]);
-    }
-#endif
 
     alphaStep = ABS(this->highlightColor[3] - cursorAlphaTargets[this->highlightPulseDir]) / XREG(35);
 
@@ -868,16 +559,12 @@ static s16 D_80812848[] = { 0x0274, 0x0278 };
 
 void FileSelect_SetWindowContentVtx(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
-    SramContext* sramCtx = &this->sramCtx;
     s16 phi_t2;
     s16 phi_t0;
     s16 phi_t5;
     s16 phi_a1;
     s16 phi_ra;
     s16 temp_t1;
-#if OOT_PAL_N64
-    u8 fileNameChar;
-#endif
 
     this->windowContentVtx = GRAPH_ALLOC(this->state.gfxCtx, 0x288 * sizeof(Vtx));
 
@@ -1015,7 +702,7 @@ void FileSelect_SetWindowContentVtx(GameState* thisx) {
     phi_ra = 0x2C;
 
     for (phi_t5 = 0; phi_t5 < 3; phi_t5++, phi_ra -= WREG(38)) {
-        if (SLOT_OCCUPIED(sramCtx, phi_t5)) {
+        if (this->valid[phi_t5]) {
             phi_t0 = this->windowPosX - WREG(39);
 
             if ((this->configMode == 0xF) && (phi_t5 == this->copyDestFileIndex)) {
@@ -1196,13 +883,12 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
     s16 i;
     s16 j;
     s16 k;
-#if OOT_PAL_N64
-    s16 health;
-    s16 heartTextureIndex;
-#endif
     s16 heartType;
     s16 vtxOffset;
     s16 deathCountSplit[3];
+
+    if (!this->valid[fileIndex])
+        return;
 
     OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1709);
 
@@ -1223,88 +909,6 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
     }
 
     if ((fileIndex == this->selectedFileIndex) || (fileIndex == this->copyDestFileIndex)) {
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPSetCombineLERP(POLY_OPA_DISP++, 1, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0, 1, 0, PRIMITIVE, 0, TEXEL0, 0,
-                          PRIMITIVE, 0);
-        gDPSetPrimColor(POLY_OPA_DISP++, 0x00, 0x00, 255, 255, 255, this->fileInfoAlpha[fileIndex]);
-        gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[D_8081284C[fileIndex]] + 0x24, 12, 0);
-
-        FileSelect_SplitNumber(this->deaths[fileIndex], &deathCountSplit[0], &deathCountSplit[1], &deathCountSplit[2]);
-
-        // draw death count
-        for (k = 0, vtxOffset = 0; k < 3; k++, vtxOffset += 4) {
-            FileSelect_DrawCharacter(this->state.gfxCtx, sp54->fontBuf + deathCountSplit[k] * FONT_CHAR_TEX_SIZE,
-                                     vtxOffset);
-        }
-
-        gDPPipeSync(POLY_OPA_DISP++);
-
-        heartType = (this->defense[fileIndex] == 0) ? 0 : 1;
-
-        gDPPipeSync(POLY_OPA_DISP++);
-        gDPSetCombineLERP(POLY_OPA_DISP++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0,
-                          PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0);
-        gDPSetPrimColor(POLY_OPA_DISP++, 0x00, 0x00, sHeartPrimColors[heartType][0], sHeartPrimColors[heartType][1],
-                        sHeartPrimColors[heartType][2], this->fileInfoAlpha[fileIndex]);
-        gDPSetEnvColor(POLY_OPA_DISP++, sHeartEnvColors[heartType][0], sHeartEnvColors[heartType][1],
-                       sHeartEnvColors[heartType][2], 255);
-
-        k = this->healthCapacities[fileIndex] / 0x10;
-
-#if !OOT_PAL_N64
-        // draw hearts
-        for (vtxOffset = 0, j = 0; j < k; j++, vtxOffset += 4) {
-            gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[D_8081284C[fileIndex] + vtxOffset] + 0x30, 4, 0);
-            POLY_OPA_DISP = FileSelect_QuadTextureIA8(POLY_OPA_DISP, sHeartTextures[heartType], 0x10, 0x10, 0);
-        }
-#else
-        health = this->health[fileIndex];
-        if (health <= 48) { // 3 hearts
-            health = 48;
-        }
-        heartTextureIndex = 4;
-
-        // draw hearts
-        for (vtxOffset = 0, j = 0; j < k; j++, vtxOffset += 4) {
-            if (health < 16) {
-                if (health != 0) {
-                    heartTextureIndex = sHeartTextureIndices[health];
-                    health = 0;
-                } else {
-                    heartTextureIndex = 0;
-                }
-            } else {
-                health -= 16;
-            }
-
-            gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[D_8081284C[fileIndex] + vtxOffset] + 0x30, 4, 0);
-            POLY_OPA_DISP =
-                FileSelect_QuadTextureIA8(POLY_OPA_DISP, sHeartTextures[heartType][heartTextureIndex], 0x10, 0x10, 0);
-        }
-#endif
-
-        gDPPipeSync(POLY_OPA_DISP++);
-
-        // draw quest items
-        for (vtxOffset = 0, j = 0; j < 9; j++, vtxOffset += 4) {
-            if (this->questItems[fileIndex] & gBitFlags[sQuestItemFlags[j]]) {
-                gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[D_8081284C[fileIndex] + vtxOffset] + 0x80, 4, 0);
-                gDPPipeSync(POLY_OPA_DISP++);
-                gDPSetPrimColor(POLY_OPA_DISP++, 0x00, 0x00, sQuestItemRed[j], sQuestItemGreen[j], sQuestItemBlue[j],
-                                this->fileInfoAlpha[fileIndex]);
-                gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);
-
-                if (j < 3) {
-                    gDPLoadTextureBlock(POLY_OPA_DISP++, sQuestItemTextures[j], G_IM_FMT_RGBA, G_IM_SIZ_32b, 16, 16, 0,
-                                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP,
-                                        G_TX_NOMASK, G_TX_NOLOD);
-                    gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
-
-                } else {
-                    POLY_OPA_DISP = FileSelect_QuadTextureIA8(POLY_OPA_DISP, sQuestItemTextures[j], 0x10, 0x10, 0);
-                }
-            }
-        }
     }
 
     CLOSE_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1797);
@@ -1678,7 +1282,6 @@ void FileSelect_ConfigModeDraw(GameState* thisx) {
  */
 void FileSelect_FadeMainToSelect(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
-    SramContext* sramCtx = &this->sramCtx;
     s16 i;
 
     for (i = 0; i < 3; i++) {
@@ -1687,7 +1290,7 @@ void FileSelect_FadeMainToSelect(GameState* thisx) {
             this->actionButtonAlpha[FS_BTN_ACTION_COPY] = this->actionButtonAlpha[FS_BTN_ACTION_ERASE] =
                 this->optionButtonAlpha = this->fileButtonAlpha[i];
 
-            if (SLOT_OCCUPIED(sramCtx, i)) {
+            if (this->valid[i]) {
                 this->nameAlpha[i] = this->nameBoxAlpha[i] = this->fileButtonAlpha[i];
                 this->connectorAlpha[i] -= 31;
             }
@@ -1812,7 +1415,6 @@ void FileSelect_FadeOutFileInfo(GameState* thisx) {
  */
 void FileSelect_MoveSelectedFileToSlot(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
-    SramContext* sramCtx = &this->sramCtx;
     s16 yStep;
     s16 i;
 
@@ -1834,7 +1436,7 @@ void FileSelect_MoveSelectedFileToSlot(GameState* thisx) {
             this->actionButtonAlpha[FS_BTN_ACTION_COPY] = this->actionButtonAlpha[FS_BTN_ACTION_ERASE] =
                 this->optionButtonAlpha = this->fileButtonAlpha[i];
 
-            if (SLOT_OCCUPIED(sramCtx, i)) {
+            if (this->valid[i]) {
                 this->nameBoxAlpha[i] = this->nameAlpha[i] = this->fileButtonAlpha[i];
                 this->connectorAlpha[i] += 31;
             }
@@ -1880,92 +1482,16 @@ void FileSelect_FadeOut(GameState* thisx) {
 void FileSelect_LoadGame(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
 
-#if DEBUG_FEATURES
-    if (this->buttonIndex == FS_BTN_SELECT_FILE_1) {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        gSaveContext.fileNum = this->buttonIndex;
-        Sram_OpenSave(&this->sramCtx);
-        gSaveContext.gameMode = GAMEMODE_NORMAL;
-        SET_NEXT_GAMESTATE(&this->state, MapSelect_Init, MapSelectState);
-        this->state.running = false;
-    } else
-#endif
-    {
-        Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        gSaveContext.fileNum = this->buttonIndex;
-        Sram_OpenSave(&this->sramCtx);
-        gSaveContext.gameMode = GAMEMODE_NORMAL;
-        SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
-        this->state.running = false;
-    }
+    Audio_PlaySfxGeneral(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
-    gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
-    gSaveContext.respawnFlag = 0;
-    gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-    gSaveContext.natureAmbienceId = 0xFF;
-    gSaveContext.showTitleCard = true;
-    gSaveContext.dogParams = 0;
-    gSaveContext.timerState = TIMER_STATE_OFF;
-    gSaveContext.subTimerState = SUBTIMER_STATE_OFF;
-    gSaveContext.eventInf[0] = 0;
-    gSaveContext.eventInf[1] = 0;
-    gSaveContext.eventInf[2] = 0;
-    gSaveContext.eventInf[3] = 0;
-    gSaveContext.prevHudVisibilityMode = HUD_VISIBILITY_ALL;
-    gSaveContext.nayrusLoveTimer = 0;
-    gSaveContext.healthAccumulator = 0;
-    gSaveContext.magicState = MAGIC_STATE_IDLE;
-    gSaveContext.prevMagicState = MAGIC_STATE_IDLE;
-    gSaveContext.forcedSeqId = NA_BGM_GENERAL_SFX;
-    gSaveContext.skyboxTime = CLOCK_TIME(0, 0);
-    gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
-    gSaveContext.nextCutsceneIndex = 0xFFEF;
-    gSaveContext.cutsceneTrigger = 0;
-    gSaveContext.chamberCutsceneNum = CHAMBER_CS_FOREST;
-    gSaveContext.nextDayTime = NEXT_TIME_NONE;
-    gSaveContext.retainWeatherMode = false;
+    gSaveFileNum = this->buttonIndex;
+    SaveRaw_Read();
+    Sram_OnLoad();
+    gGameStarted = 1;
 
-    gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
-        gSaveContext.buttonStatus[3] = gSaveContext.buttonStatus[4] = BTN_ENABLED;
-
-    gSaveContext.forceRisingButtonAlphas = gSaveContext.nextHudVisibilityMode = gSaveContext.hudVisibilityMode =
-        gSaveContext.hudVisibilityModeTimer = gSaveContext.magicCapacity = 0; // false, HUD_VISIBILITY_NO_CHANGE
-
-    // Set the fill target to be the saved magic amount
-    gSaveContext.magicFillTarget = gSaveContext.save.info.playerData.magic;
-    // Set `magicLevel` and `magic` to 0 so `magicCapacity` then `magic` grows from nothing to respectively the full
-    // capacity and `magicFillTarget`
-    gSaveContext.save.info.playerData.magicLevel = gSaveContext.save.info.playerData.magic = 0;
-
-    PRINTF_COLOR_GREEN();
-    PRINTF("Z_MAGIC_NOW_NOW=%d  MAGIC_NOW=%d\n", ((void)0, gSaveContext.magicFillTarget),
-           gSaveContext.save.info.playerData.magic);
-    PRINTF_RST();
-
-    gSaveContext.save.info.playerData.naviTimer = 0;
-
-    if ((gSaveContext.save.info.equips.buttonItems[0] != ITEM_SWORD_KOKIRI) &&
-        (gSaveContext.save.info.equips.buttonItems[0] != ITEM_SWORD_MASTER) &&
-        (gSaveContext.save.info.equips.buttonItems[0] != ITEM_SWORD_BIGGORON) &&
-        (gSaveContext.save.info.equips.buttonItems[0] != ITEM_GIANTS_KNIFE)) {
-        u16 swordEquipValue;
-
-        gSaveContext.save.info.equips.buttonItems[0] = ITEM_NONE;
-        swordEquipValue =
-            (gEquipMasks[EQUIP_TYPE_SWORD] & gSaveContext.save.info.equips.equipment) >> (EQUIP_TYPE_SWORD * 4);
-        gSaveContext.save.info.equips.equipment &= gEquipNegMasks[EQUIP_TYPE_SWORD];
-        gSaveContext.save.info.inventory.equipment ^= OWNED_EQUIP_FLAG(EQUIP_TYPE_SWORD, swordEquipValue - 1);
-    }
-
-#if PLATFORM_N64
-    if (D_80121212 != 0) {
-        s32 fileNum = gSaveContext.fileNum;
-
-        n64dd_SetDiskVersion(this->n64ddFlags[fileNum]);
-    }
-#endif
+    SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
+    this->state.running = false;
 }
 
 static void (*sSelectModeUpdateFuncs[])(GameState*) = {
@@ -2049,16 +1575,7 @@ void FileSelect_Main(GameState* thisx) {
     Input* input = &this->state.input[0];
 
     OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 2898);
-
-#if PLATFORM_N64
-    if ((D_80121212 != 0) && (func_801C70FC() != 0)) {
-        this->n64ddFlag = 1;
-    } else {
-        this->n64ddFlag = 0;
-    }
-#else
     this->n64ddFlag = 0;
-#endif
 
     gSPSegment(POLY_OPA_DISP++, 0x00, NULL);
     gSPSegment(POLY_OPA_DISP++, 0x01, this->staticSegment);
@@ -2160,11 +1677,6 @@ void FileSelect_Main(GameState* thisx) {
 void FileSelect_InitContext(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
     EnvironmentContext* envCtx = &this->envCtx;
-#if PLATFORM_GC && OOT_PAL
-    SramContext* sramCtx = &this->sramCtx;
-#endif
-
-    Sram_Alloc(&this->state, &this->sramCtx);
 
     ZREG(7) = 32;
     ZREG(8) = 22;
@@ -2291,7 +1803,7 @@ void FileSelect_InitContext(GameState* thisx) {
     Letterbox_SetSizeTarget(0);
 
     gSaveContext.skyboxTime = CLOCK_TIME(0, 0);
-    gSaveContext.save.dayTime = CLOCK_TIME(0, 0);
+    gOotSave.dayTime = CLOCK_TIME(0, 0);
 
     Skybox_Init(&this->state, &this->skyboxCtx, SKYBOX_NORMAL_SKY);
 
@@ -2320,16 +1832,6 @@ void FileSelect_InitContext(GameState* thisx) {
 
     this->n64ddFlags[0] = this->n64ddFlags[1] = this->n64ddFlags[2] = this->defense[0] = this->defense[1] =
         this->defense[2] = 0;
-
-#if PLATFORM_GC && OOT_PAL
-    SsSram_ReadWrite(OS_K1_TO_PHYSICAL(0xA8000000), sramCtx->readBuff, SRAM_SIZE, OS_READ);
-
-    gSaveContext.language = sramCtx->readBuff[SRAM_HEADER_LANGUAGE];
-
-    if (gSaveContext.language >= LANGUAGE_MAX) {
-        sramCtx->readBuff[SRAM_HEADER_LANGUAGE] = gSaveContext.language = LANGUAGE_ENG;
-    }
-#endif
 }
 
 void FileSelect_Destroy(GameState* thisx) {
@@ -2339,12 +1841,6 @@ void FileSelect_Init(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
     s32 pad;
     u32 size = (uintptr_t)_title_staticSegmentRomEnd - (uintptr_t)_title_staticSegmentRomStart;
-
-#if PLATFORM_N64
-    if (D_80121212 != 0) {
-        func_801C7268();
-    }
-#endif
 
 #if !OOT_PAL_N64
     SREG(30) = 1;

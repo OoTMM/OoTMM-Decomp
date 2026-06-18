@@ -10,7 +10,7 @@
 #include "libc/stdlib.h"
 #include "libc/string.h"
 
-#include "ultra64/ultratypes.h"
+#include "PR/ultratypes.h"
 #include "unk.h"
 
 #include "ultra64/libc.h"
@@ -26,11 +26,11 @@
 #include "ultra64/vi.h"
 #include "ultra64/pi.h"
 #include "ultra64/controller.h"
-#include "ultra64/mbi.h"
+#include "PR/mbi.h"
 #include "ultra64/pfs.h"
 #include "ultra64/motor.h"
-#include "ultra64/R4300.h"
-#include "ultra64/ucode.h"
+#include "PR/R4300.h"
+#include "PR/ucode.h"
 #include "ultra64/version.h"
 
 union uObjBg;

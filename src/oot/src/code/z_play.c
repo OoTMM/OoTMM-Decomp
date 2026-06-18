@@ -1,3 +1,4 @@
+#include <combo.h>
 #include "libc64/malloc.h"
 #include "libc64/qrand.h"
 #include "libu64/debug.h"
@@ -10,9 +11,6 @@
 #include "kaleido_manager.h"
 #include "letterbox.h"
 #include "line_numbers.h"
-#if PLATFORM_N64
-#include "n64dd.h"
-#endif
 #include "one_point_cutscene.h"
 #include "quake.h"
 #include "regs.h"
@@ -90,7 +88,7 @@ void Play_SetViewpoint(PlayState* this, s16 viewpoint) {
 
     this->viewpoint = viewpoint;
 
-    if ((R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) && (gSaveContext.save.cutsceneIndex < 0xFFF0)) {
+    if ((R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) && (gOotSave.cutsceneIndex < 0xFFF0)) {
         // Play a sfx when the player toggles the camera
         Audio_PlaySfxGeneral((viewpoint == VIEWPOINT_LOCKED) ? NA_SE_SY_CAMERA_ZOOM_DOWN : NA_SE_SY_CAMERA_ZOOM_UP,
                              &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
@@ -258,7 +256,7 @@ void Play_Destroy(GameState* thisx) {
     TransitionFade_Destroy(&this->transitionFadeFlash);
     VisMono_Destroy(&gPlayVisMono);
 
-    if (gSaveContext.save.linkAge != this->linkAgeOnLoad) {
+    if (gOotSave.linkAge != this->linkAgeOnLoad) {
         Inventory_SwapAgeEquipment();
         Player_SetEquipmentData(this, player);
     }
@@ -268,20 +266,9 @@ void Play_Destroy(GameState* thisx) {
     KaleidoScopeCall_Destroy(this);
     KaleidoManager_Destroy();
     ZeldaArena_Cleanup();
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_14 != NULL)) {
-        B_80121220->unk_14(this);
-    }
-#endif
-
-#if DEBUG_FEATURES
-    Fault_RemoveClient(&D_801614B8);
-#endif
 }
 
-void Play_Init(GameState* thisx) {
-    PlayState* this = (PlayState*)thisx;
+static void Play_InitImpl(PlayState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
     uintptr_t zAlloc;
     uintptr_t zAllocAligned;
@@ -292,24 +279,14 @@ void Play_Init(GameState* thisx) {
     u8 baseSceneLayer;
     s32 pad[2];
 
-    if (gSaveContext.save.entranceIndex == ENTR_LOAD_OPENING) {
-        gSaveContext.save.entranceIndex = 0;
+    if (gOotSave.entranceIndex == ENTR_LOAD_OPENING) {
+        gOotSave.entranceIndex = 0;
         this->state.running = false;
         SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, TitleSetupState);
         return;
     }
 
-#if PLATFORM_GC && DEBUG_FEATURES
-    SystemArena_Display();
-#endif
-
     GameState_Realloc(&this->state, 0x1D4790);
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_10 != NULL)) {
-        B_80121220->unk_10(this);
-    }
-#endif
 
     KaleidoManager_Init(this);
     View_Init(&this->view, gfxCtx);
@@ -334,7 +311,6 @@ void Play_Init(GameState* thisx) {
     Camera_OverwriteStateFlags(&this->mainCamera, CAM_STATE_CHECK_BG_ALT | CAM_STATE_CHECK_WATER | CAM_STATE_CHECK_BG |
                                                       CAM_STATE_EXTERNAL_FINISHED | CAM_STATE_CAM_FUNC_FINISH |
                                                       CAM_STATE_LOCK_MODE | CAM_STATE_DISTORTION | CAM_STATE_PLAY_INIT);
-    Sram_Init(&this->state, &this->sramCtx);
     Regs_InitData(this);
     Message_Init(this);
     GameOver_Init(this);
@@ -346,31 +322,31 @@ void Play_Init(GameState* thisx) {
     Cutscene_InitContext(this, &this->csCtx);
 
     if (gSaveContext.nextCutsceneIndex != 0xFFEF) {
-        gSaveContext.save.cutsceneIndex = gSaveContext.nextCutsceneIndex;
+        gOotSave.cutsceneIndex = gSaveContext.nextCutsceneIndex;
         gSaveContext.nextCutsceneIndex = 0xFFEF;
     }
 
-    if (gSaveContext.save.cutsceneIndex == 0xFFFD) {
-        gSaveContext.save.cutsceneIndex = 0;
+    if (gOotSave.cutsceneIndex == 0xFFFD) {
+        gOotSave.cutsceneIndex = 0;
     }
 
     if (gSaveContext.nextDayTime != NEXT_TIME_NONE) {
-        gSaveContext.save.dayTime = gSaveContext.nextDayTime;
+        gOotSave.dayTime = gSaveContext.nextDayTime;
         gSaveContext.skyboxTime = gSaveContext.nextDayTime;
     }
 
-    if (gSaveContext.save.dayTime > CLOCK_TIME(18, 0) || gSaveContext.save.dayTime < CLOCK_TIME(6, 30)) {
-        gSaveContext.save.nightFlag = 1;
+    if (gOotSave.dayTime > CLOCK_TIME(18, 0) || gOotSave.dayTime < CLOCK_TIME(6, 30)) {
+        gOotSave.nightFlag = 1;
     } else {
-        gSaveContext.save.nightFlag = 0;
+        gOotSave.nightFlag = 0;
     }
 
     Cutscene_HandleConditionalTriggers(this);
 
-    if (gSaveContext.gameMode != GAMEMODE_NORMAL || gSaveContext.save.cutsceneIndex >= 0xFFF0) {
+    if (gSaveContext.gameMode != GAMEMODE_NORMAL || gOotSave.cutsceneIndex >= 0xFFF0) {
         gSaveContext.nayrusLoveTimer = 0;
         Magic_Reset(this);
-        gSaveContext.sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gSaveContext.save.cutsceneIndex & 0xF);
+        gSaveContext.sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gOotSave.cutsceneIndex & 0xF);
     } else if (!LINK_IS_ADULT && IS_DAY) {
         gSaveContext.sceneLayer = SCENE_LAYER_CHILD_DAY;
     } else if (!LINK_IS_ADULT && !IS_DAY) {
@@ -384,7 +360,7 @@ void Play_Init(GameState* thisx) {
     // save the base scene layer (before accounting for the special cases below) to use later for the transition type
     baseSceneLayer = gSaveContext.sceneLayer;
 
-    if ((gEntranceTable[((void)0, gSaveContext.save.entranceIndex)].sceneId == SCENE_HYRULE_FIELD) && !LINK_IS_ADULT &&
+    if ((gEntranceTable[((void)0, gOotSave.entranceIndex)].sceneId == SCENE_HYRULE_FIELD) && !LINK_IS_ADULT &&
         !IS_CUTSCENE_LAYER) {
         if (CHECK_QUEST_ITEM(QUEST_KOKIRI_EMERALD) && CHECK_QUEST_ITEM(QUEST_GORON_RUBY) &&
             CHECK_QUEST_ITEM(QUEST_ZORA_SAPPHIRE)) {
@@ -392,44 +368,25 @@ void Play_Init(GameState* thisx) {
         } else {
             gSaveContext.sceneLayer = 0;
         }
-    } else if ((gEntranceTable[((void)0, gSaveContext.save.entranceIndex)].sceneId == SCENE_KOKIRI_FOREST) &&
+    } else if ((gEntranceTable[((void)0, gOotSave.entranceIndex)].sceneId == SCENE_KOKIRI_FOREST) &&
                LINK_IS_ADULT && !IS_CUTSCENE_LAYER) {
         gSaveContext.sceneLayer = GET_EVENTCHKINF(EVENTCHKINF_48) ? 3 : 2;
     }
 
     Play_SpawnScene(
-        this, gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].sceneId,
-        gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].spawn);
+        this, gEntranceTable[((void)0, gOotSave.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].sceneId,
+        gEntranceTable[((void)0, gOotSave.entranceIndex) + ((void)0, gSaveContext.sceneLayer)].spawn);
 
-    PRINTF("\nSCENE_NO=%d COUNTER=%d\n", ((void)0, gSaveContext.save.entranceIndex), gSaveContext.sceneLayer);
+    PRINTF("\nSCENE_NO=%d COUNTER=%d\n", ((void)0, gOotSave.entranceIndex), gSaveContext.sceneLayer);
 
-#if PLATFORM_GC
-    // When entering Gerudo Valley in the credits, trigger the GC emulator to play the ending movie.
-    // The emulator constantly checks whether PC is 0x81000000, so this works even though it's not a valid address.
-    if ((gEntranceTable[((void)0, gSaveContext.save.entranceIndex)].sceneId == SCENE_GERUDO_VALLEY) &&
-        gSaveContext.sceneLayer == 6) {
-        PRINTF(T("エンディングはじまるよー\n", "The ending starts\n"));
-        ((void (*)(void))0x81000000)();
-        PRINTF(T("出戻り？\n", "Return?\n"));
-    }
-#endif
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL && B_80121220->unk_54 != NULL && B_80121220->unk_54(this))) {
-    } else {
-        Cutscene_HandleEntranceTriggers(this);
-    }
-#else
     Cutscene_HandleEntranceTriggers(this);
-#endif
-
     KaleidoScopeCall_Init(this);
     Interface_Init(this);
 
     if (gSaveContext.nextDayTime != NEXT_TIME_NONE) {
         if (gSaveContext.nextDayTime == NEXT_TIME_DAY) {
-            gSaveContext.save.totalDays++;
-            gSaveContext.save.bgsDayCount++;
+            gOotSave.totalDays++;
+            gOotSave.bgsDayCount++;
             gSaveContext.dogIsLost = true;
 
             if (Inventory_ReplaceItem(this, ITEM_WEIRD_EGG, ITEM_CHICKEN) ||
@@ -463,7 +420,7 @@ void Play_Init(GameState* thisx) {
     if (gSaveContext.gameMode != GAMEMODE_TITLE_SCREEN) {
         if (gSaveContext.nextTransitionType == TRANS_NEXT_TYPE_DEFAULT) {
             this->transitionType = ENTRANCE_INFO_END_TRANS_TYPE(
-                gEntranceTable[((void)0, gSaveContext.save.entranceIndex) + baseSceneLayer].field);
+                gEntranceTable[((void)0, gOotSave.entranceIndex) + baseSceneLayer].field);
         } else {
             this->transitionType = gSaveContext.nextTransitionType;
             gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
@@ -539,6 +496,19 @@ void Play_Init(GameState* thisx) {
         DmaMgr_DmaRomToRam(0x03FEB000, gDebugCutsceneScript, sizeof(sDebugCutsceneScriptBuf));
     }
 #endif
+}
+
+void Play_Init(GameState* thisx) {
+    PlayState* this = (PlayState*)thisx;
+
+    if (gOotSave.entranceIndex == ENTR_HAPPY_MASK_SHOP_0 || gOotSave.entranceIndex == ENTR_MIDOS_HOUSE_0) {
+        Play_InitImpl(this);
+        Game_PrepareSave(this, 0);
+        Game_Switch(GAME_MM);
+        return;
+    }
+
+    Play_InitImpl(this);
 }
 
 void Play_Update(PlayState* this) {
@@ -620,8 +590,8 @@ void Play_Update(PlayState* this) {
 
                         Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
 
-                        if (gSaveContext.save.cutsceneIndex >= 0xFFF0) {
-                            sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gSaveContext.save.cutsceneIndex & 0xF);
+                        if (gOotSave.cutsceneIndex >= 0xFFF0) {
+                            sceneLayer = SCENE_LAYER_CUTSCENE_FIRST + (gOotSave.cutsceneIndex & 0xF);
                         }
 
                         // fade out bgm if "continue bgm" flag is not set
@@ -743,7 +713,7 @@ void Play_Update(PlayState* this) {
 
                             if (gSaveContext.gameMode != GAMEMODE_FILE_SELECT) {
                                 SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
-                                gSaveContext.save.entranceIndex = this->nextEntranceIndex;
+                                gOotSave.entranceIndex = this->nextEntranceIndex;
 
                                 if (gSaveContext.minigameState == 1) {
                                     gSaveContext.minigameState = 3;
@@ -794,7 +764,7 @@ void Play_Update(PlayState* this) {
                     if (sTransitionFillTimer >= 20) {
                         this->state.running = false;
                         SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
-                        gSaveContext.save.entranceIndex = this->nextEntranceIndex;
+                        gOotSave.entranceIndex = this->nextEntranceIndex;
                         this->transitionTrigger = TRANS_TRIGGER_OFF;
                         this->transitionMode = TRANS_MODE_OFF;
                     } else {
@@ -836,7 +806,7 @@ void Play_Update(PlayState* this) {
                     if (this->transitionTrigger != TRANS_TRIGGER_END) {
                         this->state.running = false;
                         SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
-                        gSaveContext.save.entranceIndex = this->nextEntranceIndex;
+                        gOotSave.entranceIndex = this->nextEntranceIndex;
                         this->transitionTrigger = TRANS_TRIGGER_OFF;
                         this->transitionMode = TRANS_MODE_OFF;
                     } else {
@@ -880,7 +850,7 @@ void Play_Update(PlayState* this) {
                         if (this->envCtx.sandstormEnvA == 255) {
                             this->state.running = false;
                             SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
-                            gSaveContext.save.entranceIndex = this->nextEntranceIndex;
+                            gOotSave.entranceIndex = this->nextEntranceIndex;
                             this->transitionTrigger = TRANS_TRIGGER_OFF;
                             this->transitionMode = TRANS_MODE_OFF;
                         }
@@ -1240,7 +1210,7 @@ void Play_Draw(PlayState* this) {
             // content and can be used by `PreRender_ApplyFilters` below.
             Sched_FlushTaskQueue();
 
-            PreRender_ApplyFilters(&this->pauseBgPreRender);
+            //PreRender_ApplyFilters(&this->pauseBgPreRender);
 
             R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_READY;
         } else if (R_PAUSE_BG_PRERENDER_STATE >= PAUSE_BG_PRERENDER_MAX) {
@@ -1526,19 +1496,6 @@ void* Play_LoadFile(PlayState* this, RomFile* file) {
     return allocp;
 }
 
-#if PLATFORM_N64
-void* Play_LoadFileFromDiskDrive(PlayState* this, RomFile* file) {
-    u32 size;
-    void* allocp;
-
-    size = file->vromEnd - file->vromStart;
-    allocp = GAME_STATE_ALLOC(&this->state, size, "../z_play.c", UNK_LINE);
-    func_801C7C1C(allocp, file->vromStart, size);
-
-    return allocp;
-}
-#endif
-
 void Play_InitEnvironment(PlayState* this, s16 skyboxId) {
     Skybox_Init(&this->state, &this->skyboxCtx, skyboxId);
     Environment_Init(this, &this->envCtx, 0);
@@ -1569,49 +1526,22 @@ void Play_InitScene(PlayState* this, s32 spawn) {
 void Play_SpawnScene(PlayState* this, s32 sceneId, s32 spawn) {
     SceneTableEntry* scene;
     UNUSED_NDEBUG u32 size;
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_48 != NULL)) {
-        scene = B_80121220->unk_48(sceneId, gSceneTable);
-    } else {
-        scene = &gSceneTable[sceneId];
-        scene->unk_13 = 0;
-    }
-#else
     scene = &gSceneTable[sceneId];
     scene->unk_13 = 0;
-#endif
 
     this->loadedScene = scene;
     this->sceneId = sceneId;
     this->sceneDrawConfig = scene->drawConfig;
 
     PRINTF("\nSCENE SIZE %fK\n", (scene->sceneFile.vromEnd - scene->sceneFile.vromStart) / 1024.0f);
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (scene->unk_12 > 0)) {
-        this->sceneSegment = Play_LoadFileFromDiskDrive(this, &scene->sceneFile);
-        scene->unk_13 = 1;
-    } else {
-        this->sceneSegment = Play_LoadFile(this, &scene->sceneFile);
-        scene->unk_13 = 0;
-    }
-#else
     this->sceneSegment = Play_LoadFile(this, &scene->sceneFile);
     scene->unk_13 = 0;
-#endif
 
     ASSERT(this->sceneSegment != NULL, "this->sceneSegment != NULL", "../z_play.c", 4960);
 
     gSegments[2] = VIRTUAL_TO_PHYSICAL(this->sceneSegment);
 
     Play_InitScene(this, spawn);
-
-#if PLATFORM_N64
-    if ((B_80121220 != NULL) && (B_80121220->unk_0C != NULL)) {
-        B_80121220->unk_0C(this);
-    }
-#endif
 
     size = Room_SetupFirstRoom(this, &this->roomCtx);
 
@@ -1856,7 +1786,7 @@ s16 func_800C09D8(PlayState* this, s16 camId, s16 uid) {
 }
 
 void Play_SaveSceneFlags(PlayState* this) {
-    SavedSceneFlags* savedSceneFlags = &gSaveContext.save.info.sceneFlags[this->sceneId];
+    OotSavedSceneFlags* savedSceneFlags = &gOotSave.info.sceneFlags[this->sceneId];
 
     savedSceneFlags->chest = this->actorCtx.flags.chest;
     savedSceneFlags->swch = this->actorCtx.flags.swch;
@@ -1884,7 +1814,7 @@ void Play_SetupRespawnPoint(PlayState* this, s32 respawnMode, s32 playerParams) 
 
     if ((this->sceneId != SCENE_FAIRYS_FOUNTAIN) && (this->sceneId != SCENE_GROTTOS)) {
         roomIndex = this->roomCtx.curRoom.num;
-        entranceIndex = gSaveContext.save.entranceIndex;
+        entranceIndex = gOotSave.entranceIndex;
         Play_SetRespawnData(this, respawnMode, entranceIndex, roomIndex, playerParams, &player->actor.world.pos,
                             player->actor.shape.rot.y);
     }
@@ -1909,15 +1839,15 @@ void Play_LoadToLastEntrance(PlayState* this) {
         this->nextEntranceIndex = ENTR_GANONS_TOWER_COLLAPSE_EXTERIOR_0;
         Item_Give(this, ITEM_SWORD_MASTER);
 #if OOT_VERSION >= PAL_1_1
-    } else if ((gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_11) ||
-               (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_12) ||
-               (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_13) ||
-               (gSaveContext.save.entranceIndex == ENTR_HYRULE_FIELD_15)) {
+    } else if ((gOotSave.entranceIndex == ENTR_HYRULE_FIELD_11) ||
+               (gOotSave.entranceIndex == ENTR_HYRULE_FIELD_12) ||
+               (gOotSave.entranceIndex == ENTR_HYRULE_FIELD_13) ||
+               (gOotSave.entranceIndex == ENTR_HYRULE_FIELD_15)) {
         // Avoid re-triggering the hop over Lon Lon fence cutscenes
         this->nextEntranceIndex = ENTR_HYRULE_FIELD_6;
 #endif
     } else {
-        this->nextEntranceIndex = gSaveContext.save.entranceIndex;
+        this->nextEntranceIndex = gOotSave.entranceIndex;
     }
 
     this->transitionType = TRANS_TYPE_FADE_BLACK;
@@ -1980,4 +1910,16 @@ s32 func_800C0DB4(PlayState* this, Vec3f* pos) {
     } else {
         return false;
     }
+}
+
+void Game_PrepareSave(PlayState* this, int saveFlags)
+{
+    Play_SaveSceneFlags(this);
+    gOotSave.info.playerData.savedSceneId = this->sceneId;
+}
+
+void Game_Save(PlayState* this, int saveFlags)
+{
+    Game_PrepareSave(this, saveFlags);
+    SaveRaw_Write();
 }

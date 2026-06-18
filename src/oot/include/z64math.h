@@ -3,6 +3,7 @@
 
 #include "ultra64.h"
 #include "math.h"
+#include "math_structs.h"
 
 #define SQ(x) ((x)*(x))
 #define VEC_SET(V,X,Y,Z) (V).x=(X);(V).y=(Y);(V).z=(Z)
@@ -11,26 +12,6 @@ typedef union FloatInt {
     f32 f;
     u32 i;
 } FloatInt;
-
-typedef struct Vec2f {
-    f32 x, y;
-} Vec2f; // size = 0x08
-
-typedef struct Vec3f {
-    f32 x, y, z;
-} Vec3f; // size = 0x0C
-
-typedef struct Vec3us {
-    u16 x, y, z;
-} Vec3us; // size = 0x06
-
-typedef struct Vec3s {
-    s16 x, y, z;
-} Vec3s; // size = 0x06
-
-typedef struct Vec3i {
-    s32 x, y, z;
-} Vec3i; // size = 0x0C
 
 typedef struct Sphere16 {
     Vec3s center;
@@ -94,6 +75,17 @@ typedef VecSphGeo VecSph;
 // Defines a point in the geographic coordinate system.
 // Pitch is 0 along the xz-plane (horizon)
 typedef VecSphGeo VecGeo;
+
+typedef float MtxF_t[4][4];
+typedef union {
+    MtxF_t mf;
+    struct {
+        float xx, yx, zx, wx,
+              xy, yy, zy, wy,
+              xz, yz, zz, wz,
+              xw, yw, zw, ww;
+    };
+} MtxF; // size = 0x40
 
 #define LERP(x, y, scale) (((y) - (x)) * (scale) + (x))
 #define LERP32(x, y, scale) ((s32)(((y) - (x)) * (scale)) + (x))

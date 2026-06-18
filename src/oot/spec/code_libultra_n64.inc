@@ -19,7 +19,6 @@
     include "$(BUILD_DIR)/src/libultra/io/contquery.o"
     include "$(BUILD_DIR)/src/libultra/gu/lookathil.o"
     include "$(BUILD_DIR)/src/libultra/libc/xprintf.o"
-    include "$(BUILD_DIR)/src/libultra/libc/string.o"
     include "$(BUILD_DIR)/src/libultra/io/sp.o"
 #if OOT_VERSION < PAL_1_0
     include "$(BUILD_DIR)/src/libultra/io/viswapbuf.o"

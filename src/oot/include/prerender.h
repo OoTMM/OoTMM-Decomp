@@ -1,7 +1,7 @@
 #ifndef PRERENDER_H
 #define PRERENDER_H
 
-#include "ultra64/ultratypes.h"
+#include "PR/ultratypes.h"
 #include "listalloc.h"
 
 typedef struct PreRender {

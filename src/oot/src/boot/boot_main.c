@@ -13,19 +13,19 @@
 
 #pragma increment_block_number "gc-eu:0 gc-eu-mq:0 gc-jp:0 gc-jp-ce:0 gc-jp-mq:0 gc-us:0 gc-us-mq:0 ntsc-1.2:128"
 
-StackEntry sBootThreadInfo;
 OSThread sIdleThread;
 STACK(sIdleThreadStack, 0x400);
 StackEntry sIdleThreadInfo;
-STACK(sBootThreadStack, BOOT_STACK_SIZE);
+
+extern char _bootSegmentBssStart;
+extern char _bootSegmentBssEnd;
 
 void bootclear(void) {
+    bzero(&_bootSegmentBssStart, &_bootSegmentBssEnd - &_bootSegmentBssStart);
     bzero(_bootSegmentEnd, osMemSize - OS_K0_TO_PHYSICAL(_bootSegmentEnd));
 }
 
 void bootproc(void) {
-    StackCheck_Init(&sBootThreadInfo, sBootThreadStack, STACK_TOP(sBootThreadStack), 0, -1, "boot");
-
     osMemSize = osGetMemSize();
 #if PLATFORM_N64
     func_80001720();

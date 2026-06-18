@@ -395,7 +395,7 @@ void EnZl4_Init(Actor* thisx, PlayState* play) {
         Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ZL4_ANIM_0);
         this->actionFunc = EnZl4_Idle;
     } else {
-        if (gSaveContext.save.entranceIndex != ENTR_CASTLE_COURTYARD_ZELDA_1) {
+        if (gOotSave.entranceIndex != ENTR_CASTLE_COURTYARD_ZELDA_1) {
             Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ZL4_ANIM_21);
             this->csState = ZL4_CS_WAIT;
             this->talkState = 0;
@@ -1131,7 +1131,7 @@ s32 EnZl4_CsMakePlan(EnZl4* this, PlayState* play) {
                 Camera_RequestSetting(GET_ACTIVE_CAM(play), CAM_SET_NORMAL0);
                 this->talkState = 7;
                 play->talkWithPlayer(play, &this->actor);
-                Actor_OfferGetItem(&this->actor, play, GI_ZELDAS_LETTER, fabsf(this->actor.xzDistToPlayer) + 1.0f,
+                Actor_OfferGetItem(&this->actor, play,GI_OOT_ZELDA_LETTER, fabsf(this->actor.xzDistToPlayer) + 1.0f,
                                    fabsf(this->actor.yDistToPlayer) + 1.0f);
                 play->msgCtx.stateTimer = 4;
                 play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
@@ -1142,7 +1142,7 @@ s32 EnZl4_CsMakePlan(EnZl4* this, PlayState* play) {
                 Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ZL4_ANIM_0);
                 this->talkState++;
             } else {
-                Actor_OfferGetItem(&this->actor, play, GI_ZELDAS_LETTER, fabsf(this->actor.xzDistToPlayer) + 1.0f,
+                Actor_OfferGetItem(&this->actor, play,GI_OOT_ZELDA_LETTER, fabsf(this->actor.xzDistToPlayer) + 1.0f,
                                    fabsf(this->actor.yDistToPlayer) + 1.0f);
             }
             // no break here is required for matching

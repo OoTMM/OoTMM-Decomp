@@ -1,6 +1,6 @@
 #include "sys_debug_controller.h"
 #include "stdbool.h"
-#include "ultra64/ultratypes.h"
+#include "PR/ultratypes.h"
 #include "padmgr.h"
 
 u32 gIsCtrlr2Valid = false;
