@@ -116,7 +116,7 @@ s8 func_80997A90(s16 arg0, s16 arg1) {
     if ((arg0 == 0) || ((arg0 != 1) && (arg0 != 2) && (arg0 == 3))) {
         phi_v1 = 0;
     } else {
-        phi_v1 = (gSaveContext.save.saveInfo.unk_EA0 >> (arg1 * 3)) & 7;
+        phi_v1 = (gMmSave.saveInfo.unk_EA0 >> (arg1 * 3)) & 7;
     }
     return phi_v1;
 }
@@ -407,7 +407,7 @@ void func_809985B8(EnGs* this, PlayState* play) {
         Math_Vec3f_Sum(&player->actor.world.pos, &sp38, &player->actor.world.pos);
         Math_Vec3f_Copy(&player->actor.prevPos, &player->actor.world.pos);
         this->unk_200 = 0.0f;
-        gSaveContext.save.saveInfo.unk_EA0 = ((u32)gSaveContext.save.saveInfo.unk_EA0 & ~(7 << (this->unk_198 * 3))) |
+        gMmSave.saveInfo.unk_EA0 = ((u32)gMmSave.saveInfo.unk_EA0 & ~(7 << (this->unk_198 * 3))) |
                                              ((this->unk_194 & 7) << (this->unk_198 * 3));
         gossipStone = NULL;
 
@@ -472,7 +472,7 @@ void func_8099874C(EnGs* this, PlayState* play) {
             phi_v0 = 1;
 
             for (i = 0; i < 4; i++) {
-                if (((gSaveContext.save.saveInfo.unk_EA0 >> (i * 3)) & 7) != (u32)this->unk_194) {
+                if (((gMmSave.saveInfo.unk_EA0 >> (i * 3)) & 7) != (u32)this->unk_194) {
                     phi_v0 = 0;
                 }
             }
@@ -482,21 +482,21 @@ void func_8099874C(EnGs* this, PlayState* play) {
                 switch (this->unk_194) {
                     case 1:
                         if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_77_08)) {
-                            this->getItemId = GI_RUPEE_SILVER;
+                            this->getItemId = GI_MM_RUPEE_SILVER;
                             SET_WEEKEVENTREG(WEEKEVENTREG_77_08);
                         }
                         break;
 
                     case 3:
                         if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_77_10)) {
-                            this->getItemId = GI_RUPEE_SILVER;
+                            this->getItemId = GI_MM_RUPEE_SILVER;
                             SET_WEEKEVENTREG(WEEKEVENTREG_77_10);
                         }
                         break;
 
                     case 2:
                         if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_77_20)) {
-                            this->getItemId = GI_RUPEE_SILVER;
+                            this->getItemId = GI_MM_RUPEE_SILVER;
                             SET_WEEKEVENTREG(WEEKEVENTREG_77_20);
                         }
                         break;
@@ -507,7 +507,7 @@ void func_8099874C(EnGs* this, PlayState* play) {
 
                 if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_GOSSIP_STONE_GROTTO_HEART_PIECE)) {
                     SET_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_GOSSIP_STONE_GROTTO_HEART_PIECE);
-                    this->getItemId = GI_HEART_PIECE;
+                    this->getItemId = GI_MM_HEART_PIECE;
                 }
 
                 if (this->getItemId > GI_NONE) {

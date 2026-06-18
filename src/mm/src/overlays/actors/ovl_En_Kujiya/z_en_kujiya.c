@@ -45,11 +45,11 @@ ActorProfile En_Kujiya_Profile = {
 };
 
 #define CHECK_LOTTERY_NUMBERS()                                                      \
-    (((u32)((void)0, gSaveContext.save.saveInfo.lotteryCodes[CURRENT_DAY - 1][0]) == \
+    (((u32)((void)0, gMmSave.saveInfo.lotteryCodes[CURRENT_DAY - 1][0]) == \
       ((HS_GET_LOTTERY_CODE_GUESS() & 0xF00) >> 8)) &&                               \
-     ((u32)((void)0, gSaveContext.save.saveInfo.lotteryCodes[CURRENT_DAY - 1][1]) == \
+     ((u32)((void)0, gMmSave.saveInfo.lotteryCodes[CURRENT_DAY - 1][1]) == \
       ((HS_GET_LOTTERY_CODE_GUESS() & 0xF0) >> 4)) &&                                \
-     ((u32)((void)0, gSaveContext.save.saveInfo.lotteryCodes[CURRENT_DAY - 1][2]) == \
+     ((u32)((void)0, gMmSave.saveInfo.lotteryCodes[CURRENT_DAY - 1][2]) == \
       (HS_GET_LOTTERY_CODE_GUESS() & 0xF)))
 
 void EnKujiya_Init(Actor* thisx, PlayState* play) {
@@ -107,7 +107,7 @@ void EnKujiya_Wait(EnKujiya* this, PlayState* play) {
 void EnKujiya_HandlePlayerChoice(EnKujiya* this, PlayState* play) {
     if (Message_ShouldAdvance(play)) {
         if (play->msgCtx.choiceIndex == 0) { // Buy
-            if (gSaveContext.save.saveInfo.playerData.rupees < 10) {
+            if (gMmSave.saveInfo.playerData.rupees < 10) {
                 Audio_PlaySfx(NA_SE_SY_ERROR);
                 Message_StartTextbox(play, 0x2B62, &this->actor);
                 this->textId = 0x2B62; // Not enough Rupees
@@ -220,7 +220,7 @@ void EnKujiya_GivePrize(EnKujiya* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
         EnKujiya_SetupFinishGivePrize(this);
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_RUPEE_PURPLE, 500.0f, 100.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_RUPEE_PURPLE, 500.0f, 100.0f);
     }
 }
 

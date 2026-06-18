@@ -68,7 +68,7 @@ void EnMuto_Init(Actor* thisx, PlayState* play) {
             this->textIdIndex = 3;
         }
 
-        if ((gSaveContext.save.day != 3) || !gSaveContext.save.isNight) {
+        if ((gMmSave.day != 3) || !gMmSave.isNight) {
             Actor_Kill(&this->actor);
         }
     } else {
@@ -77,7 +77,7 @@ void EnMuto_Init(Actor* thisx, PlayState* play) {
         this->collider.dim.yShift = 0;
 
         if (CHECK_WEEKEVENTREG(WEEKEVENTREG_RESOLVED_MAYOR_MEETING) ||
-            ((gSaveContext.save.day == 3) && gSaveContext.save.isNight)) {
+            ((gMmSave.day == 3) && gMmSave.isNight)) {
             Actor_Kill(&this->actor);
         }
     }
@@ -262,7 +262,7 @@ void EnMuto_Update(Actor* thisx, PlayState* play2) {
         EnMuto_SetHeadRotation(this);
     }
 
-    if (this->isInMayorsRoom && (gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+    if (this->isInMayorsRoom && (gMmSave.day == 3) && gMmSave.isNight) {
         Actor_Kill(&this->actor);
         return;
     }

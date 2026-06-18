@@ -250,17 +250,17 @@ s16 func_80BECF6C(Path* path) {
 s32 func_80BECFBC(EnAkindonuts* this) {
     switch (ENAKINDONUTS_GET_3(&this->actor)) {
         case 0:
-            return GI_DEED_SWAMP;
+            return GI_MM_DEED_SWAMP;
 
         case 1:
-            return GI_DEED_MOUNTAIN;
+            return GI_MM_DEED_MOUNTAIN;
 
         case 2:
-            return GI_DEED_OCEAN;
+            return GI_MM_DEED_OCEAN;
 
         case 3:
             Inventory_DeleteItem(ITEM_DEED_OCEAN, SLOT(ITEM_DEED_OCEAN));
-            return GI_RUPEE_HUGE;
+            return GI_MM_RUPEE_GOLD;
 
         default:
             return GI_NONE;
@@ -270,16 +270,16 @@ s32 func_80BECFBC(EnAkindonuts* this) {
 s32 func_80BED034(EnAkindonuts* this) {
     switch (ENAKINDONUTS_GET_3(&this->actor)) {
         case 0:
-            return GI_MAGIC_BEANS;
+            return GI_MM_MAGIC_BEAN;
 
         case 1:
-            return GI_BOMB_BAG_40;
+            return GI_MM_BOMB_BAG;
 
         case 2:
-            return GI_POTION_GREEN;
+            return GI_MM_POTION_GREEN;
 
         case 3:
-            return GI_POTION_BLUE;
+            return GI_MM_POTION_BLUE;
 
         default:
             return GI_NONE;
@@ -333,7 +333,7 @@ s32 func_80BED208(EnAkindonuts* this) {
         return 0;
     }
 
-    if (gSaveContext.save.saveInfo.playerData.rupees < 10) {
+    if (gMmSave.saveInfo.playerData.rupees < 10) {
         return 1;
     }
 
@@ -355,7 +355,7 @@ s32 func_80BED27C(EnAkindonuts* this) {
         return 0;
     }
 
-    if (gSaveContext.save.saveInfo.playerData.rupees < 200) {
+    if (gMmSave.saveInfo.playerData.rupees < 200) {
         return 1;
     }
 
@@ -369,7 +369,7 @@ s32 func_80BED2FC(EnAkindonuts* this) {
         return 2;
     }
 
-    if (gSaveContext.save.saveInfo.playerData.rupees < 40) {
+    if (gMmSave.saveInfo.playerData.rupees < 40) {
         return 1;
     }
 
@@ -383,7 +383,7 @@ s32 func_80BED35C(EnAkindonuts* this) {
         return 2;
     }
 
-    if (gSaveContext.save.saveInfo.playerData.rupees < 100) {
+    if (gMmSave.saveInfo.playerData.rupees < 100) {
         return 1;
     }
 

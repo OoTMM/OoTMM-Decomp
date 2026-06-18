@@ -234,7 +234,7 @@ void EnMag_Update(Actor* thisx, PlayState* play) {
     s32 pad[2];
     EnMag* this = (EnMag*)thisx;
 
-    if (gSaveContext.fileNum != 0xFEDC) {
+    if (gSaveFileNum != -2) {
         if (this->state == MAG_STATE_INITIAL) {
             if (CHECK_BTN_ALL(CONTROLLER1(&play->state)->press.button, BTN_START) ||
                 CHECK_BTN_ALL(CONTROLLER1(&play->state)->press.button, BTN_A) ||
@@ -393,7 +393,7 @@ void EnMag_Update(Actor* thisx, PlayState* play) {
                                 play->transitionTrigger = TRANS_TRIGGER_START;
                                 play->transitionType = TRANS_TYPE_FADE_BLACK;
                                 play->nextEntrance = ENTRANCE(CUTSCENE, 0);
-                                gSaveContext.save.cutsceneIndex = 0;
+                                gMmSave.cutsceneIndex = 0;
                                 gSaveContext.sceneLayer = 0;
                             }
                             this->unk11F54 = 15;
@@ -849,7 +849,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
                              COPYRIGHT_TEX_LEFT, COPYRIGHT_TEX_TOP);
     }
 
-    if (gSaveContext.fileNum == 0xFEDC) {
+    if (gSaveFileNum == -2) {
         // Draw No controller message
 
         TIMED_STEP_TO(sTextAlpha, sTextAlphaTargets[sTextAlphaTargetIndex], sTextAlphaTimer, step);
@@ -895,7 +895,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
         sTextAlphaTimer--;
         if (sTextAlphaTimer == 0) {
             sTextAlpha = sTextAlphaTargets[sTextAlphaTargetIndex];
-            if (gSaveContext.fileNum == 0xFEDC) {
+            if (gSaveFileNum == -2) {
                 sTextAlphaTimer = 40;
             } else {
                 sTextAlphaTimer = 20;
@@ -941,7 +941,7 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
         sTextAlphaTimer--;
         if (sTextAlphaTimer == 0) {
             sTextAlpha = sTextAlphaTargets[sTextAlphaTargetIndex];
-            if (gSaveContext.fileNum == 0xFEDC) {
+            if (gSaveFileNum == -2) {
                 sTextAlphaTimer = 40;
             } else {
                 sTextAlphaTimer = 20;

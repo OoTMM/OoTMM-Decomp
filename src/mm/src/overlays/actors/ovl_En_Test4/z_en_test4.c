@@ -55,11 +55,11 @@ void EnTest4_HandleDayNightSwapFromInit(EnTest4* this, PlayState* play) {
         // Previously night, turning day, without a cutscene
         if (play->actorCtx.flags & ACTORCTX_FLAG_TELESCOPE_ON) {
             Sram_IncrementDay();
-            gSaveContext.save.time = CLOCK_TIME(6, 0);
+            gMmSave.time = CLOCK_TIME(6, 0);
             Message_DisplaySceneTitleCard(play, sDawnOfTextIds[CURRENT_DAY - 1]);
         } else {
             this->daytimeIndex = THREEDAY_DAYTIME_NIGHT;
-            gSaveContext.save.time += CLOCK_TIME_MINUTE;
+            gMmSave.time += CLOCK_TIME_MINUTE;
             this->prevTime = CURRENT_TIME;
         }
 
@@ -94,7 +94,7 @@ void EnTest4_HandleDayNightSwapFromInit(EnTest4* this, PlayState* play) {
             this->daytimeIndex = THREEDAY_DAYTIME_NIGHT;
         }
 
-        gSaveContext.save.time += CLOCK_TIME_MINUTE;
+        gMmSave.time += CLOCK_TIME_MINUTE;
         this->prevTime = CURRENT_TIME;
     }
 }
@@ -115,7 +115,7 @@ void EnTest4_HandleDayNightSwap(EnTest4* this, PlayState* play) {
     } else if ((sCsIdList[this->daytimeIndex] <= CS_ID_NONE) || (play->actorCtx.flags & ACTORCTX_FLAG_TELESCOPE_ON)) {
         // Previously night, turning day, without a cutscene
         Sram_IncrementDay();
-        gSaveContext.save.time = CLOCK_TIME(6, 0);
+        gMmSave.time = CLOCK_TIME(6, 0);
         Interface_NewDay(play, CURRENT_DAY);
         Message_DisplaySceneTitleCard(play, sDawnOfTextIds[CURRENT_DAY - 1]);
         gSceneSeqState = SCENESEQ_MORNING;
@@ -148,7 +148,7 @@ void EnTest4_HandleDayNightSwap(EnTest4* this, PlayState* play) {
             this->daytimeIndex = THREEDAY_DAYTIME_NIGHT;
         }
 
-        gSaveContext.save.time += CLOCK_TIME_MINUTE;
+        gMmSave.time += CLOCK_TIME_MINUTE;
         this->prevTime = CURRENT_TIME;
     }
 }
@@ -346,17 +346,17 @@ void EnTest4_Init(Actor* thisx, PlayState* play) {
 
         if (CURRENT_DAY == 0) {
             if (CURRENT_TIME < CLOCK_TIME(6, 1)) {
-                gSaveContext.save.time = CLOCK_TIME(6, 0);
+                gMmSave.time = CLOCK_TIME(6, 0);
                 gSaveContext.gameMode = GAMEMODE_NORMAL;
                 STOP_GAMESTATE(&play->state);
                 SET_NEXT_GAMESTATE(&play->state, DayTelop_Init, sizeof(DayTelopState));
                 this->daytimeIndex = THREEDAY_DAYTIME_DAY;
-                gSaveContext.save.time = CLOCK_TIME(6, 0);
+                gMmSave.time = CLOCK_TIME(6, 0);
                 Actor_Kill(&this->actor);
             } else {
-                gSaveContext.save.day = 1;
-                eventDayCount = gSaveContext.save.day;
-                gSaveContext.save.eventDayCount = eventDayCount;
+                gMmSave.day = 1;
+                eventDayCount = gMmSave.day;
+                gMmSave.eventDayCount = eventDayCount;
                 this->daytimeIndex = THREEDAY_DAYTIME_DAY;
                 this->prevTime = CURRENT_TIME;
                 this->actionFunc = EnTest4_HandleEvents;
@@ -482,7 +482,7 @@ void EnTest4_HandleEvents(EnTest4* this, PlayState* play) {
                     this->daytimeIndex = THREEDAY_DAYTIME_NIGHT;
                 }
 
-                gSaveContext.save.time += CLOCK_TIME_MINUTE;
+                gMmSave.time += CLOCK_TIME_MINUTE;
                 this->prevTime = CURRENT_TIME;
             }
             return;
@@ -498,11 +498,11 @@ void EnTest4_HandleEvents(EnTest4* this, PlayState* play) {
 
             if (CURRENT_DAY == 3) {
                 if ((this->nextBellTime == CLOCK_TIME(0, 0)) &&
-                    ((gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) ||
+                    ((gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) ||
                      (play->sceneId == SCENE_CLOCKTOWER))) {
                     // Initiate Clocktown day 3 midnight festival cutscene
                     s32 playerParams;
-                    u32 entrance = gSaveContext.save.entrance;
+                    u32 entrance = gMmSave.entrance;
 
                     if (play->actorCtx.flags & ACTORCTX_FLAG_TELESCOPE_ON) {
                         playerParams = PLAYER_PARAMS(0xFF, PLAYER_START_MODE_TELESCOPE);
@@ -556,7 +556,7 @@ void EnTest4_HandleCutscene(EnTest4* this, PlayState* play) {
         if (this->transitionCsTimer == 60) {
             Player* player = GET_PLAYER(play);
 
-            gSaveContext.save.time += CLOCK_TIME_MINUTE;
+            gMmSave.time += CLOCK_TIME_MINUTE;
             this->prevTime = CURRENT_TIME;
             play->numSetupActors = -play->numSetupActors;
             player->stateFlags1 &= ~PLAYER_STATE1_200;

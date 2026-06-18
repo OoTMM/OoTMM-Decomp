@@ -349,7 +349,7 @@ void EnSyatekiMan_Swamp_HandleChoice(EnSyatekiMan* this, PlayState* play) {
                 // You don't have a bow!
                 Message_StartTextbox(play, 0xA30, &this->actor);
                 this->prevTextId = 0xA30;
-            } else if (gSaveContext.save.saveInfo.playerData.rupees < 20) {
+            } else if (gMmSave.saveInfo.playerData.rupees < 20) {
                 Audio_PlaySfx(NA_SE_SY_ERROR);
 
                 // You don't have enough rupees!
@@ -652,7 +652,7 @@ void EnSyatekiMan_Town_HandleChoice(EnSyatekiMan* this, PlayState* play) {
                     Message_StartTextbox(play, 0x3FA, &this->actor);
                     this->prevTextId = 0x3FA;
                 }
-            } else if (gSaveContext.save.saveInfo.playerData.rupees < 20) {
+            } else if (gMmSave.saveInfo.playerData.rupees < 20) {
                 Audio_PlaySfx(NA_SE_SY_ERROR);
                 if (CURRENT_DAY != 3) {
                     // You don't have a enough rupees!
@@ -897,15 +897,14 @@ void EnSyatekiMan_Swamp_SetupGiveReward(EnSyatekiMan* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = EnSyatekiMan_Swamp_GiveReward;
     } else {
-        if ((CUR_UPG_VALUE(UPG_QUIVER) < 3) &&
-            !CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_SWAMP_SHOOTING_GALLERY_QUIVER_UPGRADE)) {
-            Actor_OfferGetItem(&this->actor, play, GI_QUIVER_30 + CUR_UPG_VALUE(UPG_QUIVER), 500.0f, 100.0f);
+        if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_SWAMP_SHOOTING_GALLERY_QUIVER_UPGRADE)) {
+            Actor_OfferGetItem(&this->actor, play, GI_MM_BOW, 500.0f, 100.0f);
         } else if (this->score < SG_SWAMP_HEART_PIECE_SCORE) {
-            Actor_OfferGetItem(&this->actor, play, GI_RUPEE_RED, 500.0f, 100.0f);
+            Actor_OfferGetItem(&this->actor, play, GI_MM_RUPEE_RED, 500.0f, 100.0f);
         } else if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_SWAMP_SHOOTING_GALLERY_HEART_PIECE)) {
-            Actor_OfferGetItem(&this->actor, play, GI_HEART_PIECE, 500.0f, 100.0f);
+            Actor_OfferGetItem(&this->actor, play, GI_MM_HEART_PIECE, 500.0f, 100.0f);
         } else {
-            Actor_OfferGetItem(&this->actor, play, GI_RUPEE_PURPLE, 500.0f, 100.0f);
+            Actor_OfferGetItem(&this->actor, play, GI_MM_RUPEE_PURPLE, 500.0f, 100.0f);
         }
 
         player->actor.shape.rot.y = -0x8000;
@@ -959,16 +958,15 @@ void EnSyatekiMan_Town_SetupGiveReward(EnSyatekiMan* this, PlayState* play) {
         this->actionFunc = EnSyatekiMan_Town_GiveReward;
     } else {
         if (this->prevTextId == 0x407) {
-            if ((CUR_UPG_VALUE(UPG_QUIVER) < 3) &&
-                !CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_TOWN_SHOOTING_GALLERY_QUIVER_UPGRADE)) {
-                Actor_OfferGetItem(&this->actor, play, GI_QUIVER_30 + CUR_UPG_VALUE(UPG_QUIVER), 500.0f, 100.0f);
+            if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_TOWN_SHOOTING_GALLERY_QUIVER_UPGRADE)) {
+                Actor_OfferGetItem(&this->actor, play, GI_MM_BOW, 500.0f, 100.0f);
             } else {
-                Actor_OfferGetItem(&this->actor, play, GI_RUPEE_PURPLE, 500.0f, 100.0f);
+                Actor_OfferGetItem(&this->actor, play, GI_MM_RUPEE_PURPLE, 500.0f, 100.0f);
             }
         } else if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_TOWN_SHOOTING_GALLERY_HEART_PIECE)) {
-            Actor_OfferGetItem(&this->actor, play, GI_HEART_PIECE, 500.0f, 100.0f);
+            Actor_OfferGetItem(&this->actor, play, GI_MM_HEART_PIECE, 500.0f, 100.0f);
         } else {
-            Actor_OfferGetItem(&this->actor, play, GI_RUPEE_HUGE, 500.0f, 100.0f);
+            Actor_OfferGetItem(&this->actor, play, GI_MM_RUPEE_GOLD, 500.0f, 100.0f);
         }
 
         player->actor.shape.rot.y = -0x8000;

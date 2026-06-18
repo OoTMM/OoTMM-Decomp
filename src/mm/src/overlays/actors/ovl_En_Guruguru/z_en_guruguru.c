@@ -94,7 +94,7 @@ void EnGuruguru_Init(Actor* thisx, PlayState* play) {
     if (this->actor.params != 2) {
         Collider_InitAndSetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
     }
-    if (!gSaveContext.save.isNight) {
+    if (!gMmSave.isNight) {
         if (this->actor.params == 0) {
             func_80BC6E10(this);
         } else if (this->actor.params == 2) {
@@ -315,7 +315,7 @@ void func_80BC7440(EnGuruguru* this, PlayState* play) {
         SET_WEEKEVENTREG(WEEKEVENTREG_38_40);
         this->actionFunc = func_80BC7520;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_MASK_BREMEN, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_MASK_BREMEN, 300.0f, 300.0f);
     }
 }
 
@@ -334,7 +334,7 @@ void EnGuruguru_Update(Actor* thisx, PlayState* play) {
     Player* player = GET_PLAYER(play);
     s16 yawTemp;
 
-    if (!gSaveContext.save.isNight) {
+    if (!gMmSave.isNight) {
         if (this->actor.params == 1) {
             Actor_Kill(&this->actor);
             return;

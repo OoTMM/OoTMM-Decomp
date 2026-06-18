@@ -244,7 +244,7 @@ void EnDt_Init(Actor* thisx, PlayState* play) {
     this->npcEnBaisen = NULL;
     Collider_InitAndSetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
 
-    if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+    if ((gMmSave.day == 3) && gMmSave.isNight) {
         EnDt_SetupFinalNightState(this, play);
     } else {
         s32 csId = this->actor.csId;
@@ -683,7 +683,7 @@ void EnDt_FinishMeetingCutscene(EnDt* this, PlayState* play) {
 }
 
 void EnDt_OfferMeetingReward(EnDt* this, PlayState* play) {
-    Actor_OfferGetItem(&this->actor, play, GI_HEART_PIECE, 300.0f, 300.0f);
+    Actor_OfferGetItem(&this->actor, play, GI_MM_HEART_PIECE, 300.0f, 300.0f);
     this->state = EN_DT_NPC_STATE_OFFERED_MEETING_REWARD;
     this->actionFunc = EnDt_TriggerMeetingRewardEvent;
 }
@@ -699,7 +699,7 @@ void EnDt_TriggerMeetingRewardEvent(EnDt* this, PlayState* play) {
         SET_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_MAYOR_HEART_PIECE);
         this->actionFunc = EnDt_TriggerMeetingNotebookEvent;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_HEART_PIECE, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_HEART_PIECE, 300.0f, 300.0f);
     }
 }
 
@@ -776,12 +776,12 @@ void EnDt_Update(Actor* thisx, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     Actor_SetScale(&this->actor, 0.01f);
 
-    if ((this->state != 4) && (this->state != 5) && (gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+    if ((this->state != 4) && (this->state != 5) && (gMmSave.day == 3) && gMmSave.isNight) {
         EnDt_SetupFinalNightState(this, play);
     }
 
     if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_RESOLVED_MAYOR_MEETING) &&
-        ((gSaveContext.save.day != 3) || ((gSaveContext.save.day == 3) && !gSaveContext.save.isNight))) {
+        ((gMmSave.day != 3) || ((gMmSave.day == 3) && !gMmSave.isNight))) {
         Audio_PlaySequenceAtPos(SEQ_PLAYER_BGM_SUB, &gSfxDefaultPos, NA_BGM_MAYORS_OFFICE, 1000.0f);
         Actor_PlaySfx(&this->actor, NA_SE_EV_CROWD - SFX_FLAG);
     }

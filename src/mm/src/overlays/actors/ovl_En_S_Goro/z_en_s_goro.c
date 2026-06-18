@@ -519,7 +519,7 @@ u16 EnSGoro_BombshopGoron_NextTextId(EnSGoro* this, PlayState* play) {
                 case PLAYER_FORM_GORON:
                     // Check if Powder Keg is in Powder Key slot.
                     if (INV_CONTENT(ITEM_POWDER_KEG) == ITEM_POWDER_KEG) {
-                        if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+                        if ((gMmSave.day == 3) && gMmSave.isNight) {
                             if (!(this->bombbuyFlags & EN_S_GORO_BOMBBUYFLAG_TALKED_GOROKPK_FINALNIGHT)) {
                                 this->bombbuyFlags |= EN_S_GORO_BOMBBUYFLAG_TALKED_GOROKPK_FINALNIGHT;
                                 this->actionFlags |= EN_S_GORO_ACTIONFLAG_HANDTAP;
@@ -536,7 +536,7 @@ u16 EnSGoro_BombshopGoron_NextTextId(EnSGoro* this, PlayState* play) {
                     }
 
                     // No powder keg
-                    if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+                    if ((gMmSave.day == 3) && gMmSave.isNight) {
                         if (!(this->bombbuyFlags & EN_S_GORO_BOMBBUYFLAG_TALKED_GORON_FINALNIGHT)) {
                             this->bombbuyFlags |= EN_S_GORO_BOMBBUYFLAG_TALKED_GORON_FINALNIGHT;
                             this->actionFlags |= EN_S_GORO_ACTIONFLAG_HANDTAP;
@@ -552,7 +552,7 @@ u16 EnSGoro_BombshopGoron_NextTextId(EnSGoro* this, PlayState* play) {
                     return 0x681;
 
                 case PLAYER_FORM_ZORA:
-                    if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+                    if ((gMmSave.day == 3) && gMmSave.isNight) {
                         if (!(this->bombbuyFlags & EN_S_GORO_BOMBBUYFLAG_TALKED_ZORA_FINALNIGHT)) {
                             this->bombbuyFlags |= EN_S_GORO_BOMBBUYFLAG_TALKED_ZORA_FINALNIGHT;
                             return 0x668;
@@ -570,7 +570,7 @@ u16 EnSGoro_BombshopGoron_NextTextId(EnSGoro* this, PlayState* play) {
                     return 0x66C;
 
                 case PLAYER_FORM_DEKU:
-                    if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+                    if ((gMmSave.day == 3) && gMmSave.isNight) {
                         if (!(this->bombbuyFlags & EN_S_GORO_BOMBBUYFLAG_TALKED_DEKU_FINALNIGHT)) {
                             this->bombbuyFlags |= EN_S_GORO_BOMBBUYFLAG_TALKED_DEKU_FINALNIGHT;
                             return 0x668;
@@ -586,7 +586,7 @@ u16 EnSGoro_BombshopGoron_NextTextId(EnSGoro* this, PlayState* play) {
                     return 0x66C;
 
                 case PLAYER_FORM_HUMAN:
-                    if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+                    if ((gMmSave.day == 3) && gMmSave.isNight) {
                         if (!(this->bombbuyFlags & EN_S_GORO_BOMBBUYFLAG_TALKED_HUMAN_FINALNIGHT)) {
                             this->bombbuyFlags |= EN_S_GORO_BOMBBUYFLAG_TALKED_HUMAN_FINALNIGHT;
                             return 0x668;
@@ -680,13 +680,13 @@ u16 EnSGoro_BombshopGoron_NextTextId(EnSGoro* this, PlayState* play) {
                     return 0x673;
                 }
                 this->powderKegPrice = play->msgCtx.unk1206C;
-                if (gSaveContext.save.saveInfo.playerData.rupees < this->powderKegPrice) {
+                if (gMmSave.saveInfo.playerData.rupees < this->powderKegPrice) {
                     this->actionFlags |= EN_S_GORO_ACTIONFLAG_LASTMESSAGE;
                     this->actionFlags |= EN_S_GORO_ACTIONFLAG_TIRED;
                     Audio_PlaySfx(NA_SE_SY_ERROR);
                     return 0x674;
                 }
-                if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+                if ((gMmSave.day == 3) && gMmSave.isNight) {
                     this->actionFlags |= EN_S_GORO_ACTIONFLAG_LASTMESSAGE;
                     Audio_PlaySfx_MessageDecide();
                     return 0x676;
@@ -695,7 +695,7 @@ u16 EnSGoro_BombshopGoron_NextTextId(EnSGoro* this, PlayState* play) {
                 Audio_PlaySfx_MessageDecide();
                 return 0x675;
             }
-            if ((gSaveContext.save.day == 3) && gSaveContext.save.isNight) {
+            if ((gMmSave.day == 3) && gMmSave.isNight) {
                 this->actionFlags |= EN_S_GORO_ACTIONFLAG_LASTMESSAGE;
                 return 0x672;
             }
@@ -1225,7 +1225,7 @@ void EnSGoro_ShopGoron_Talk(EnSGoro* this, PlayState* play) {
         if ((this->textId == 0x675) || (this->textId == 0x676)) {
             play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
             play->msgCtx.stateTimer = 4;
-            Actor_OfferGetItem(&this->actor, play, GI_POWDER_KEG, 300.0f, 300.0f);
+            Actor_OfferGetItem(&this->actor, play, GI_MM_POWDER_KEG, 300.0f, 300.0f);
             this->actionFunc = EnSGoro_ShopGoron_TakePayment;
         } else {
             Message_StartTextbox(play, this->textId, &this->actor);
@@ -1242,7 +1242,7 @@ void EnSGoro_ShopGoron_TakePayment(EnSGoro* this, PlayState* play) {
         Rupees_ChangeBy(-this->powderKegPrice);
         this->actionFunc = EnSGoro_ShopGoron_FinishTransaction;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_POWDER_KEG, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_POWDER_KEG, 300.0f, 300.0f);
     }
 }
 

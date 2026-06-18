@@ -1090,7 +1090,7 @@ void DmStk_Init(Actor* thisx, PlayState* play) {
 
             Collider_InitCylinder(play, &this->collider);
 
-            if (gSaveContext.save.entrance == ENTRANCE(CLOCK_TOWER_ROOFTOP, 0)) {
+            if (gMmSave.entrance == ENTRANCE(CLOCK_TOWER_ROOFTOP, 0)) {
                 if (gSaveContext.sceneLayer == 0) {
                     if (gSaveContext.timerStates[TIMER_ID_MOON_CRASH] == TIMER_STATE_OFF) {
                         // Starts a 5 minute (300 second) timer until the moon falls.
@@ -1099,7 +1099,7 @@ void DmStk_Init(Actor* thisx, PlayState* play) {
                         R_MOON_CRASH_TIMER_X = 115;
                     }
 
-                    if (gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) {
+                    if (gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) {
                         sCylinderInit.base.colMaterial = COL_MATERIAL_WOOD;
                         this->actionFunc = DmStk_ClockTower_StartIntroCutsceneVersion1;
                     } else {
@@ -1217,7 +1217,7 @@ void DmStk_StartTelescopeCutscene(DmStk* this, PlayState* play) {
     s16 finalHoursCsId = CutsceneManager_GetAdditionalCsId(dayThreeCsId);
     s16 csId;
 
-    if (gSaveContext.save.day < 3) {
+    if (gMmSave.day < 3) {
         csId = dayOneAndTwoCsId;
     } else if (CHECK_WEEKEVENTREG(WEEKEVENTREG_CLOCK_TOWER_OPENED) ||
                ((CURRENT_DAY == 3) && (CURRENT_TIME < CLOCK_TIME(6, 0)))) {
@@ -1449,7 +1449,7 @@ void DmStk_HandleCutscene(DmStk* this, PlayState* play) {
 
                     case 22:
                         this->animIndex = SK_ANIM_PLAY_OCARINA_WHILE_FLOATING;
-                        if (gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) {
+                        if (gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) {
                             this->handType = SK_HAND_TYPE_HOLDING_OCARINA;
                         }
                         break;
@@ -1461,7 +1461,7 @@ void DmStk_HandleCutscene(DmStk* this, PlayState* play) {
 
                     case 24:
                         this->animIndex = SK_ANIM_CALL_DOWN_MOON_START;
-                        if (gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) {
+                        if (gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) {
                             this->handType = SK_HAND_TYPE_HOLDING_OCARINA;
                         }
                         break;
@@ -1472,14 +1472,14 @@ void DmStk_HandleCutscene(DmStk* this, PlayState* play) {
 
                     case 26:
                         this->animIndex = SK_ANIM_SMACK_FAIRY_START;
-                        if (gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) {
+                        if (gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) {
                             this->handType = SK_HAND_TYPE_HOLDING_OCARINA;
                         }
                         break;
 
                     case 27:
                         this->animIndex = SK_ANIM_HIT_BY_BUBBLE;
-                        if (gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) {
+                        if (gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) {
                             this->handType = SK_HAND_TYPE_HOLDING_OCARINA;
                         }
                         break;
@@ -1870,9 +1870,9 @@ void DmStk_Update(Actor* thisx, PlayState* play) {
             (play->msgCtx.currentTextId == 0x5E6) && !FrameAdvance_IsEnabled(play) &&
             (play->transitionTrigger == TRANS_TRIGGER_OFF) && (CutsceneManager_GetCurrentCsId() == CS_ID_NONE) &&
             (play->csCtx.state == CS_STATE_IDLE)) {
-            gSaveContext.save.time = CURRENT_TIME + (u16)R_TIME_SPEED;
+            gMmSave.time = CURRENT_TIME + (u16)R_TIME_SPEED;
             if (R_TIME_SPEED != 0) {
-                gSaveContext.save.time = CURRENT_TIME + (u16)((void)0, gSaveContext.save.timeSpeedOffset);
+                gMmSave.time = CURRENT_TIME + (u16)((void)0, gMmSave.timeSpeedOffset);
             }
         }
     }

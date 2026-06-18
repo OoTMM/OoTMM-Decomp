@@ -80,7 +80,7 @@ void EnMs_Destroy(Actor* thisx, PlayState* play) {
 void EnMs_Wait(EnMs* this, PlayState* play) {
     s16 yawDiff = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
 
-    if (gSaveContext.save.saveInfo.inventory.items[SLOT_MAGIC_BEANS] == ITEM_NONE) {
+    if (gMmSave.saveInfo.inventory.items[SLOT_MM_MAGIC_BEANS] == ITEM_NONE) {
         this->actor.textId = 0x92E;
     } else {
         this->actor.textId = 0x932;
@@ -104,7 +104,7 @@ void EnMs_Talk(EnMs* this, PlayState* play) {
         case TEXT_STATE_EVENT:
             if (Message_ShouldAdvance(play)) {
                 Message_CloseTextbox(play);
-                Actor_OfferGetItem(&this->actor, play, GI_MAGIC_BEANS, this->actor.xzDistToPlayer,
+                Actor_OfferGetItem(&this->actor, play, GI_MM_MAGIC_BEAN, this->actor.xzDistToPlayer,
                                    this->actor.playerHeightRel);
                 this->actionFunc = EnMs_Sell;
             }
@@ -115,7 +115,7 @@ void EnMs_Talk(EnMs* this, PlayState* play) {
                 switch (play->msgCtx.choiceIndex) {
                     case 0: // yes
                         Message_CloseTextbox(play);
-                        if (gSaveContext.save.saveInfo.playerData.rupees < 10) {
+                        if (gMmSave.saveInfo.playerData.rupees < 10) {
                             Audio_PlaySfx(NA_SE_SY_ERROR);
                             Message_ContinueTextbox(play, 0x935);
                         } else if (AMMO(ITEM_MAGIC_BEANS) >= 20) {
@@ -123,7 +123,7 @@ void EnMs_Talk(EnMs* this, PlayState* play) {
                             Message_ContinueTextbox(play, 0x937);
                         } else {
                             Audio_PlaySfx_MessageDecide();
-                            Actor_OfferGetItem(&this->actor, play, GI_MAGIC_BEANS, 90.0f, 10.0f);
+                            Actor_OfferGetItem(&this->actor, play, GI_MM_MAGIC_BEAN, 90.0f, 10.0f);
                             Rupees_ChangeBy(-10);
                             this->actionFunc = EnMs_Sell;
                         }
@@ -150,7 +150,7 @@ void EnMs_Sell(EnMs* this, PlayState* play) {
                                 PLAYER_IA_NONE);
         this->actionFunc = EnMs_TalkAfterPurchase;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_MAGIC_BEANS, this->actor.xzDistToPlayer, this->actor.playerHeightRel);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_MAGIC_BEAN, this->actor.xzDistToPlayer, this->actor.playerHeightRel);
     }
 }
 

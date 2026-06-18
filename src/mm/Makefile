@@ -135,7 +135,7 @@ NM      := $(MIPS_BINUTILS_PREFIX)nm
 OBJCOPY := $(MIPS_BINUTILS_PREFIX)objcopy
 OBJDUMP := $(MIPS_BINUTILS_PREFIX)objdump
 
-IINC := -Iinclude -Iinclude/libc -Isrc -I$(BUILD_DIR) -I. -I$(EXTRACTED_DIR)
+IINC := -I../../include -I../../include/libc -I../../build/include -Iinclude -Iinclude/libc -Isrc -I$(BUILD_DIR) -I. -I$(EXTRACTED_DIR)
 
 ifeq ($(KEEP_MDEBUG),0)
   RM_MDEBUG = $(OBJCOPY) --remove-section .mdebug $@
@@ -198,7 +198,7 @@ SFCFLAGS := --matching
 # We can't use the C preprocessor for this because it won't substitute inside string literals.
 BUILD_DIR_REPLACE := sed -e 's|$$(BUILD_DIR)|$(BUILD_DIR)|g'
 
-GBI_DEFINES := -DF3DEX_GBI_2 -DF3DEX_GBI_PL -DGBI_DOWHILE
+GBI_DEFINES := -D__MM__ -DF3DEX_GBI_2 -DF3DEX_GBI_PL -DGBI_DOWHILE
 
 ifeq ($(COMPILER),gcc)
   # MIPS options
@@ -262,9 +262,9 @@ SPEC_INCLUDES := $(wildcard spec/*.inc)
 $(shell mkdir -p asm data extracted)
 
 ifeq ($(COMPILER),ido)
-SRC_DIRS := $(shell find src -type d -not -path src/gcc_fix)
+SRC_DIRS := $(shell find -L src -type d -not -path src/gcc_fix)
 else
-SRC_DIRS := $(shell find src -type d)
+SRC_DIRS := $(shell find -L src -type d)
 endif
 
 ASM_DIRS := $(shell find asm -type d -not -path "asm/non_matchings*") $(shell find data -type d)
@@ -383,8 +383,7 @@ SCHEDULE_INC_FILES := $(foreach f,$(SCHEDULE_FILES:.schl=.schl.inc),$(BUILD_DIR)
 LD_FINAL_FILES := $(foreach f,$(shell find linker_scripts/final/*.ld),$(BUILD_DIR)/$f)
 
 # Automatic dependency files
-# (Only asm_processor dependencies and reloc dependencies are handled for now)
-DEP_FILES := $(O_FILES:.o=.asmproc.d) $(OVL_RELOC_FILES:.o=.d)
+DEP_FILES := $(shell find $(BUILD_DIR) -name '*.d')
 
 # Other directories that need to be created in the build directory
 OTHER_DIRS := assets/text baserom dmadata $(shell find linker_scripts -type d)
@@ -502,10 +501,11 @@ $(ROMC): $(ROM) $(ELF) $(BUILD_DIR)/dmadata/compress_ranges.txt
 
 $(ELF): $(TEXTURE_FILES_OUT) $(ASSET_FILES_OUT) $(O_FILES) $(OVL_RELOC_FILES) $(LDSCRIPT) $(LD_FINAL_FILES) \
         $(SAMPLEBANK_O_FILES) $(SOUNDFONT_O_FILES) $(SEQUENCE_O_FILES) \
-        $(BUILD_DIR)/assets/audio/sequence_font_table.o
+        $(BUILD_DIR)/assets/audio/sequence_font_table.o \
+		../loader/build/makerom.o ../loader/build/entry.o ../loader/build/loader.o
 	$(LD) -T $(LDSCRIPT) -T $(LD_FINAL_FILES) --no-check-sections --accept-unknown-input-arch --emit-relocs -Map $(MAP) -o $@
 
-## Order-only prerequisites 
+## Order-only prerequisites
 # These ensure e.g. the O_FILES are built before the OVL_RELOC_FILES.
 # The intermediate phony targets avoid quadratically-many dependencies between the targets and prerequisites.
 
@@ -545,6 +545,7 @@ venv:
 ## Extraction step
 
 setup:
+	ln -snf ../../z64 src/z64
 	$(MAKE) -C tools
 	$(PYTHON) tools/decompress_baserom.py -v $(VERSION)
 	$(PYTHON) tools/extract_baserom.py $(BASEROM_DIR)/baserom-decompressed.z64 $(EXTRACTED_DIR)/baserom -v $(VERSION)

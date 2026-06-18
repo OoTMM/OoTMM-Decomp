@@ -29,7 +29,7 @@ ActorProfile Obj_Dinner_Profile = {
 void ObjDinner_Init(Actor* thisx, PlayState* play) {
     ObjDinner* this = (ObjDinner*)thisx;
 
-    if ((gSaveContext.save.isNight != true) ||
+    if ((gMmSave.isNight != true) ||
         ((CURRENT_DAY == 3) && CHECK_WEEKEVENTREG(WEEKEVENTREG_DEFENDED_AGAINST_ALIENS))) {
         Actor_Kill(&this->actor);
     }

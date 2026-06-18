@@ -62,91 +62,91 @@ ActorProfile En_GirlA_Profile = {
 };
 
 static ShopItemEntry sShopItemEntries[] = {
-    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x083F, 0x0840, GI_POTION_RED, EnGirlA_CanBuyPotionRed,
+    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x083F, 0x0840, GI_MM_POTION_RED, EnGirlA_CanBuyPotionRed,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_GREEN, func_800B8050, 1, 0x0841, 0x0842, GI_POTION_GREEN, EnGirlA_CanBuyPotionGreen,
+    { OBJECT_GI_LIQUID, GID_POTION_GREEN, func_800B8050, 1, 0x0841, 0x0842, GI_MM_POTION_GREEN, EnGirlA_CanBuyPotionGreen,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_BLUE, func_800B8050, 1, 0x0843, 0x0844, GI_POTION_BLUE, EnGirlA_CanBuyPotionBlue,
+    { OBJECT_GI_LIQUID, GID_POTION_BLUE, func_800B8050, 1, 0x0843, 0x0844, GI_MM_POTION_BLUE, EnGirlA_CanBuyPotionBlue,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOTTLE_04, GID_FAIRY, func_800B8050, 1, 0x06B6, 0x06B7, GI_FAIRY, EnGirlA_CanBuyFairy,
+    { OBJECT_GI_BOTTLE_04, GID_FAIRY, func_800B8050, 1, 0x06B6, 0x06B7, GI_MM_FAIRY, EnGirlA_CanBuyFairy,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_ARROW, GID_ARROWS_LARGE, func_800B8050, 50, 0x06BA, 0x06BB, GI_ARROWS_40, EnGirlA_CanBuyArrows,
+    { OBJECT_GI_ARROW, GID_ARROWS_LARGE, func_800B8050, 50, 0x06BA, 0x06BB, GI_MM_ARROWS_40, EnGirlA_CanBuyArrows,
       EnGirlA_BuyArrows, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_GREEN, func_800B8050, 1, 0x06B2, 0x06B3, GI_POTION_GREEN, EnGirlA_CanBuyPotionGreen,
+    { OBJECT_GI_LIQUID, GID_POTION_GREEN, func_800B8050, 1, 0x06B2, 0x06B3, GI_MM_POTION_GREEN, EnGirlA_CanBuyPotionGreen,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x06AE, 0x06AF, GI_SHIELD_HERO, EnGirlA_CanBuyShieldHero,
+    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x06AE, 0x06AF, GI_MM_SHIELD_HERO, EnGirlA_CanBuyShieldHero,
       EnGirlA_BuyShieldHero, EnGirlA_BuyFanfare },
-    { OBJECT_GI_STICK, GID_DEKU_STICK, NULL, 1, 0x06B4, 0x06B5, GI_DEKU_STICKS_1, EnGirlA_CanBuyStick, EnGirlA_BuyStick,
+    { OBJECT_GI_STICK, GID_DEKU_STICK, NULL, 1, 0x06B4, 0x06B5, GI_MM_STICK, EnGirlA_CanBuyStick, EnGirlA_BuyStick,
       EnGirlA_BuyFanfare },
-    { OBJECT_GI_ARROW, GID_ARROWS_MEDIUM, func_800B8050, 30, 0x06B8, 0x06B9, GI_ARROWS_30, EnGirlA_CanBuyArrows,
+    { OBJECT_GI_ARROW, GID_ARROWS_MEDIUM, func_800B8050, 30, 0x06B8, 0x06B9, GI_MM_ARROWS_30, EnGirlA_CanBuyArrows,
       EnGirlA_BuyArrows, EnGirlA_BuyFanfare },
-    { OBJECT_GI_NUTS, GID_DEKU_NUTS, func_800B8118, 10, 0x06B0, 0x06B1, GI_DEKU_NUTS_10, EnGirlA_CanBuyNuts,
+    { OBJECT_GI_NUTS, GID_DEKU_NUTS, func_800B8118, 10, 0x06B0, 0x06B1, GI_MM_NUTS_10, EnGirlA_CanBuyNuts,
       EnGirlA_BuyNuts, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x06AC, 0x06AD, GI_POTION_RED, EnGirlA_CanBuyPotionRed,
+    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x06AC, 0x06AD, GI_MM_POTION_RED, EnGirlA_CanBuyPotionRed,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOTTLE_04, GID_FAIRY, func_800B8050, 1, 0x06D3, 0x06D4, GI_FAIRY, EnGirlA_CanBuyFairy,
+    { OBJECT_GI_BOTTLE_04, GID_FAIRY, func_800B8050, 1, 0x06D3, 0x06D4, GI_MM_FAIRY, EnGirlA_CanBuyFairy,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_ARROW, GID_ARROWS_MEDIUM, func_800B8050, 30, 0x06D5, 0x06D6, GI_ARROWS_30, EnGirlA_CanBuyArrows,
+    { OBJECT_GI_ARROW, GID_ARROWS_MEDIUM, func_800B8050, 30, 0x06D5, 0x06D6, GI_MM_ARROWS_30, EnGirlA_CanBuyArrows,
       EnGirlA_BuyArrows, EnGirlA_BuyFanfare },
-    { OBJECT_GI_ARROW, GID_ARROWS_LARGE, func_800B8050, 50, 0x06D7, 0x06D8, GI_ARROWS_40, EnGirlA_CanBuyArrows,
+    { OBJECT_GI_ARROW, GID_ARROWS_LARGE, func_800B8050, 50, 0x06D7, 0x06D8, GI_MM_ARROWS_40, EnGirlA_CanBuyArrows,
       EnGirlA_BuyArrows, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_GREEN, func_800B8050, 1, 0x06CF, 0x06D0, GI_POTION_GREEN, EnGirlA_CanBuyPotionGreen,
+    { OBJECT_GI_LIQUID, GID_POTION_GREEN, func_800B8050, 1, 0x06CF, 0x06D0, GI_MM_POTION_GREEN, EnGirlA_CanBuyPotionGreen,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_NUTS, GID_DEKU_NUTS, func_800B8118, 10, 0x06CD, 0x06CE, GI_DEKU_NUTS_10, EnGirlA_CanBuyNuts,
+    { OBJECT_GI_NUTS, GID_DEKU_NUTS, func_800B8118, 10, 0x06CD, 0x06CE, GI_MM_NUTS_10, EnGirlA_CanBuyNuts,
       EnGirlA_BuyNuts, EnGirlA_BuyFanfare },
-    { OBJECT_GI_STICK, GID_DEKU_STICK, NULL, 1, 0x06D1, 0x06D2, GI_DEKU_STICKS_1, EnGirlA_CanBuyStick, EnGirlA_BuyStick,
+    { OBJECT_GI_STICK, GID_DEKU_STICK, NULL, 1, 0x06D1, 0x06D2, GI_MM_STICK, EnGirlA_CanBuyStick, EnGirlA_BuyStick,
       EnGirlA_BuyFanfare },
-    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x06CB, 0x06CC, GI_SHIELD_HERO, EnGirlA_CanBuyShieldHero,
+    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x06CB, 0x06CC, GI_MM_SHIELD_HERO, EnGirlA_CanBuyShieldHero,
       EnGirlA_BuyShieldHero, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x06C9, 0x06CA, GI_POTION_RED, EnGirlA_CanBuyPotionRed,
+    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x06C9, 0x06CA, GI_MM_POTION_RED, EnGirlA_CanBuyPotionRed,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_MASK06, GID_MASK_ALL_NIGHT, func_800B8050, 1, 0x29D9, 0x29DA, GI_MASK_ALL_NIGHT,
+    { OBJECT_GI_MASK06, GID_MASK_ALL_NIGHT, func_800B8050, 1, 0x29D9, 0x29DA, GI_MM_MASK_ALL_NIGHT,
       EnGirlA_CanBuyMaskAllNight, EnGirlA_BuyMaskAllNight, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_20, func_800B8050, 1, 0x29DB, 0x29DC, GI_BOMB_BAG_20,
+    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_20, func_800B8050, 1, 0x29DB, 0x29DC, GI_MM_BOMB_BAG,
       EnGirlA_CanBuyBombBagCuriosityShop, EnGirlA_BuyBombBag, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_30, func_800B8050, 2, 0x29DB, 0x29DC, GI_BOMB_BAG_30,
+    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_30, func_800B8050, 2, 0x29DB, 0x29DC, GI_MM_BOMB_BAG2,
       EnGirlA_CanBuyBombBagCuriosityShop, EnGirlA_BuyBombBag, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_40, func_800B8050, 3, 0x29DB, 0x29DC, GI_BOMB_BAG_40,
+    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_40, func_800B8050, 3, 0x29DB, 0x29DC, GI_MM_BOMB_BAG3,
       EnGirlA_CanBuyBombBagCuriosityShop, EnGirlA_BuyBombBag, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_20, func_800B8050, 1, 0x0654, 0x0655, GI_BOMB_BAG_20,
+    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_20, func_800B8050, 1, 0x0654, 0x0655, GI_MM_BOMB_BAG,
       EnGirlA_CanBuyBombBag20BombShop, EnGirlA_BuyBombBag, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_30, func_800B8050, 2, 0x0656, 0x0657, GI_BOMB_BAG_30,
+    { OBJECT_GI_BOMBPOUCH, GID_BOMB_BAG_30, func_800B8050, 2, 0x0656, 0x0657, GI_MM_BOMB_BAG2,
       EnGirlA_CanBuyBombBag30BombShop, EnGirlA_BuyBombBag, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMB_2, GID_BOMBCHU, func_800B8050, 10, 0x0652, 0x0653, GI_BOMBCHUS_10, EnGirlA_CanBuyBombchus,
+    { OBJECT_GI_BOMB_2, GID_BOMBCHU, func_800B8050, 10, 0x0652, 0x0653, GI_MM_BOMBCHU_10, EnGirlA_CanBuyBombchus,
       EnGirlA_BuyBombchus, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMB_1, GID_BOMB, func_800B8050, 10, 0x0650, 0x0651, GI_BOMBS_10, EnGirlA_CanBuyBombs, EnGirlA_BuyBombs,
+    { OBJECT_GI_BOMB_1, GID_BOMB, func_800B8050, 10, 0x0650, 0x0651, GI_MM_BOMBS_10, EnGirlA_CanBuyBombs, EnGirlA_BuyBombs,
       EnGirlA_BuyFanfare },
-    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x12DB, 0x12DC, GI_SHIELD_HERO, EnGirlA_CanBuyShieldHero,
+    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x12DB, 0x12DC, GI_MM_SHIELD_HERO, EnGirlA_CanBuyShieldHero,
       EnGirlA_BuyShieldHero, EnGirlA_BuyFanfare },
-    { OBJECT_GI_ARROW, GID_ARROWS_SMALL, func_800B8050, 10, 0x12DD, 0x12DE, GI_ARROWS_10, EnGirlA_CanBuyArrows,
+    { OBJECT_GI_ARROW, GID_ARROWS_SMALL, func_800B8050, 10, 0x12DD, 0x12DE, GI_MM_ARROWS_10, EnGirlA_CanBuyArrows,
       EnGirlA_BuyArrows, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x12DF, 0x12E0, GI_POTION_RED, EnGirlA_CanBuyPotionRed,
+    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x12DF, 0x12E0, GI_MM_POTION_RED, EnGirlA_CanBuyPotionRed,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMB_1, GID_BOMB, func_800B8050, 10, 0x0BC5, 0x0BC6, GI_BOMBS_10, EnGirlA_CanBuyBombs, EnGirlA_BuyBombs,
+    { OBJECT_GI_BOMB_1, GID_BOMB, func_800B8050, 10, 0x0BC5, 0x0BC6, GI_MM_BOMBS_10, EnGirlA_CanBuyBombs, EnGirlA_BuyBombs,
       EnGirlA_BuyFanfare },
-    { OBJECT_GI_ARROW, GID_ARROWS_SMALL, func_800B8050, 10, 0x0BC7, 0x0BC8, GI_ARROWS_10, EnGirlA_CanBuyArrows,
+    { OBJECT_GI_ARROW, GID_ARROWS_SMALL, func_800B8050, 10, 0x0BC7, 0x0BC8, GI_MM_ARROWS_10, EnGirlA_CanBuyArrows,
       EnGirlA_BuyArrows, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x0BC9, 0x0BCA, GI_POTION_RED, EnGirlA_CanBuyPotionRed,
+    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x0BC9, 0x0BCA, GI_MM_POTION_RED, EnGirlA_CanBuyPotionRed,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOMB_1, GID_BOMB, func_800B8050, 10, 0x0BCB, 0x0BCC, GI_BOMBS_10, EnGirlA_CanBuyBombs, EnGirlA_BuyBombs,
+    { OBJECT_GI_BOMB_1, GID_BOMB, func_800B8050, 10, 0x0BCB, 0x0BCC, GI_MM_BOMBS_10, EnGirlA_CanBuyBombs, EnGirlA_BuyBombs,
       EnGirlA_BuyFanfare },
-    { OBJECT_GI_ARROW, GID_ARROWS_SMALL, func_800B8050, 10, 0x0BCD, 0x0BCE, GI_ARROWS_10, EnGirlA_CanBuyArrows,
+    { OBJECT_GI_ARROW, GID_ARROWS_SMALL, func_800B8050, 10, 0x0BCD, 0x0BCE, GI_MM_ARROWS_10, EnGirlA_CanBuyArrows,
       EnGirlA_BuyArrows, EnGirlA_BuyFanfare },
-    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x0BCF, 0x0BD0, GI_POTION_RED, EnGirlA_CanBuyPotionRed,
+    { OBJECT_GI_LIQUID, GID_POTION_RED, func_800B8050, 1, 0x0BCF, 0x0BD0, GI_MM_POTION_RED, EnGirlA_CanBuyPotionRed,
       EnGirlA_BuyBottleItem, EnGirlA_BuyFanfare },
-    { OBJECT_GI_BOTTLE, GID_BOTTLE, func_800B8050, 1, 0x29F8, 0x29F9, GI_BOTTLE_STOLEN, EnGirlA_CanBuyBottleStolen,
+    { OBJECT_GI_BOTTLE, GID_BOTTLE, func_800B8050, 1, 0x29F8, 0x29F9, GI_MM_BOTTLE_EMPTY, EnGirlA_CanBuyBottleStolen,
       EnGirlA_BuyBottle, EnGirlA_BuyFanfare },
-    { OBJECT_GI_SWORD_4, GID_SWORD_GREAT_FAIRY, func_800B8050, 4, 0x29F2, 0x29F3, GI_SWORD_GREAT_FAIRY_STOLEN,
+    { OBJECT_GI_SWORD_4, GID_SWORD_GREAT_FAIRY, func_800B8050, 4, 0x29F2, 0x29F3, GI_MM_GREAT_FAIRY_SWORD,
       EnGirlA_CanBuySword, EnGirlA_BuySword, EnGirlA_BuyFanfare },
-    { OBJECT_GI_SWORD_1, GID_SWORD_KOKIRI, func_800B8050, 1, 0x29F4, 0x29F5, GI_SWORD_KOKIRI_STOLEN,
+    { OBJECT_GI_SWORD_1, GID_SWORD_KOKIRI, func_800B8050, 1, 0x29F4, 0x29F5, GI_MM_SWORD_KOKIRI,
       EnGirlA_CanBuySword, EnGirlA_BuySword, EnGirlA_BuyFanfare },
-    { OBJECT_GI_SWORD_2, GID_SWORD_RAZOR, func_800B8050, 2, 0x29F4, 0x29F5, GI_SWORD_RAZOR_STOLEN, EnGirlA_CanBuySword,
+    { OBJECT_GI_SWORD_2, GID_SWORD_RAZOR, func_800B8050, 2, 0x29F4, 0x29F5, GI_MM_SWORD_RAZOR, EnGirlA_CanBuySword,
       EnGirlA_BuySword, EnGirlA_BuyFanfare },
-    { OBJECT_GI_SWORD_3, GID_SWORD_GILDED, func_800B8050, 3, 0x29F4, 0x29F5, GI_SWORD_GILDED_STOLEN,
+    { OBJECT_GI_SWORD_3, GID_SWORD_GILDED, func_800B8050, 3, 0x29F4, 0x29F5, GI_MM_SWORD_GILDED,
       EnGirlA_CanBuySword, EnGirlA_BuySword, EnGirlA_BuyFanfare },
-    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x29F6, 0x29F7, GI_SHIELD_HERO_STOLEN,
+    { OBJECT_GI_SHIELD_2, GID_SHIELD_HERO, func_800B8050, 1, 0x29F6, 0x29F7, GI_MM_SHIELD_HERO,
       EnGirlA_CanBuyShieldHero, EnGirlA_BuyShieldHero, EnGirlA_BuyFanfare },
-    { OBJECT_GI_SHIELD_3, GID_SHIELD_MIRROR, func_800B8050, 1, 0x29F6, 0x29F7, GI_SHIELD_MIRROR,
+    { OBJECT_GI_SHIELD_3, GID_SHIELD_MIRROR, func_800B8050, 1, 0x29F6, 0x29F7, GI_MM_SHIELD_MIRROR,
       EnGirlA_CanBuyShieldMirror, EnGirlA_BuyShieldMirror, EnGirlA_BuyFanfare },
 };
 
@@ -186,7 +186,7 @@ s32 EnGirlA_CanBuyPotionRed(PlayState* play, EnGirlA* this) {
     if (!Inventory_HasEmptyBottle()) {
         return CANBUY_RESULT_NEED_EMPTY_BOTTLE;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;
@@ -196,7 +196,7 @@ s32 EnGirlA_CanBuyPotionGreen(PlayState* play, EnGirlA* this) {
     if (!Inventory_HasEmptyBottle()) {
         return CANBUY_RESULT_NEED_EMPTY_BOTTLE;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;
@@ -212,7 +212,7 @@ s32 EnGirlA_CanBuyPotionBlue(PlayState* play, EnGirlA* this) {
     if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_FREE_BLUE_POTION)) {
         return CANBUY_RESULT_SUCCESS_2;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;
@@ -225,7 +225,7 @@ s32 EnGirlA_CanBuyArrows(PlayState* play, EnGirlA* this) {
     if (AMMO(ITEM_BOW) >= CUR_CAPACITY(UPG_QUIVER)) {
         return CANBUY_RESULT_NO_ROOM_2;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;
@@ -235,7 +235,7 @@ s32 EnGirlA_CanBuyNuts(PlayState* play, EnGirlA* this) {
     if ((CUR_CAPACITY(UPG_DEKU_NUTS) != 0) && (CUR_CAPACITY(UPG_DEKU_NUTS) <= AMMO(ITEM_DEKU_NUT))) {
         return CANBUY_RESULT_NO_ROOM;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     if (Item_CheckObtainability(ITEM_DEKU_NUT) == ITEM_NONE) {
@@ -248,7 +248,7 @@ s32 EnGirlA_CanBuyShieldHero(PlayState* play, EnGirlA* this) {
     if (GET_CUR_EQUIP_VALUE(EQUIP_TYPE_SHIELD) != EQUIP_VALUE_SHIELD_NONE) {
         return CANBUY_RESULT_NO_ROOM;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_1;
@@ -258,7 +258,7 @@ s32 EnGirlA_CanBuyStick(PlayState* play, EnGirlA* this) {
     if ((CUR_CAPACITY(UPG_DEKU_STICKS) != 0) && (AMMO(ITEM_DEKU_STICK) >= CUR_CAPACITY(UPG_DEKU_STICKS))) {
         return CANBUY_RESULT_NO_ROOM;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     if (Item_CheckObtainability(ITEM_DEKU_STICK) == ITEM_NONE) {
@@ -268,7 +268,7 @@ s32 EnGirlA_CanBuyStick(PlayState* play, EnGirlA* this) {
 }
 
 s32 EnGirlA_CanBuyMaskAllNight(PlayState* play, EnGirlA* this) {
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;
@@ -278,7 +278,7 @@ s32 EnGirlA_CanBuyBombBagCuriosityShop(PlayState* play, EnGirlA* this) {
     if (GET_CUR_UPG_VALUE(UPG_BOMB_BAG) >= 2) {
         return CANBUY_RESULT_CANNOT_GET_NOW;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;
@@ -291,7 +291,7 @@ s32 EnGirlA_CanBuyBombBag20BombShop(PlayState* play, EnGirlA* this) {
     if (GET_CUR_UPG_VALUE(UPG_BOMB_BAG) >= 2) {
         return CANBUY_RESULT_HAVE_BETTER;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_1;
@@ -304,7 +304,7 @@ s32 EnGirlA_CanBuyBombBag30BombShop(PlayState* play, EnGirlA* this) {
     if (GET_CUR_UPG_VALUE(UPG_BOMB_BAG) == 3) {
         return CANBUY_RESULT_HAVE_BETTER;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_1;
@@ -317,7 +317,7 @@ s32 EnGirlA_CanBuyBombchus(PlayState* play, EnGirlA* this) {
     if (AMMO(ITEM_BOMBCHU) >= CUR_CAPACITY(UPG_BOMB_BAG)) {
         return CANBUY_RESULT_NO_ROOM;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     if (Item_CheckObtainability(ITEM_BOMBCHU) == ITEM_NONE) {
@@ -333,21 +333,21 @@ s32 EnGirlA_CanBuyBombs(PlayState* play, EnGirlA* this) {
     if (AMMO(ITEM_BOMB) >= CUR_CAPACITY(UPG_BOMB_BAG)) {
         return CANBUY_RESULT_NO_ROOM;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;
 }
 
 s32 EnGirlA_CanBuyBottleStolen(PlayState* play, EnGirlA* this) {
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_1;
 }
 
 s32 EnGirlA_CanBuySword(PlayState* play, EnGirlA* this) {
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_1;
@@ -357,7 +357,7 @@ s32 EnGirlA_CanBuyShieldMirror(PlayState* play, EnGirlA* this) {
     if (GET_CUR_EQUIP_VALUE(EQUIP_TYPE_SHIELD) != EQUIP_VALUE_SHIELD_NONE) {
         return CANBUY_RESULT_NO_ROOM;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_1;
@@ -367,7 +367,7 @@ s32 EnGirlA_CanBuyFairy(PlayState* play, EnGirlA* this) {
     if (!Inventory_HasEmptyBottle()) {
         return CANBUY_RESULT_NEED_EMPTY_BOTTLE;
     }
-    if (gSaveContext.save.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
+    if (gMmSave.saveInfo.playerData.rupees < play->msgCtx.unk1206C) {
         return CANBUY_RESULT_NEED_RUPEES;
     }
     return CANBUY_RESULT_SUCCESS_2;

@@ -689,7 +689,7 @@ void func_80B51760(EnGk* this, PlayState* play) {
                 this->unk_1E4 |= 2;
             }
         } else if (((this->actor.xzDistToPlayer < 100.0f) || this->actor.isLockedOn) &&
-                   (gSaveContext.save.entrance != ENTRANCE(GORON_RACETRACK, 1))) {
+                   (gMmSave.entrance != ENTRANCE(GORON_RACETRACK, 1))) {
             Actor_OfferTalkNearColChkInfoCylinder(&this->actor, play);
         }
 
@@ -1007,14 +1007,14 @@ void func_80B5253C(EnGk* this, PlayState* play) {
     s32 getItemId;
 
     if (CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_GORON_RACE_BOTTLE)) {
-        getItemId = GI_GOLD_DUST_2;
+        getItemId = GI_MM_BOTTLED_GOLD_DUST;
     } else {
-        getItemId = GI_GOLD_DUST;
+        getItemId = GI_MM_GOLD_DUST;
     }
 
     if (Actor_HasParent(&this->actor, play)) {
         this->actor.parent = NULL;
-        if (getItemId == GI_GOLD_DUST) {
+        if (getItemId == GI_MM_GOLD_DUST) {
             SET_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_GORON_RACE_BOTTLE);
         }
         this->actionFunc = func_80B525E0;
@@ -1079,9 +1079,9 @@ void EnGk_Init(Actor* thisx, PlayState* play) {
             this->actionFunc = func_80B51760;
         } else if (play->sceneId == SCENE_GORONRACE) {
             if (CHECK_WEEKEVENTREG(WEEKEVENTREG_CLEARED_SNOWHEAD_TEMPLE)) {
-                if (gSaveContext.save.entrance == ENTRANCE(GORON_RACETRACK, 1)) {
+                if (gMmSave.entrance == ENTRANCE(GORON_RACETRACK, 1)) {
                     this->actionFunc = func_80B51760;
-                } else if (gSaveContext.save.entrance == ENTRANCE(GORON_RACETRACK, 2)) {
+                } else if (gMmSave.entrance == ENTRANCE(GORON_RACETRACK, 2)) {
                     this->actionFunc = func_80B52340;
                 } else {
                     this->actionFunc = func_80B51760;

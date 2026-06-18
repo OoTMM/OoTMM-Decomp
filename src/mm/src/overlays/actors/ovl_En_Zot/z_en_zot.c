@@ -491,7 +491,7 @@ void func_80B973BC(EnZot* this, PlayState* play) {
                 break;
 
             case 0x1275:
-                if (gSaveContext.save.saveInfo.playerData.rupees < 10) {
+                if (gMmSave.saveInfo.playerData.rupees < 10) {
                     Message_ContinueTextbox(play, 0x1277);
                 } else {
                     Message_ContinueTextbox(play, 0x1278);
@@ -1233,7 +1233,7 @@ void func_80B98F30(EnZot* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = func_80B990A4;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_RUPEE_BLUE, 10000.0f, 50.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_RUPEE_BLUE, 10000.0f, 50.0f);
     }
 }
 

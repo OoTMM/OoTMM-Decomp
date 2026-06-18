@@ -207,36 +207,36 @@ void EnAz_Init(Actor* thisx, PlayState* play2) {
     switch (BEAVER_GET_PARAM_F00(thisx)) {
         case 0:
             phi_v1 =
-                (gSaveContext.save.entrance == ENTRANCE(WATERFALL_RAPIDS, 0)) && CHECK_WEEKEVENTREG(WEEKEVENTREG_93_01);
+                (gMmSave.entrance == ENTRANCE(WATERFALL_RAPIDS, 0)) && CHECK_WEEKEVENTREG(WEEKEVENTREG_93_01);
             phi_v1 = !phi_v1;
             break;
 
         case 2:
-            phi_v1 = (gSaveContext.save.entrance != ENTRANCE(WATERFALL_RAPIDS, 1)) ||
+            phi_v1 = (gMmSave.entrance != ENTRANCE(WATERFALL_RAPIDS, 1)) ||
                      !CHECK_WEEKEVENTREG(WEEKEVENTREG_24_04);
             break;
 
         case 4:
-            phi_v1 = gSaveContext.save.entrance != ENTRANCE(WATERFALL_RAPIDS, 2);
+            phi_v1 = gMmSave.entrance != ENTRANCE(WATERFALL_RAPIDS, 2);
             break;
 
         case 1:
             phi_v1 =
-                (gSaveContext.save.entrance == ENTRANCE(WATERFALL_RAPIDS, 0)) && CHECK_WEEKEVENTREG(WEEKEVENTREG_93_01);
+                (gMmSave.entrance == ENTRANCE(WATERFALL_RAPIDS, 0)) && CHECK_WEEKEVENTREG(WEEKEVENTREG_93_01);
             phi_v1 = !phi_v1;
             break;
 
         case 3:
             phi_v1 =
-                (gSaveContext.save.entrance != ENTRANCE(WATERFALL_RAPIDS, 1)) || CHECK_WEEKEVENTREG(WEEKEVENTREG_24_04);
+                (gMmSave.entrance != ENTRANCE(WATERFALL_RAPIDS, 1)) || CHECK_WEEKEVENTREG(WEEKEVENTREG_24_04);
             break;
 
         case 5:
-            phi_v1 = gSaveContext.save.entrance != ENTRANCE(WATERFALL_RAPIDS, 2);
+            phi_v1 = gMmSave.entrance != ENTRANCE(WATERFALL_RAPIDS, 2);
             break;
 
         case 6:
-            phi_v1 = (gSaveContext.save.entrance == ENTRANCE(WATERFALL_RAPIDS, 0)) &&
+            phi_v1 = (gMmSave.entrance == ENTRANCE(WATERFALL_RAPIDS, 0)) &&
                      !CHECK_WEEKEVENTREG(WEEKEVENTREG_93_01);
             phi_v1 = !phi_v1;
             break;
@@ -296,7 +296,7 @@ void EnAz_Init(Actor* thisx, PlayState* play2) {
     SubS_ChangeAnimationBySpeedInfo(&this->skelAnime, sAnimationSpeedInfo, BEAVER_ANIM_IDLE, &this->animIndex);
     this->skelAnime.curFrame = Rand_ZeroOne() * this->skelAnime.endFrame;
 
-    switch (gSaveContext.save.entrance) {
+    switch (gMmSave.entrance) {
         case ENTRANCE(WATERFALL_RAPIDS, 0):
             if (CHECK_WEEKEVENTREG(WEEKEVENTREG_93_01)) {
                 this->unk_2FA = 5;
@@ -323,7 +323,7 @@ void EnAz_Init(Actor* thisx, PlayState* play2) {
                 this->actor.flags |=
                     (ACTOR_FLAG_ATTENTION_ENABLED | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED);
             }
-            if (gSaveContext.save.entrance == ENTRANCE(WATERFALL_RAPIDS, 3)) {
+            if (gMmSave.entrance == ENTRANCE(WATERFALL_RAPIDS, 3)) {
                 this->unk_2FA = 0xA;
             }
             func_80A97C0C(this, play);
@@ -416,7 +416,7 @@ void EnAz_Init(Actor* thisx, PlayState* play2) {
 void EnAz_Destroy(Actor* thisx, PlayState* play2) {
     EnAz* this = (EnAz*)thisx;
 
-    if (gSaveContext.save.entrance != ENTRANCE(WATERFALL_RAPIDS, 1)) {
+    if (gMmSave.entrance != ENTRANCE(WATERFALL_RAPIDS, 1)) {
         gSaveContext.timerStates[TIMER_ID_MINIGAME_2] = TIMER_STATE_STOP;
     }
     Collider_DestroyCylinder(play2, &this->collider);
@@ -1004,9 +1004,9 @@ s32 func_80A9617C(EnAz* this, PlayState* play) {
                     case 0x10F1:
                         SET_WEEKEVENTREG(WEEKEVENTREG_93_01);
                         if (CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_BEAVER_RACE_BOTTLE)) {
-                            this->getItemId = GI_RUPEE_RED;
+                            this->getItemId = GI_MM_RUPEE_RED;
                         } else {
-                            this->getItemId = GI_BOTTLE;
+                            this->getItemId = GI_MM_BOTTLE_EMPTY;
                             SET_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_BEAVER_RACE_BOTTLE);
                         }
                         SubS_ChangeAnimationBySpeedInfo(&this->skelAnime, sAnimationSpeedInfo, BEAVER_ANIM_IDLE,
@@ -1176,9 +1176,9 @@ s32 func_80A9617C(EnAz* this, PlayState* play) {
 
                     case 0x1105:
                         if (CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_BEAVER_BROS_HEART_PIECE)) {
-                            this->getItemId = GI_RUPEE_PURPLE;
+                            this->getItemId = GI_MM_RUPEE_PURPLE;
                         } else {
-                            this->getItemId = GI_HEART_PIECE;
+                            this->getItemId = GI_MM_HEART_PIECE;
                             SET_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_BEAVER_BROS_HEART_PIECE);
                         }
                         SubS_ChangeAnimationBySpeedInfo(&this->skelAnime, sAnimationSpeedInfo, BEAVER_ANIM_IDLE,
@@ -1330,9 +1330,9 @@ s32 func_80A97274(EnAz* this, PlayState* play) {
 s32 func_80A973B4(EnAz* this, PlayState* play) {
     s32 ret = 0;
 
-    if (this->getItemId != GI_RUPEE_RED) {
-        if ((this->getItemId != GI_RUPEE_PURPLE) && (this->getItemId != GI_HEART_PIECE)) {
-            if (this->getItemId == GI_BOTTLE) {
+    if (this->getItemId != GI_MM_RUPEE_RED) {
+        if ((this->getItemId != GI_MM_RUPEE_PURPLE) && (this->getItemId != GI_MM_HEART_PIECE)) {
+            if (this->getItemId == GI_MM_BOTTLE_EMPTY) {
                 ret = 0x10F2;
             }
         } else {

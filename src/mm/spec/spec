@@ -1,26 +1,24 @@
 /*
  * ROM spec file
  */
-
 beginseg
-    name "framebuffer_lo"
-    address 0x80000500
-    flags NOLOAD
-    include "$(BUILD_DIR)/src/buffers/framebuffer_lo.o"
+    name "makerom"
+    include "../loader/build/makerom.o"
 endseg
 
 beginseg
-    name "makerom"
-    address 0x8007F000
-    include "$(BUILD_DIR)/src/makerom/rom_header.o"
-    include "$(BUILD_DIR)/src/makerom/ipl3.o"
-    include "$(BUILD_DIR)/src/makerom/entry.o"
+    name "loader"
+    address 0x80000400
+    include "../loader/build/entry.o"
+    include "../loader/build/loader.o"
 endseg
 
 beginseg
     name "boot"
-    address 0x80080060
     include "$(BUILD_DIR)/src/boot/boot_main.o"
+    include "$(BUILD_DIR)/src/z64/file.o"
+    include "$(BUILD_DIR)/src/z64/save.o"
+    include "$(BUILD_DIR)/src/z64/flash.o"
     include "$(BUILD_DIR)/src/boot/idle.o"
     include "$(BUILD_DIR)/src/boot/viconfig.o"
     include "$(BUILD_DIR)/src/boot/carthandle.o"
@@ -135,10 +133,7 @@ beginseg
     include "$(BUILD_DIR)/src/libultra/io/epidma.o"
     include "$(BUILD_DIR)/src/libultra/voice/voicecontread2.o"
     include "$(BUILD_DIR)/src/libultra/voice/voicecrc.o"
-    include "$(BUILD_DIR)/src/libultra/libc/string.o"
     include "$(BUILD_DIR)/src/libultra/os/createmesgqueue.o"
-    include "$(BUILD_DIR)/asm/boot/invalicache.text.o"
-    include "$(BUILD_DIR)/asm/boot/invaldcache.text.o"
     include "$(BUILD_DIR)/src/libultra/os/timerintr.o"
     include "$(BUILD_DIR)/src/libultra/voice/voicecontread36.o"
     include "$(BUILD_DIR)/src/libultra/io/sp.o"
@@ -238,12 +233,7 @@ beginseg
     include "$(BUILD_DIR)/asm/boot/getwatchlo.text.o"
     include "$(BUILD_DIR)/asm/boot/setwatchlo.text.o"
     include "$(BUILD_DIR)/src/boot/libm/fmodf.o"
-    include "$(BUILD_DIR)/src/boot/libc/memset.o"
-    include "$(BUILD_DIR)/src/boot/libc/strcmp.o"
-    include "$(BUILD_DIR)/src/boot/libc/strcpy.o"
-    include "$(BUILD_DIR)/src/boot/libc/memmove.o"
     include "$(BUILD_DIR)/src/boot/build.o"
-    include "$(BUILD_DIR)/src/boot/rspboot.o"
 
 #ifdef COMPILER_GCC
     include "$(BUILD_DIR)/src/gcc_fix/missing_gcc_functions.o"
@@ -743,9 +733,7 @@ beginseg
     include "$(BUILD_DIR)/src/code/sys_freeze.o"
     include "$(BUILD_DIR)/src/code/c_keyframe.o"
     include "$(BUILD_DIR)/src/code/sys_slowly.o"
-    include "$(BUILD_DIR)/src/code/sys_flashrom.o"
     include "$(BUILD_DIR)/asm/code/kanread.text.o" // handwritten
-    include "$(BUILD_DIR)/src/code/osFlash.o"
     pad_text
     pad_text
     pad_text
@@ -780,7 +768,6 @@ beginseg
     include "$(BUILD_DIR)/assets/audio/sequence_font_table.o"
     include "$(BUILD_DIR)/src/audio/tables/sequence_table.o"
     include "$(BUILD_DIR)/src/audio/tables/samplebank_table.o"
-    include "$(BUILD_DIR)/src/code/rspcode.o"
 endseg
 
 // The game expects all the segments after the `code` segment and before the first overlay to be `NOLOAD` ones
@@ -790,13 +777,7 @@ beginseg
     flags NOLOAD
     include "$(BUILD_DIR)/src/buffers/gfxbuffers.o"
     include "$(BUILD_DIR)/src/buffers/audio_heap.o"
-endseg
-
-beginseg
-    name "framebuffer_hi"
-    flags NOLOAD
-    // This has to be fixed location in VRAM. See the FRAMEBUFFERS_START_ADDR define on `buffers.h` for a more in-depth explanation
-    address 0x80780000
+    include "$(BUILD_DIR)/src/buffers/framebuffer_lo.o"
     include "$(BUILD_DIR)/src/buffers/framebuffer_hi.o"
 endseg
 
@@ -820,16 +801,6 @@ beginseg
     compress
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_opening/z_opening.o"
     include "$(BUILD_DIR)/src/overlays/gamestates/ovl_opening/ovl_opening_reloc.o"
-endseg
-
-beginseg
-    name "ovl_file_choose"
-    compress
-    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_nameset_data.o"
-    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_copy_erase.o"
-    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_nameset_NES.o"
-    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/z_file_choose_NES.o"
-    include "$(BUILD_DIR)/src/overlays/gamestates/ovl_file_choose/ovl_file_choose_reloc.o"
 endseg
 
 beginseg

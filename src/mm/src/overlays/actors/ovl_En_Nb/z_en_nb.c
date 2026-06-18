@@ -118,7 +118,7 @@ MsgScript D_80BC1464[] = {
     /* 0x00AE 0x03 */ MSCRIPT_CMD_CONTINUE_TEXT(0x290F),
     /* 0x00B1 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x00B2 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
-    /* 0x00B3 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_HEART_PIECE, 0x0),
+    /* 0x00B3 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_HEART_PIECE, 0x0),
     /* 0x00B8 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x000C),
     /* 0x00BB 0x03 */ MSCRIPT_CMD_JUMP_3(0x0),
     /* 0x00BE 0x01 */ MSCRIPT_CMD_AWAIT_TEXT_DONE(),
@@ -145,7 +145,7 @@ MsgScript D_80BC1464[] = {
     /* 0x00E9 0x03 */ MSCRIPT_CMD_CONTINUE_TEXT(0x2909),
     /* 0x00EC 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x00ED 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
-    /* 0x00EE 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_HEART_PIECE, 0x0),
+    /* 0x00EE 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_HEART_PIECE, 0x0),
     /* 0x00F3 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x000C),
     /* 0x00F6 0x03 */ MSCRIPT_CMD_JUMP_3(0x0),
     /* 0x00F9 0x01 */ MSCRIPT_CMD_AWAIT_TEXT_DONE(),
@@ -465,7 +465,7 @@ s32 func_80BC01DC(Actor* thisx, PlayState* play) {
             FALLTHROUGH;
         case ENNB_BEHAVIOUR_5:
             if (!CHECK_EVENTINF(EVENTINF_42)) {
-                gSaveContext.save.time = CLOCK_TIME(8, 0);
+                gMmSave.time = CLOCK_TIME(8, 0);
                 Sram_IncrementDay();
             } else {
                 Environment_SetTimeJump(120.0f);
@@ -742,7 +742,7 @@ void EnNb_HandleSchedule(EnNb* this, PlayState* play) {
 void EnNb_FollowSchedule(EnNb* this, PlayState* play) {
     ScheduleOutput scheduleOutput;
 
-    this->timePathTimeSpeed = R_TIME_SPEED + ((void)0, gSaveContext.save.timeSpeedOffset);
+    this->timePathTimeSpeed = R_TIME_SPEED + ((void)0, gMmSave.timeSpeedOffset);
 
     if (CHECK_EVENTINF(EVENTINF_43)) {
         scheduleOutput.result = EN_NB_SCH_1;

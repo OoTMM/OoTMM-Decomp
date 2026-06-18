@@ -240,12 +240,12 @@ MsgScript D_80B2C3B8[] = {
     /* 0x0007 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0008 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
     /* 0x0009 0x05 */ MSCRIPT_CMD_CHECK_WEEK_EVENT_REG(WEEKEVENTREG_81_08, 0x001D - 0x000E),
-    /* 0x000E 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_HEART_PIECE, 0x0),
+    /* 0x000E 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_HEART_PIECE, 0x0),
     /* 0x0013 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x000C),
     /* 0x0016 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0017 0x03 */ MSCRIPT_CMD_SET_WEEK_EVENT_REG(WEEKEVENTREG_81_08),
     /* 0x001A 0x03 */ MSCRIPT_CMD_AUTOTALK(0x0029 - 0x001D),
-    /* 0x001D 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_RUPEE_GREEN, 0x0),
+    /* 0x001D 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_RUPEE_GREEN, 0x0),
     /* 0x0022 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x0001),
     /* 0x0025 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0026 0x03 */ MSCRIPT_CMD_AUTOTALK(0x0),
@@ -629,7 +629,7 @@ void EnPst_FollowSchedule(EnPst* this, PlayState* play) {
 void EnPst_Talk(EnPst* this, PlayState* play) {
     if (MsgEvent_RunScript(&this->actor, play, this->msgScript, this->msgScriptCallback, &this->msgScriptPos)) {
         if (EnPst_HandleLetterDay1(this) != this->isLetterToKafeiDeposited) {
-            switch (gSaveContext.save.day) {
+            switch (gMmSave.day) {
                 case 1:
                     SET_WEEKEVENTREG(WEEKEVENTREG_91_04);
                     break;

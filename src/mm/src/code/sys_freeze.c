@@ -3,6 +3,6 @@
 
 NORETURN void Sys_Freeze(void) {
     for (;;) {
-        msleep(1000);
+        Sleep_Msec(1000);
     }
 }

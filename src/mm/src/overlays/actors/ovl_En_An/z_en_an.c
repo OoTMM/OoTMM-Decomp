@@ -408,7 +408,7 @@ MsgScript sAnjuMsgScript_ReceptionistDay1[] = {
     /* 0x0034 0x03 */ MSCRIPT_CMD_CONTINUE_TEXT(0x28AB),
     /* 0x0037 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0038 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
-    /* 0x0039 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_ROOM_KEY, 0x0),
+    /* 0x0039 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_ROOM_KEY, 0x0),
     /* 0x003E 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x00A0),
     /* 0x0041 0x03 */ MSCRIPT_CMD_JUMP_3(0x0),
     /* 0x0044 0x01 */ MSCRIPT_CMD_AWAIT_TEXT_DONE(),
@@ -585,7 +585,7 @@ MsgScript sAnjuMsgScript_SchMidnightMeeting[] = {
     /* 0x0027 0x03 */ MSCRIPT_CMD_SET_WEEK_EVENT_REG(WEEKEVENTREG_HAD_MIDNIGHT_MEETING),
     /* 0x002A 0x03 */ MSCRIPT_CMD_SET_WEEK_EVENT_REG(WEEKEVENTREG_50_10),
     /* 0x002D 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
-    /* 0x002E 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_LETTER_TO_KAFEI, 0x0),
+    /* 0x002E 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_LETTER_TO_KAFEI, 0x0),
     /* 0x0033 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x00AA),
     /* 0x0036 0x03 */ MSCRIPT_CMD_JUMP_3(0x0),
     /* 0x0039 0x01 */ MSCRIPT_CMD_AWAIT_TEXT_DONE(),
@@ -1735,7 +1735,7 @@ MsgScript* EnAn_GetMsgScript(EnAn* this, PlayState* play) {
             return sAnjuMsgScript_SchLaundryPoolKafeiMask;
         }
 
-        if (gSaveContext.save.day >= 2) {
+        if (gMmSave.day >= 2) {
             return sAnjuMsgScript_80B58A44;
         }
 
@@ -1757,7 +1757,7 @@ MsgScript* EnAn_GetMsgScript(EnAn* this, PlayState* play) {
             return sAnjuMsgScript_SchLaundryPoolDefault;
         }
 
-        if (gSaveContext.save.day >= 2) {
+        if (gMmSave.day >= 2) {
             return sAnjuMsgScript_80B58A44;
         }
     }
@@ -1780,7 +1780,7 @@ MsgScript* EnAn_GetMsgScript(EnAn* this, PlayState* play) {
             return sAnjuMsgScript_SchLaundryPoolDefault;
 
         case ANJU_SCH_RECEPTIONIST_IDLE:
-            if (gSaveContext.save.day >= 2) {
+            if (gMmSave.day >= 2) {
                 return sAnjuMsgScript_Receptionist;
             }
             return sAnjuMsgScript_ReceptionistDay1;
@@ -3264,7 +3264,7 @@ void EnAn_FinishInit(EnAn* this, PlayState* play) {
 void EnAn_FollowSchedule(EnAn* this, PlayState* play) {
     ScheduleOutput scheduleOutput;
 
-    this->timePathTimeSpeed = R_TIME_SPEED + ((void)0, gSaveContext.save.timeSpeedOffset);
+    this->timePathTimeSpeed = R_TIME_SPEED + ((void)0, gMmSave.timeSpeedOffset);
 
     if (!ENAN_GET_8000(&this->actor) && !this->unk_3C0 &&
         CHECK_WEEKEVENTREG(WEEKEVENTREG_COUPLES_MASK_CUTSCENE_FINISHED)) {

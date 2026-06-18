@@ -417,9 +417,9 @@ void func_80AD3FF4(EnTrt2* this, PlayState* play) {
         this->actor.parent = NULL;
         this->unk_3B2 = 14;
     } else if (CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_KOTAKE_BOTTLE)) {
-        Actor_OfferGetItem(&this->actor, play, GI_POTION_RED, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_POTION_RED, 300.0f, 300.0f);
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_POTION_RED_BOTTLE, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_BOTTLE_POTION_RED, 300.0f, 300.0f);
     }
 }
 
@@ -752,7 +752,7 @@ void func_80AD4DB4(EnTrt2* this, PlayState* play) {
     }
 
     if ((play->sceneId == SCENE_20SICHITAI) || (play->sceneId == SCENE_20SICHITAI2)) {
-        if (gSaveContext.save.day == 2) {
+        if (gMmSave.day == 2) {
             if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_15_80)) {
                 SET_WEEKEVENTREG(WEEKEVENTREG_15_80);
                 this->unk_3B2 = 3;
@@ -764,14 +764,14 @@ void func_80AD4DB4(EnTrt2* this, PlayState* play) {
             Actor_Kill(&this->actor);
             return;
         }
-    } else if (gSaveContext.save.day == 2) {
+    } else if (gMmSave.day == 2) {
         if (CHECK_WEEKEVENTREG(WEEKEVENTREG_15_80)) {
             this->unk_3B2 = 4;
         } else {
             Actor_Kill(&this->actor);
             return;
         }
-    } else if (gSaveContext.save.day == 3) {
+    } else if (gMmSave.day == 3) {
         this->unk_3B2 = 4;
     }
     this->actionFunc = func_80AD4FE4;

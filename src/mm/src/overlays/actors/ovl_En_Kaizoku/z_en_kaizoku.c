@@ -1803,14 +1803,14 @@ void EnKaizoku_DefeatKnockdown(EnKaizoku* this, PlayState* play) {
 void EnKaizoku_UpdateDamage(EnKaizoku* this, PlayState* play) {
     s32 wasHit = false;
 
-    if (gSaveContext.save.saveInfo.playerData.health <= 0x10) {
+    if (gMmSave.saveInfo.playerData.health <= 0x10) {
         this->swordCollider.elem.atDmgInfo.damage = 0;
     } else {
         this->swordCollider.elem.atDmgInfo.damage = 4;
     }
 
     if (!(this->swordCollider.base.atFlags & AT_BOUNCED) && (this->swordCollider.base.atFlags & AT_HIT)) {
-        if ((gSaveContext.save.saveInfo.playerData.health <= 0x10) && (this->action != KAIZOKU_ACTION_SCENE_FADE)) {
+        if ((gMmSave.saveInfo.playerData.health <= 0x10) && (this->action != KAIZOKU_ACTION_SCENE_FADE)) {
             this->spinAttackState = 2;
             this->subCamId = SUB_CAM_ID_DONE;
             this->picto.actor.flags |= ACTOR_FLAG_FREEZE_EXCEPTION;
@@ -1828,7 +1828,7 @@ void EnKaizoku_UpdateDamage(EnKaizoku* this, PlayState* play) {
                    (this->swordCollider.base.at == &GET_PLAYER(play)->actor)) {
             func_800B8D98(play, &this->picto.actor, 3.0f, this->picto.actor.yawTowardsPlayer, 1.0f);
             Health_ChangeBy(play, -0xC);
-            if ((gSaveContext.save.saveInfo.playerData.health <= 0x10) && (this->action != KAIZOKU_ACTION_SCENE_FADE)) {
+            if ((gMmSave.saveInfo.playerData.health <= 0x10) && (this->action != KAIZOKU_ACTION_SCENE_FADE)) {
                 Health_ChangeBy(play, 0x10);
                 this->spinAttackState = 2;
                 this->subCamId = SUB_CAM_ID_DONE;

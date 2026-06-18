@@ -138,13 +138,13 @@ void EnElfgrp_Init(Actor* thisx, PlayState* play) {
                         break;
 
                     case ENELFGRP_TYPE_WISDOM:
-                        if (gSaveContext.save.saveInfo.playerData.isDoubleMagicAcquired == true) {
+                        if (gMmSave.saveInfo.playerData.isDoubleMagicAcquired == true) {
                             EnElfgrp_SetCutscene(this, 1);
                         }
                         break;
 
                     case ENELFGRP_TYPE_COURAGE:
-                        if (gSaveContext.save.saveInfo.playerData.doubleDefense) {
+                        if (gMmSave.saveInfo.playerData.doubleDefense) {
                             EnElfgrp_SetCutscene(this, 1);
                         }
                         break;
@@ -166,7 +166,7 @@ void EnElfgrp_Init(Actor* thisx, PlayState* play) {
             } else {
                 this->actionFunc = func_80A3A8F8;
 
-                if ((gSaveContext.save.saveInfo.weekEventReg[9] & this->talkedOnceFlag)) { // talked for first time
+                if ((gMmSave.saveInfo.weekEventReg[9] & this->talkedOnceFlag)) { // talked for first time
                     this->actor.textId = (this->type * 3) + 0x580;
                 } else {
                     this->actor.textId = (this->type * 3) + 0x57F;
@@ -203,13 +203,13 @@ void EnElfgrp_Init(Actor* thisx, PlayState* play) {
                         EnElfgrp_SetCutscene(this, 3);
                         this->stateFlags |= ELFGRP_STATE_1;
                     }
-                } else if (gSaveContext.save.saveInfo.playerData.isMagicAcquired == true) {
+                } else if (gMmSave.saveInfo.playerData.isMagicAcquired == true) {
                     EnElfgrp_SetCutscene(this, 1);
                 }
             } else {
                 EnElfgrp_SpawnStrayFairies(this, play, STRAY_FAIRY_TOTAL - 1, SPAWNED_STRAY_FAIRY_TYPE_PRESENT);
                 this->actionFunc = func_80A3A8F8;
-                if ((gSaveContext.save.saveInfo.weekEventReg[9] & this->talkedOnceFlag)) {
+                if ((gMmSave.saveInfo.weekEventReg[9] & this->talkedOnceFlag)) {
                     this->actor.textId = 0x580;
                 } else {
                     this->actor.textId = 0x578;
@@ -231,7 +231,7 @@ s32 EnElfgrp_GetHeldFairiesCount(PlayState* play, s32 type) {
 
     // Number in fountain originally + total number collected - number currently in fountain
     return (STRAY_FAIRY_TOTAL - STRAY_FAIRY_SCATTERED_TOTAL) +
-           ((void)0, gSaveContext.save.saveInfo.inventory.strayFairies[type - 1]) -
+           ((void)0, gMmSave.saveInfo.inventory.strayFairies[type - 1]) -
            EnElfgrp_GetFountainFairiesCount(play, type);
 }
 
@@ -244,7 +244,7 @@ s32 EnElfgrp_GetFountainFairiesCount(PlayState* play, s32 type) {
     }
 
     if (type == ENELFGRP_TYPE_MAGIC) {
-        if (gSaveContext.save.saveInfo.permanentSceneFlags[play->sceneId].unk_14 & 1) {
+        if (gMmSave.saveInfo.permanentSceneFlags[play->sceneId].unk_14 & 1) {
             return STRAY_FAIRY_TOTAL;
         } else {
             return STRAY_FAIRY_TOTAL - 1;
@@ -252,7 +252,7 @@ s32 EnElfgrp_GetFountainFairiesCount(PlayState* play, s32 type) {
     }
 
     numberInFountain =
-        (gSaveContext.save.saveInfo.permanentSceneFlags[play->sceneId].unk_14 >> (((type - 1) * 5) + 1)) & 0x1F;
+        (gMmSave.saveInfo.permanentSceneFlags[play->sceneId].unk_14 >> (((type - 1) * 5) + 1)) & 0x1F;
     if (numberInFountain < STRAY_FAIRY_TOTAL - STRAY_FAIRY_SCATTERED_TOTAL) {
         numberInFountain = STRAY_FAIRY_TOTAL - STRAY_FAIRY_SCATTERED_TOTAL;
     } else if (numberInFountain > STRAY_FAIRY_TOTAL) {
@@ -270,13 +270,13 @@ void EnElfgrp_SetFountainFairiesCount(PlayState* play, s32 type, s32 newCount) {
 
     if (type == ENELFGRP_TYPE_MAGIC) {
         if (newCount == STRAY_FAIRY_TOTAL) {
-            gSaveContext.save.saveInfo.permanentSceneFlags[play->sceneId].unk_14 |= 1;
+            gMmSave.saveInfo.permanentSceneFlags[play->sceneId].unk_14 |= 1;
         } else {
-            gSaveContext.save.saveInfo.permanentSceneFlags[play->sceneId].unk_14 &= ~1;
+            gMmSave.saveInfo.permanentSceneFlags[play->sceneId].unk_14 &= ~1;
         }
     } else {
-        gSaveContext.save.saveInfo.permanentSceneFlags[play->sceneId].unk_14 &= ~(0x1F << ((type * 5) - 4));
-        gSaveContext.save.saveInfo.permanentSceneFlags[play->sceneId].unk_14 |= newCount << ((type * 5) - 4);
+        gMmSave.saveInfo.permanentSceneFlags[play->sceneId].unk_14 &= ~(0x1F << ((type * 5) - 4));
+        gMmSave.saveInfo.permanentSceneFlags[play->sceneId].unk_14 |= newCount << ((type * 5) - 4);
     }
 }
 
@@ -588,7 +588,7 @@ void func_80A3A7FC(EnElfgrp* this, PlayState* play) {
     s32 curTotalFairies;
 
     if (Actor_TalkOfferAccepted(&this->actor, &play->state)) {
-        gSaveContext.save.saveInfo.weekEventReg[9] |= this->talkedOnceFlag;
+        gMmSave.saveInfo.weekEventReg[9] |= this->talkedOnceFlag;
         this->actionFunc = func_80A3A6F4;
 
         curTotalFairies = EnElfgrp_GetHeldFairiesCount(play, this->type);
@@ -610,7 +610,7 @@ void func_80A3A8F8(EnElfgrp* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (Actor_TalkOfferAccepted(&this->actor, &play->state)) {
-        gSaveContext.save.saveInfo.weekEventReg[9] |= this->talkedOnceFlag;
+        gMmSave.saveInfo.weekEventReg[9] |= this->talkedOnceFlag;
         this->actionFunc = func_80A3A6F4;
         return;
     }
@@ -629,7 +629,7 @@ void func_80A3A8F8(EnElfgrp* this, PlayState* play) {
             player->stateFlags1 |= PLAYER_STATE1_20000000;
             Message_StartTextbox(play, this->actor.textId, &this->actor);
             this->actionFunc = func_80A3A77C;
-            gSaveContext.save.saveInfo.weekEventReg[9] |= this->talkedOnceFlag;
+            gMmSave.saveInfo.weekEventReg[9] |= this->talkedOnceFlag;
         } else {
             this->actor.flags |= ACTOR_FLAG_TALK_OFFER_AUTO_ACCEPTED;
             Actor_OfferTalk(&this->actor, play, 100.0f);

@@ -219,10 +219,10 @@ void func_80AE77D4(EnStopheishi* this) {
         (this->animIndex != SOLDIER_ANIM_STAND_HAND_ON_CHEST) && (this->unk_264 != 0)) {
         this->skelAnime.playSpeed = 1.0f;
         EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_HAND_ON_HIP);
-        if ((gSaveContext.save.day != 3) && gSaveContext.save.isNight) {
+        if ((gMmSave.day != 3) && gMmSave.isNight) {
             EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_LOOK_DOWN);
         }
-        if (gSaveContext.save.day == 3) {
+        if (gMmSave.day == 3) {
             EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_HAND_ON_CHEST);
         }
     }
@@ -287,7 +287,7 @@ void func_80AE795C(EnStopheishi* this, PlayState* play) {
 
     switch (this->unk_274) {
         case 0:
-            if (gSaveContext.save.day != 3) {
+            if (gMmSave.day != 3) {
                 EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_4);
                 this->unk_274 = 2;
             } else {
@@ -339,10 +339,10 @@ void func_80AE795C(EnStopheishi* this, PlayState* play) {
 
 void func_80AE7E9C(EnStopheishi* this) {
     EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_HAND_ON_HIP);
-    if ((gSaveContext.save.day != 3) && gSaveContext.save.isNight) {
+    if ((gMmSave.day != 3) && gMmSave.isNight) {
         EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_LOOK_DOWN);
     }
-    if (gSaveContext.save.day == 3) {
+    if (gMmSave.day == 3) {
         EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_HAND_ON_CHEST);
     }
     this->unk_274 = 0;
@@ -364,7 +364,7 @@ void func_80AE7F34(EnStopheishi* this, PlayState* play) {
     if ((this->animIndex == SOLDIER_ANIM_5) && ((TRUNCF_BINANG(this->skelAnime.curFrame) % 2) != 0)) {
         Actor_PlaySfx(&this->actor, NA_SE_EV_SOLDIER_WALK);
     }
-    if (gSaveContext.save.day != 3) {
+    if (gMmSave.day != 3) {
         EnStopheishi_UpdateHeadNormal(this, play);
     } else {
         EnStopHeishi_UpdateHeadThirdDay(this);
@@ -372,16 +372,16 @@ void func_80AE7F34(EnStopheishi* this, PlayState* play) {
     Math_SmoothStepToS(&this->actor.world.rot.y, this->rotYTarget, 1, 0x1388, 0);
 
     sp32 = 0;
-    if (gSaveContext.save.isNight) {
+    if (gMmSave.isNight) {
         sp32 = 0x20;
     }
 
     phi_a2 = 0;
     switch (player->transformation) {
         case PLAYER_FORM_HUMAN:
-            if ((STOLEN_ITEM_1 == SLOT_SWORD_GREAT_FAIRY) || (STOLEN_ITEM_1 == ITEM_SWORD_KOKIRI) ||
+            if ((STOLEN_ITEM_1 == SLOT_MM_SWORD_GREAT_FAIRY) || (STOLEN_ITEM_1 == ITEM_SWORD_KOKIRI) ||
                 (STOLEN_ITEM_1 == ITEM_SWORD_RAZOR) || (STOLEN_ITEM_1 == ITEM_SWORD_GILDED) ||
-                (STOLEN_ITEM_2 == SLOT_SWORD_GREAT_FAIRY) || (STOLEN_ITEM_2 == ITEM_SWORD_KOKIRI) ||
+                (STOLEN_ITEM_2 == SLOT_MM_SWORD_GREAT_FAIRY) || (STOLEN_ITEM_2 == ITEM_SWORD_KOKIRI) ||
                 (STOLEN_ITEM_2 == ITEM_SWORD_RAZOR) || (STOLEN_ITEM_2 == ITEM_SWORD_GILDED)) {
                 if (this->unk_265 != 0) {
                     phi_a2 = 1;
@@ -408,10 +408,10 @@ void func_80AE7F34(EnStopheishi* this, PlayState* play) {
         (((this->animIndex == SOLDIER_ANIM_4)) || (this->animIndex == SOLDIER_ANIM_5) ||
          (this->animIndex == SOLDIER_ANIM_6))) {
         EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_HAND_ON_HIP);
-        if ((gSaveContext.save.day != 3) && gSaveContext.save.isNight) {
+        if ((gMmSave.day != 3) && gMmSave.isNight) {
             EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_LOOK_DOWN);
         }
-        if (gSaveContext.save.day == 3) {
+        if (gMmSave.day == 3) {
             EnStopHeishi_ChangeAnim(this, SOLDIER_ANIM_STAND_HAND_ON_CHEST);
         }
     }
@@ -441,7 +441,7 @@ void func_80AE7F34(EnStopheishi* this, PlayState* play) {
         }
         this->messageIndex += this->unk_276 * 2;
     }
-    if (gSaveContext.save.day != 3) {
+    if (gMmSave.day != 3) {
         this->actor.textId = sLeaveMessages[this->messageIndex];
         this->unk_27E = sLeaveMessages[this->messageIndex + 1];
     } else {

@@ -2824,7 +2824,6 @@ void KaleidoScope_Update(PlayState* play) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     MessageContext* msgCtx = &play->msgCtx;
     GameOverContext* gameOverCtx = &play->gameOverCtx;
-    SramContext* sramCtx = &play->sramCtx;
     Input* input = CONTROLLER1(&play->state);
     size_t size0;
     size_t size1;
@@ -3067,14 +3066,12 @@ void KaleidoScope_Update(PlayState* play) {
                         } else {
                             Audio_PlaySfx(NA_SE_SY_PIECE_OF_HEART);
                             Play_SaveCycleSceneFlags(play);
-                            gSaveContext.save.saveInfo.playerData.savedSceneId = play->sceneId;
-                            func_8014546C(sramCtx);
+                            gMmSave.saveInfo.playerData.savedSceneId = play->sceneId;
+                            Sram_UpdatePermanentFlags();
                             if (!gSaveContext.flashSaveAvailable) {
                                 pauseCtx->savePromptState = PAUSE_SAVEPROMPT_STATE_5;
                             } else {
-                                Sram_SetFlashPagesDefault(sramCtx, gFlashSaveStartPages[gSaveContext.fileNum],
-                                                          gFlashSaveNumPages[gSaveContext.fileNum]);
-                                Sram_StartWriteToFlashDefault(sramCtx);
+                                SaveRaw_Write();
                                 pauseCtx->savePromptState = PAUSE_SAVEPROMPT_STATE_4;
                             }
                             sDelayTimer = 90;
@@ -3093,9 +3090,7 @@ void KaleidoScope_Update(PlayState* play) {
                     break;
 
                 case PAUSE_SAVEPROMPT_STATE_4:
-                    if (sramCtx->status == 0) {
-                        pauseCtx->savePromptState = PAUSE_SAVEPROMPT_STATE_5;
-                    }
+                    pauseCtx->savePromptState = PAUSE_SAVEPROMPT_STATE_5;
                     break;
 
                 case PAUSE_SAVEPROMPT_STATE_5:
@@ -3333,15 +3328,13 @@ void KaleidoScope_Update(PlayState* play) {
                     Audio_PlaySfx(NA_SE_SY_PIECE_OF_HEART);
                     pauseCtx->promptChoice = PAUSE_PROMPT_YES;
                     Play_SaveCycleSceneFlags(play);
-                    gSaveContext.save.saveInfo.playerData.savedSceneId = play->sceneId;
-                    gSaveContext.save.saveInfo.playerData.health = 0x30;
-                    func_8014546C(sramCtx);
+                    gMmSave.saveInfo.playerData.savedSceneId = play->sceneId;
+                    gMmSave.saveInfo.playerData.health = 0x30;
+                    Sram_UpdatePermanentFlags();
                     if (!gSaveContext.flashSaveAvailable) {
                         pauseCtx->state = PAUSE_STATE_GAMEOVER_8;
                     } else {
-                        Sram_SetFlashPagesDefault(sramCtx, gFlashSaveStartPages[gSaveContext.fileNum],
-                                                  gFlashSaveNumPages[gSaveContext.fileNum]);
-                        Sram_StartWriteToFlashDefault(sramCtx);
+                        SaveRaw_Write();
                         pauseCtx->state = PAUSE_STATE_GAMEOVER_7;
                     }
                     sDelayTimer = 90;
@@ -3356,13 +3349,11 @@ void KaleidoScope_Update(PlayState* play) {
             break;
 
         case PAUSE_STATE_GAMEOVER_7:
-            if (sramCtx->status == 0) {
-                pauseCtx->state = PAUSE_STATE_OFF;
-                GameState_SetFramerateDivisor(&play->state, 3);
-                R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_UNK4;
-                Object_LoadAll(&play->objectCtx);
-                BgCheck_InitCollisionHeaders(&play->colCtx, play);
-            }
+            pauseCtx->state = PAUSE_STATE_OFF;
+            GameState_SetFramerateDivisor(&play->state, 3);
+            R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_UNK4;
+            Object_LoadAll(&play->objectCtx);
+            BgCheck_InitCollisionHeaders(&play->colCtx, play);
             break;
 
         case PAUSE_STATE_GAMEOVER_8:
@@ -3383,7 +3374,7 @@ void KaleidoScope_Update(PlayState* play) {
                 if (pauseCtx->promptChoice == PAUSE_PROMPT_YES) {
                     Audio_PlaySfx(NA_SE_SY_PIECE_OF_HEART);
                     Play_SaveCycleSceneFlags(play);
-                    if (gSaveContext.save.entrance == ENTRANCE(UNSET_0D, 0)) {}
+                    if (gMmSave.entrance == ENTRANCE(UNSET_0D, 0)) {}
                 } else { // PAUSE_PROMPT_NO
                     Audio_PlaySfx(NA_SE_SY_DECIDE);
                 }
@@ -3407,15 +3398,15 @@ void KaleidoScope_Update(PlayState* play) {
                         func_80169FDC(play);
                         gSaveContext.respawnFlag = -2;
                         gSaveContext.nextTransitionType = TRANS_TYPE_FADE_BLACK;
-                        gSaveContext.save.saveInfo.playerData.health = 0x30;
+                        gMmSave.saveInfo.playerData.health = 0x30;
                         Audio_SetSpec(0xA);
                         gSaveContext.healthAccumulator = 0;
                         gSaveContext.magicState = MAGIC_STATE_IDLE;
                         gSaveContext.magicFlag = 0;
                         gSaveContext.magicCapacity = 0;
-                        gSaveContext.magicFillTarget = gSaveContext.save.saveInfo.playerData.magic;
-                        gSaveContext.save.saveInfo.playerData.magicLevel = 0;
-                        gSaveContext.save.saveInfo.playerData.magic = 0;
+                        gSaveContext.magicFillTarget = gMmSave.saveInfo.playerData.magic;
+                        gMmSave.saveInfo.playerData.magicLevel = 0;
+                        gMmSave.saveInfo.playerData.magic = 0;
                     } else { // PAUSE_PROMPT_NO
                         STOP_GAMESTATE(&play->state);
                         SET_NEXT_GAMESTATE(&play->state, TitleSetup_Init, sizeof(TitleSetupState));

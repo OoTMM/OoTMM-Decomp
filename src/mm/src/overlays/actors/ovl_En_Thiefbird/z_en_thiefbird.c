@@ -217,15 +217,15 @@ s32 func_80C10B0C(EnThiefbird* this, PlayState* play) {
     };
     s32 isItemFound = false;
     s32 phi_a3 = 0;
-    s32 slotId = SLOT_BOTTLE_1;
+    s32 slotId = SLOT_MM_BOTTLE_1;
     s32 itemId1;
     s16 itemId2 = 0;
 
     for (; slotId < ITEM_NUM_SLOTS; slotId++) {
-        if ((gSaveContext.save.saveInfo.inventory.items[slotId] >= ITEM_BOTTLE) &&
-            (gSaveContext.save.saveInfo.inventory.items[slotId] <= ITEM_POTION_BLUE)) {
+        if ((gMmSave.saveInfo.inventory.items[slotId] >= ITEM_BOTTLE) &&
+            (gMmSave.saveInfo.inventory.items[slotId] <= ITEM_POTION_BLUE)) {
             isItemFound = true;
-            itemId2 = gSaveContext.save.saveInfo.inventory.items[slotId];
+            itemId2 = gMmSave.saveInfo.inventory.items[slotId];
             break;
         }
     }
@@ -263,7 +263,7 @@ s32 func_80C10B0C(EnThiefbird* this, PlayState* play) {
 
         itemId1 = phi_a3 + (ITEM_SWORD_KOKIRI - 1);
         if (phi_a3 == 4) {
-            Inventory_DeleteItem(ITEM_SWORD_GREAT_FAIRY, SLOT_SWORD_GREAT_FAIRY);
+            Inventory_DeleteItem(ITEM_SWORD_GREAT_FAIRY, SLOT_MM_SWORD_GREAT_FAIRY);
             this->unk_3E8 = gTakkuriStolenGreatFairysSwordDL;
             itemId1 = ITEM_SWORD_GREAT_FAIRY;
         } else {
@@ -343,7 +343,7 @@ s32 func_80C10E98(PlayState* play) {
         spAC = 0;
     }
 
-    sp98 = (gSaveContext.save.saveInfo.playerData.rupees / 4) * 3;
+    sp98 = (gMmSave.saveInfo.playerData.rupees / 4) * 3;
     phi_s0_2 = sp98 / 50;
     sp5C = (-spB0 - spAC);
     sp5C += 8;

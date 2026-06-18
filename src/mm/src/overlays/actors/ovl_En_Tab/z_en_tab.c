@@ -133,7 +133,7 @@ MsgScript D_80BE19A0[] = {
     /* 0x003B 0x01 */ MSCRIPT_CMD_PLAY_DECIDE(),
     /* 0x003C 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
     /* 0x003D 0x03 */ MSCRIPT_CMD_CHANGE_RUPEES(-200),
-    /* 0x0040 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_CHATEAU, 0x0),
+    /* 0x0040 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_CHATEAU, 0x0),
     /* 0x0045 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x0091),
     /* 0x0048 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0049 0x01 */ MSCRIPT_CMD_DONE(),
@@ -141,7 +141,7 @@ MsgScript D_80BE19A0[] = {
     /* 0x004A 0x01 */ MSCRIPT_CMD_PLAY_DECIDE(),
     /* 0x004B 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
     /* 0x004C 0x03 */ MSCRIPT_CMD_CHANGE_RUPEES(-20),
-    /* 0x004F 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MILK, 0x0),
+    /* 0x004F 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_MILK, 0x0),
     /* 0x0054 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x0092),
     /* 0x0057 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0058 0x01 */ MSCRIPT_CMD_DONE(),
@@ -187,7 +187,7 @@ MsgScript D_80BE1A0C[] = {
     /* 0x003B 0x01 */ MSCRIPT_CMD_PLAY_DECIDE(),
     /* 0x003C 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
     /* 0x003D 0x03 */ MSCRIPT_CMD_CHANGE_RUPEES(-200),
-    /* 0x0040 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_CHATEAU, 0x0),
+    /* 0x0040 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_CHATEAU, 0x0),
     /* 0x0045 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x0091),
     /* 0x0048 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0049 0x01 */ MSCRIPT_CMD_DONE(),
@@ -195,7 +195,7 @@ MsgScript D_80BE1A0C[] = {
     /* 0x004A 0x01 */ MSCRIPT_CMD_PLAY_DECIDE(),
     /* 0x004B 0x01 */ MSCRIPT_CMD_CLOSE_TEXT(),
     /* 0x004C 0x03 */ MSCRIPT_CMD_CHANGE_RUPEES(-20),
-    /* 0x004F 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MILK, 0x0),
+    /* 0x004F 0x05 */ MSCRIPT_CMD_OFFER_ITEM(GI_MM_MILK, 0x0),
     /* 0x0054 0x03 */ MSCRIPT_CMD_SET_COLLECTIBLE(0x0092),
     /* 0x0057 0x01 */ MSCRIPT_CMD_AWAIT_TEXT(),
     /* 0x0058 0x01 */ MSCRIPT_CMD_DONE(),
@@ -483,7 +483,7 @@ MsgScript* EnTab_GetMsgScript(EnTab* this, PlayState* play) {
                 return D_80BE1998;
             }
 
-            if (gSaveContext.save.day == 3) {
+            if (gMmSave.day == 3) {
                 return D_80BE1A0C;
             }
             return D_80BE19A0;
@@ -614,7 +614,7 @@ void func_80BE1224(EnTab* this, PlayState* play) {
 void func_80BE127C(EnTab* this, PlayState* play) {
     ScheduleOutput scheduleOutput;
 
-    this->unk_31A = R_TIME_SPEED + ((void)0, gSaveContext.save.timeSpeedOffset);
+    this->unk_31A = R_TIME_SPEED + ((void)0, gMmSave.timeSpeedOffset);
 
     if (!Schedule_RunScript(play, D_80BE18D0, &scheduleOutput) ||
         ((this->scheduleResult != scheduleOutput.result) && !func_80BE1060(this, play, &scheduleOutput))) {

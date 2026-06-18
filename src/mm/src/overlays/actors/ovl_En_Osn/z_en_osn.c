@@ -432,7 +432,7 @@ s32 EnOsn_GetInitialMaskText(EnOsn* this, PlayState* play) {
             break;
     }
     this->stateFlags |= OSN_STATE_END_CONVERSATION;
-    if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) && (CURRENT_TIME < CLOCK_TIME(6, 0))) {
+    if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) && (CURRENT_TIME < CLOCK_TIME(6, 0))) {
         return 0x2006;
     }
     return 0x1FCD;
@@ -441,13 +441,13 @@ s32 EnOsn_GetInitialMaskText(EnOsn* this, PlayState* play) {
 s32 EnOsn_GetInitialText(EnOsn* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if ((gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] != ITEM_NONE) &&
+    if ((gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] != ITEM_NONE) &&
         CHECK_QUEST_ITEM(QUEST_SONG_HEALING)) {
         if (this->stateFlags & OSN_STATE_SPECIAL_CONVERSTATION) {
             this->stateFlags |= OSN_STATE_END_CONVERSATION;
-            if ((gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] != ITEM_NONE) &&
+            if ((gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] != ITEM_NONE) &&
                 (INV_CONTENT(ITEM_MASK_DEKU) == ITEM_MASK_DEKU)) {
-                if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
+                if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
                     (CURRENT_TIME < CLOCK_TIME(6, 0))) {
                     return 0x2006;
                 }
@@ -459,7 +459,7 @@ s32 EnOsn_GetInitialText(EnOsn* this, PlayState* play) {
         if (player->transformation == PLAYER_FORM_DEKU) {
             if (this->stateFlags & OSN_STATE_MET_DEKU) {
                 this->stateFlags |= OSN_STATE_END_CONVERSATION;
-                if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
+                if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
                     (CURRENT_TIME < CLOCK_TIME(6, 0))) {
                     return 0x2006;
                 }
@@ -472,7 +472,7 @@ s32 EnOsn_GetInitialText(EnOsn* this, PlayState* play) {
         if (player->transformation == PLAYER_FORM_GORON) {
             if (this->stateFlags & OSN_STATE_MET_GORON) {
                 this->stateFlags |= OSN_STATE_END_CONVERSATION;
-                if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
+                if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
                     (CURRENT_TIME < CLOCK_TIME(6, 0))) {
                     return 0x2006;
                 } else {
@@ -491,7 +491,7 @@ s32 EnOsn_GetInitialText(EnOsn* this, PlayState* play) {
         if (player->transformation == PLAYER_FORM_ZORA) {
             if (this->stateFlags & OSN_STATE_MET_ZORA) {
                 this->stateFlags |= OSN_STATE_END_CONVERSATION;
-                if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
+                if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
                     (CURRENT_TIME < CLOCK_TIME(6, 0))) {
                     return 0x2006;
                 }
@@ -509,7 +509,7 @@ s32 EnOsn_GetInitialText(EnOsn* this, PlayState* play) {
         if (Player_GetMask(play) == PLAYER_MASK_NONE) {
             if (this->stateFlags & OSN_STATE_MET_HUMAN) {
                 this->stateFlags |= OSN_STATE_END_CONVERSATION;
-                if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
+                if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
                     (CURRENT_TIME < CLOCK_TIME(6, 0))) {
                     return 0x2006;
                 }
@@ -523,7 +523,7 @@ s32 EnOsn_GetInitialText(EnOsn* this, PlayState* play) {
     }
 
     this->stateFlags |= OSN_STATE_END_CONVERSATION;
-    if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) && (CURRENT_TIME < CLOCK_TIME(6, 0))) {
+    if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) && (CURRENT_TIME < CLOCK_TIME(6, 0))) {
         return 0x2004;
     }
 
@@ -541,7 +541,7 @@ void EnOsn_HandleConversation(EnOsn* this, PlayState* play) {
             break;
 
         case 0x1FCA:
-            if ((gSaveContext.save.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
+            if ((gMmSave.day == 3) && (CURRENT_TIME >= CLOCK_TIME(5, 0)) &&
                 (CURRENT_TIME < CLOCK_TIME(6, 0))) {
                 this->textId = 0x2007;
             } else {
@@ -691,11 +691,11 @@ void EnOsn_HandleConversation(EnOsn* this, PlayState* play) {
 
 void EnOsn_InitCutscene(EnOsn* this) {
     this->csId = this->actor.csId;
-    if ((gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) ||
+    if ((gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) ||
         (INV_CONTENT(ITEM_MASK_DEKU) == ITEM_MASK_DEKU)) {
         this->csId = CutsceneManager_GetAdditionalCsId(this->csId);
 
-        if ((gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] != ITEM_NONE) ||
+        if ((gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] != ITEM_NONE) ||
             (INV_CONTENT(ITEM_MASK_DEKU) == ITEM_MASK_DEKU)) {
             this->csId = CutsceneManager_GetAdditionalCsId(this->csId);
         }
@@ -718,7 +718,7 @@ void EnOsn_ChooseAction(EnOsn* this, PlayState* play) {
 void EnOsn_Idle(EnOsn* this, PlayState* play) {
     s16 yaw = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
 
-    if ((gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] != ITEM_NONE) &&
+    if ((gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] != ITEM_NONE) &&
         !CHECK_QUEST_ITEM(QUEST_SONG_HEALING)) {
         if (Actor_TalkOfferAccepted(&this->actor, &play->state)) {
             this->actionFunc = EnOsn_StartCutscene;
@@ -912,17 +912,17 @@ void EnOsn_Init(Actor* thisx, PlayState* play) {
 
     switch (ENOSN_GET_TYPE(&this->actor)) {
         case OSN_TYPE_CHOOSE:
-            if ((gSaveContext.save.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 2)) ||
-                (gSaveContext.save.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 3)) ||
-                (gSaveContext.save.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 6))) {
+            if ((gMmSave.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 2)) ||
+                (gMmSave.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 3)) ||
+                (gMmSave.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 6))) {
                 this->stateFlags |= OSN_STATE_SPECIAL_CONVERSTATION;
             }
             this->shouldRotateHead = true;
             if (play->sceneId == SCENE_INSIDETOWER) {
-                if ((gSaveContext.save.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 2)) ||
-                    (gSaveContext.save.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 6))) {
+                if ((gMmSave.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 2)) ||
+                    (gMmSave.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 6))) {
                     this->actionFunc = EnOsn_HandleCutscene;
-                } else if (gSaveContext.save.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 3)) {
+                } else if (gMmSave.entrance == ENTRANCE(CLOCK_TOWER_INTERIOR, 3)) {
                     EnOsn_InitCutscene(this);
                     this->actionFunc = EnOsn_StartCutscene;
                 } else {

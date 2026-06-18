@@ -802,7 +802,7 @@ void EnFishing_Init(Actor* thisx, PlayState* play2) {
     Actor_ProcessInitChain(thisx, sInitChain);
     ActorShape_Init(&thisx->shape, 0.0f, NULL, 0.0f);
 
-    sLinkAge = gSaveContext.save.linkAge;
+    sLinkAge = gMmSave.linkAge;
 
     if (thisx->params < 100) {
         s16 i;
@@ -4718,7 +4718,7 @@ void EnFishing_HandleOwnerDialog(EnFishing* this, PlayState* play) {
 
                 switch (play->msgCtx.choiceIndex) {
                     case 0:
-                        if (gSaveContext.save.saveInfo.playerData.rupees >= 20) {
+                        if (gMmSave.saveInfo.playerData.rupees >= 20) {
                             Rupees_ChangeBy(-20);
                             if (!Rumble_ControllerOneHasRumblePak()) {
                                 this->actor.textId = 0x407C;
@@ -4941,30 +4941,30 @@ void EnFishing_HandleOwnerDialog(EnFishing* this, PlayState* play) {
                     }
 
                     if (D_809171CC >= 60.0f) {
-                        getItemId = GI_RUPEE_PURPLE;
+                        getItemId = GI_MM_RUPEE_PURPLE;
                     } else if (D_809171CC >= 50.0f) {
-                        getItemId = GI_RUPEE_10;
+                        getItemId = GI_MM_RUPEE_RED;
                     } else if (D_809171CC >= 40.0f) {
-                        getItemId = GI_RUPEE_BLUE;
+                        getItemId = GI_MM_RUPEE_BLUE;
                     } else {
-                        getItemId = GI_RUPEE_GREEN;
+                        getItemId = GI_MM_RUPEE_GREEN;
                     }
 
                     if (sLinkAge == 1) {
                         if ((D_809171CC >= 50.0f) && !(HIGH_SCORE(HS_FISHING) & 0x400)) {
                             HIGH_SCORE(HS_FISHING) |= 0x400;
-                            getItemId = GI_HEART_PIECE;
+                            getItemId = GI_MM_HEART_PIECE;
                             sSinkingLureLocation = Rand_ZeroFloat(3.999f) + 1.0f;
                         }
                     } else {
                         if ((D_809171CC >= 60.0f) && !(HIGH_SCORE(HS_FISHING) & 0x800)) {
                             HIGH_SCORE(HS_FISHING) |= 0x800;
-                            getItemId = GI_SKULL_TOKEN;
+                            getItemId = GI_MM_HEART_PIECE;
                             sSinkingLureLocation = Rand_ZeroFloat(3.999f) + 1.0f;
                         }
                     }
                 } else {
-                    getItemId = GI_RUPEE_PURPLE;
+                    getItemId = GI_MM_RUPEE_PURPLE;
                     D_8090CCF0 = 0.0f;
                 }
 
@@ -5022,7 +5022,7 @@ void EnFishing_HandleOwnerDialog(EnFishing* this, PlayState* play) {
             if (Actor_HasParent(&this->actor, play)) {
                 this->unk_154 = 24;
             } else {
-                Actor_OfferGetItem(&this->actor, play, GI_SKULL_TOKEN, 2000.0f, 1000.0f);
+                Actor_OfferGetItem(&this->actor, play, GI_MM_HEART_PIECE, 2000.0f, 1000.0f);
             }
             break;
 

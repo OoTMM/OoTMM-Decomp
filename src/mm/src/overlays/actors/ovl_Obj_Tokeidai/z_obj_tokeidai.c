@@ -86,7 +86,7 @@ static InitChainEntry sInitChain[] = {
  * the middle of rotating.
  */
 s32 ObjTokeidai_GetTargetSunMoonPanelRotation(void) {
-    if (gSaveContext.save.isNight) {
+    if (gMmSave.isNight) {
         return 0x8000;
     }
     return 0;
@@ -163,7 +163,7 @@ void ObjTokeidai_Counterweight_Init(ObjTokeidai* this, PlayState* play) {
     this->actor.draw = ObjTokeidai_Counterweight_Draw;
     this->opaDList = gClockTowerCounterweightDL;
     this->xluDList = gClockTowerSpotlightDL;
-    if (gSaveContext.save.isNight) {
+    if (gMmSave.isNight) {
         this->spotlightIntensity = 100;
     } else {
         this->spotlightIntensity = 0;
@@ -446,7 +446,7 @@ void ObjTokeidai_TowerOpening_EndCutscene(ObjTokeidai* this, PlayState* play) {
         if (((play->sceneId == SCENE_CLOCKTOWER) && (gSaveContext.sceneLayer == 2) && (play->csCtx.scriptIndex == 0)) ||
             ((play->sceneId == SCENE_00KEIKOKU) && (gSaveContext.sceneLayer == 2) && (play->csCtx.scriptIndex == 0))) {
             Audio_SetCutsceneFlag(false);
-            gSaveContext.save.cutsceneIndex = 0;
+            gMmSave.cutsceneIndex = 0;
             gSaveContext.nextCutsceneIndex = 0;
             gSaveContext.respawnFlag = 2;
             play->transitionTrigger = TRANS_TRIGGER_START;
@@ -622,7 +622,7 @@ void ObjTokeidai_StaircaseToRooftop_Idle(ObjTokeidai* this, PlayState* play) {
 }
 
 s32 ObjTokeidai_IsPostFirstCycleFinalHours(ObjTokeidai* this, PlayState* play) {
-    if (gSaveContext.save.saveInfo.inventory.items[SLOT_OCARINA] == ITEM_NONE) {
+    if (gMmSave.saveInfo.inventory.items[SLOT_MM_OCARINA] == ITEM_NONE) {
         return false;
     }
     if ((CURRENT_DAY == 3) && (CURRENT_TIME < CLOCK_TIME(6, 0))) {
@@ -770,7 +770,7 @@ void ObjTokeidai_Counterweight_Idle(ObjTokeidai* this, PlayState* play) {
         }
     } else {
         this->actor.shape.rot.y -= 0x40;
-        if (gSaveContext.save.isNight) {
+        if (gMmSave.isNight) {
             if (this->spotlightIntensity < 100) {
                 this->spotlightIntensity += 4;
             }

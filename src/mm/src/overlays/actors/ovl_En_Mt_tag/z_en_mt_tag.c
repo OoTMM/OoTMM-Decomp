@@ -475,7 +475,7 @@ void EnMttag_Init(Actor* thisx, PlayState* play) {
     Player* player;
     EnMttag* this = (EnMttag*)thisx;
 
-    if (gSaveContext.save.entrance == ENTRANCE(GORON_RACETRACK, 1)) {
+    if (gMmSave.entrance == ENTRANCE(GORON_RACETRACK, 1)) {
         player = GET_PLAYER(play);
         player->stateFlags1 |= PLAYER_STATE1_20;
         this->raceInitialized = false;

@@ -383,7 +383,7 @@ void EnTrt_PayForMushroom(EnTrt* this, PlayState* play) {
         Player_UpdateBottleHeld(play, GET_PLAYER(play), ITEM_BOTTLE, PLAYER_IA_BOTTLE_EMPTY);
         this->actionFunc = EnTrt_SetupItemGiven;
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_RUPEE_RED, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_RUPEE_RED, 300.0f, 300.0f);
     }
 }
 
@@ -462,9 +462,9 @@ void EnTrt_GiveRedPotionForKoume(EnTrt* this, PlayState* play) {
         player->stateFlags2 &= ~PLAYER_STATE2_20000000;
         this->actionFunc = EnTrt_GivenRedPotionForKoume;
     } else if (CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_KOTAKE_BOTTLE)) {
-        Actor_OfferGetItem(&this->actor, play, GI_POTION_RED, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_POTION_RED, 300.0f, 300.0f);
     } else {
-        Actor_OfferGetItem(&this->actor, play, GI_POTION_RED_BOTTLE, 300.0f, 300.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MM_BOTTLE_POTION_RED, 300.0f, 300.0f);
     }
 }
 
@@ -1493,7 +1493,7 @@ void EnTrt_LookToShopkeeperFromShelf(EnTrt* this, PlayState* play) {
 void EnTrt_InitShopkeeper(EnTrt* this, PlayState* play) {
     SkelAnime_InitFlex(play, &this->skelAnime, &gKotakeSkel, &gKotakeSleepingAnim, NULL, NULL, 0);
     if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_SAVED_KOUME) &&
-        !CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_RED_POTION_FOR_KOUME) && (gSaveContext.save.day >= 2)) {
+        !CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_RED_POTION_FOR_KOUME) && (gMmSave.day >= 2)) {
         this->actor.draw = NULL;
     } else {
         this->actor.draw = EnTrt_Draw;
@@ -1509,7 +1509,7 @@ void EnTrt_InitShop(EnTrt* this, PlayState* play) {
     this->actor.colChkInfo.cylRadius = 50;
     this->timer = Rand_S16Offset(40, 20);
     if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_SAVED_KOUME) &&
-        !CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_RED_POTION_FOR_KOUME) && gSaveContext.save.day >= 2) {
+        !CHECK_WEEKEVENTREG(WEEKEVENTREG_RECEIVED_RED_POTION_FOR_KOUME) && gMmSave.day >= 2) {
         this->textId = 0x84A;
         this->actionFunc = EnTrt_ShopkeeperGone;
     } else {
