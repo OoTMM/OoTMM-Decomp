@@ -1,0 +1,2 @@
+800FBC00 gIdentityMtx
+80A72FA0 sShadowTex
