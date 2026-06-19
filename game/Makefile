@@ -6,7 +6,7 @@ OOT_REGION 	:= US
 
 MM_VERSION 	:= n64-us
 
-ROMS_DIR        := roms
+ROMS_DIR        := ../roms
 
 SRC_DIR			:= src
 SRC_DIR_OOT		:= $(SRC_DIR)/oot

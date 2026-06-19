@@ -1,0 +1,12 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "nx": "nx"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "nx": "^20.0.5"
+  }
+}
