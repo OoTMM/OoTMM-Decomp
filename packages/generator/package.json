@@ -13,5 +13,17 @@
     "@ootmm/game": "workspace:*",
     "yaz0": "^4.0.3"
   },
-  "nx": {}
+  "nx": {
+    "targets": {
+      "start": {
+        "inputs": [
+          "{projectRoot}/src/**/*"
+        ],
+        "outputs": [],
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
+  }
 }

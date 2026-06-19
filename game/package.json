@@ -7,5 +7,18 @@
   },
   "devDependencies": {
     "@ootmm/data": "workspace:*"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "inputs": [
+          "{projectRoot}/src/**/*",
+          "{projectRoot}/include/**/*"
+        ],
+        "outputs": [
+          "{projectRoot}/dist/**/*"
+        ]
+      }
+    }
   }
 }
