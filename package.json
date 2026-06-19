@@ -5,6 +5,7 @@
     "nx": "nx"
   },
   "devDependencies": {
+    "@types/node": "^25.9.3",
     "nx": "^20.0.5",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"

@@ -5,3 +5,7 @@ packages:
 allowBuilds:
   esbuild: true
   nx: true
+  yaz0: true
+
+minimumReleaseAgeExclude:
+  - yaz0@4.0.3
