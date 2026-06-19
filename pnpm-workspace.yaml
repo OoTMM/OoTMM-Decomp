@@ -1,2 +1,7 @@
 packages:
-  - game
+  - 'game'
+  - 'packages/*'
+
+allowBuilds:
+  esbuild: true
+  nx: true

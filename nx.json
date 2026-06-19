@@ -1,0 +1,15 @@
+{
+  "targetDefaults": {
+    "build": {
+      "configurations": {
+        "production": {},
+        "development": {}
+      },
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true
+    }
+  },
+  "defaultBase": "master"
+}

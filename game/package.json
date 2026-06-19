@@ -1,0 +1,11 @@
+{
+  "name": "@ootmm/game",
+  "scripts": {
+    "build": "make"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@ootmm/data": "workspace:*"
+  }
+}
